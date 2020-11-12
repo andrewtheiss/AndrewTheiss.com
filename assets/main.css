@@ -1,4 +1,4 @@
-#main_container {
+.main-container {
   width:800px;
   min-height:300px;
   border-left:1px solid black;
@@ -9,4 +9,29 @@
 .choco-style {
   background-color: brown;
   min-height:500px;
+}
+
+.bd-placeholder-img {
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@media (min-width: 768px) {
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
+  }
+}
+
+.navbar-parent {
+  width: 1200px;
+  margin: 0px auto;
+}
+
+.nav-item {
+  padding-left: 5px;
+  padding-right: 5px;
 }

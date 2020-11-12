@@ -60,8 +60,4 @@ $("#load_chocolate").click(requestChocolateContent);
 $("#load_meditation").click(requestChocolateMeditation);
 $("#load_visuals").click(requestChocolateVisuals);
 $("#home").click(requestHome);
-
-
-
-$.ajax({url: "/pages/splash.html", success: loadContent});
 // Document 'ready' function is called when all content is loaded
