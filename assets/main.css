@@ -1,0 +1,12 @@
+#main_container {
+  width:800px;
+  min-height:300px;
+  border-left:1px solid black;
+  border-right: 1px solid black;
+  margin:0px auto;
+}
+
+.choco-style {
+  background-color: brown;
+  min-height:500px;
+}
