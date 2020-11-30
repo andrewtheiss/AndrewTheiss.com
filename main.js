@@ -19,7 +19,7 @@ function loadContentChocolate(result) {
 
 function requestChocolateContent() {
   unloadContent();
-  $.ajax({url: "/pages/chocolate.html", success: loadContentChocolate});
+  $.ajax({url: "/pages/chocolate/index.html", success: loadContentChocolate});
 }
 
 function requestChocolateMeditation() {
@@ -51,6 +51,13 @@ function requestHome() {
 document.getElementById("go_to_hw").onclick = function () {
     location.href = "http://www.hw.com";
 };
+
+function playAudio() {
+var x = document.getElementById("myAudio");
+  x.play();
+}
+$('#myAudio').mouseover(playAudio);
+
 
 
 // Events

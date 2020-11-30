@@ -1,3 +1,19 @@
+.red {
+  background-color: #ff0000;
+}
+
+.blue {
+  background-color: #0000ff;
+}
+
+.green {
+  background-color: #00ff00;
+}
+
+.pink {
+  background-color: #FFC0CB;
+}
+
 .main-container {
   width: 800px;
   min-height: 300px;

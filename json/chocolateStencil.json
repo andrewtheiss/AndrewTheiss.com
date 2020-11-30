@@ -1,0 +1,15 @@
+{
+    "type": "Vietname Ben Tre 2018"
+    "flavorProfile" : {
+        "chocolate" : 4,
+        "acidity" : 4,
+        "bitter" : 4,
+        "astringent" : 4,
+        "sweet" : 4,
+        "fruity" : 4,
+        "floral" : 4,
+        "nutty" : 4,
+        "earthy" : 4
+    },
+    "picture" : null
+}
