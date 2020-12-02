@@ -37,14 +37,20 @@ function loadGame (htmlContent) {
 }
 
 function requestGame() {
-  $.ajax({url: "/pages/game.html", success: loadGame});
+  $.ajax({
+    url: "/pages/game.html",
+    success: loadGame
+  });
 }
 
 
 
 function requestHome() {
   unloadContent();
-  $.ajax({url: "/pages/splash.html", success: loadContent});
+  $.ajax({
+    url: "/pages/splash/splash.html",
+    success: loadContent
+  });
 }
 
 
@@ -53,7 +59,7 @@ document.getElementById("go_to_hw").onclick = function () {
 };
 
 function playAudio() {
-var x = document.getElementById("myAudio");
+  var x = document.getElementById("myAudio");
   x.play();
 }
 $('#myAudio').mouseover(playAudio);
@@ -66,4 +72,5 @@ $("#load_meditation").click(requestChocolateMeditation);
 $("#load_visuals").click(requestChocolateVisuals);
 $("#load_game").click(requestGame);
 $("#home").click(requestHome);
+requestHome();
 // Document 'ready' function is called when all content is loaded
