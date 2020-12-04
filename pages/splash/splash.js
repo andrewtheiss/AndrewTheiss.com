@@ -24,7 +24,7 @@ function requestNasaRss() {
 }
 
 function requestRSSFeeds() {
-  requestNasaRss();
+//  requestNasaRss();
 }
 
 
