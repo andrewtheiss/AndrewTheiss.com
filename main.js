@@ -1,3 +1,15 @@
+
+/*
+var cookie = document.cookie;
+if (!cookie) {
+  cookie = 1;
+} else {
+  cookie++;
+}
+document.cookie = cookie;
+alert(cookie);
+*/
+
 function unloadContent() {
   // Using jquery
   $("#main_container").html('');
