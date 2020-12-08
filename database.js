@@ -3,8 +3,10 @@ const latestChcocolateVote = $("#latest_vote");
 const voteOnChocolate = $("#vote_chocolate");
 const chocolateOutput = $("#chocolate_output");
 
+// Connect to firebase and store in variable firestore
 var firestore = firebase.firestore();
-const databaseDocumentRef = firestore.doc("chocolates/latestChocolateRating");
+
+const databaseDocumentRef = firestore.doc("chocolates/ethopian2018");
 
 
 
@@ -20,7 +22,8 @@ function submitChocolateVote() {
     console.log('submitting chocolate vote: ' + chocolateInput.val());
     databaseDocumentRef.set(
       {
-          latestRating : chocolateInput.val()
+          latestRating : chocolateInput.val(),
+          exampleData: 1
       }
     ).then(voteSuccess).catch(generalErrorHandler);
 }
@@ -43,6 +46,7 @@ voteOnChocolate.click(submitChocolateVote);
 function getChocolateVoteDocument(doc) {
   if (doc && doc.exists) {
     var myData = doc.data();
+    console.log(myData);
     chocolateOutput.html(myData.latestRating);
   }
 }
@@ -52,6 +56,21 @@ function getLatestVote() {
 }
 
 latestChcocolateVote.click(getLatestVote);
+
+function getRealTimeUpdate() {
+
+  databaseDocumentRef.onSnapshot(getChocolateVoteDocument);
+}
+
+getRealTimeUpdate();
+
+
+
+
+
+
+
+
 
 
 
