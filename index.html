@@ -23,7 +23,7 @@
   <script src="libs/xmlToJson.js"></script>
 </head>
 
-<body>
+<body id="body">
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
@@ -31,31 +31,35 @@
         <li class="nav-item active">
           <a class="nav-link" href="#" id="home">Home <span class="sr-only">(current)</span></a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" id="load_chocolate">Eat Chocolate</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" tabindex="-1" id="load_visuals">Light Your World</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" tabindex="-1" id="load_meditation">Explore Your Mind</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" tabindex="-1" id="load_game">Play A Game</a>
-        </li>
+        <div style="display:none;">
+          <li class="nav-item">
+            <a class="nav-link" href="#" id="load_chocolate">Eat Chocolate</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" tabindex="-1" id="load_visuals">Light Your World</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" tabindex="-1" id="load_meditation">Explore Your Mind</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" tabindex="-1" id="load_game">Play A Game</a>
+          </li>
+        </div>
       </ul>
     </div>
   </nav>
-  <div id="game_content"></div>
-  <input type="text" id="chocolate_input"></input>
-  <button id="vote_chocolate">Vote on Chocolate</button>
-  <button id="latest_vote">Get Latest Vote</button>
-  <p>
-  <h3>
-    <div style="display:inline-block;">Latest Vote:</div>
-    <div style="display:inline-block;" id="chocolate_output"></div>
-  </h3>
-  </p>
+  <div style="display:none;">
+    <div id="game_content"></div>
+    <input type="text" id="chocolate_input"></input>
+    <button id="vote_chocolate">Vote on Chocolate</button>
+    <button id="latest_vote">Get Latest Vote</button>
+    <p>
+    <h3>
+      <div style="display:inline-block;">Latest Vote:</div>
+      <div style="display:inline-block;" id="chocolate_output"></div>
+    </h3>
+    </p>
+  </div>
   <main role="main" class="main-container" id="main_container">
     <div id="content_one"></div>
     <div id="content_two"></div>
@@ -65,9 +69,11 @@
     </audio>
   </main>
 
-  <footer class="container">
-    <p id="go_to_hw">&copy; HW Class 2020-2021</p>
-  </footer>
+  <div style="display:none;">
+    <footer class="container">
+      <p id="go_to_hw">&copy; Chocolate Research Program 2020-2021</p>
+    </footer>
+  </div>
   <script src="./assets/bootstrap.bundle.min.js"></script>
   <script src="main.js"></script>
   <script>

@@ -11,7 +11,27 @@ function loadChocolateJSONAsHTML(result) {
   $("#list_chocolates").html(myString);
 }
 
+function handleChocolateExplorationCodeReturn(data) {
+  console.log(data);
+}
 
+
+function generalErrorHandler(errer) {
+    console.log("Got an error", error);
+};
+
+function loadChocolateExplorationCode() {
+    var chocolateSubmissionCode = $("#chocolate_code").val();
+
+    // Connect to firebase and store in variable firestore
+    var firestore = firebase.firestore();
+
+    const databaseCollectionRef = firestore.collection(chocolateSubmissionCode);
+    databaseCollectionRef.get().then(handleChocolateExplorationCodeReturn).catch(generalErrorHandler);
+
+    $('#chocolate_request_form_container').addClass('hidden');
+    $('#chocolate_come_back').removeClass('hidden');
+}
 
 
 function requestChocolateData() {
@@ -24,8 +44,14 @@ function requestChocolateData() {
   });
 }
 
-
-
+function createBindings() {
+  $("#chocolate_code").on( "keydown", function(event) {
+      if(event.which == 13)
+         loadChocolateExplorationCode();
+    });
+  $("#chocolate_submit").click(loadChocolateExplorationCode);
+}
+createBindings();
 
 requestChocolateData();
 

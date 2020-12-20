@@ -16,6 +16,7 @@ function unloadContent() {
 
   // Add style or remove style
   $("#main_container").removeClass("choco-style");
+  $("#body").removeClass("choco-bg");
 }
 
 function loadContent(result) {
@@ -27,6 +28,7 @@ function loadContentChocolate(result) {
   unloadContent();
   $("#main_container").html(result);
   $("#main_container").addClass("choco-style");
+  $("#body").addClass("choco-bg");
 }
 
 function requestChocolateContent() {
@@ -66,10 +68,6 @@ function requestHome() {
 }
 
 
-document.getElementById("go_to_hw").onclick = function () {
-    location.href = "http://www.hw.com";
-};
-
 function playAudio() {
   var x = document.getElementById("myAudio");
   x.play();
@@ -83,6 +81,6 @@ $("#load_chocolate").click(requestChocolateContent);
 $("#load_meditation").click(requestChocolateMeditation);
 $("#load_visuals").click(requestChocolateVisuals);
 $("#load_game").click(requestGame);
-$("#home").click(requestHome);
-requestHome();
+$("#home").click(requestChocolateContent);
+requestChocolateContent();
 // Document 'ready' function is called when all content is loaded

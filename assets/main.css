@@ -23,7 +23,12 @@
 }
 
 .choco-style {
-  background-color: brown;
+  background-color: rgb(136, 92, 38);
+  min-height: 500px;
+}
+
+.choco-bg {
+  background-color: rgb(247, 243, 206);
   min-height: 500px;
 }
 
@@ -85,4 +90,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.chocolate-code-request {
+  margin: 0px auto;
+  width: 500px;
+  height: 300px;
+  padding: 80px;
+}
+
+.chocolate-code-request.hidden {
+  display: none;
+}
+
+.chocolate-come-back {
+  text-align: center;
+}
+
+.chocolate-come-back.hidden {
+  text-align: center;
+  display: none;
 }
