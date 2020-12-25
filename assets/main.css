@@ -94,9 +94,9 @@
 
 .chocolate-code-request {
   margin: 0px auto;
-  width: 500px;
+  padding-top: 50px;
+  width: 560px;
   height: 300px;
-  padding: 80px;
 }
 
 .chocolate-code-request.hidden {
@@ -110,4 +110,30 @@
 .chocolate-come-back.hidden {
   text-align: center;
   display: none;
+}
+
+.chocolate-left {
+  display: inline;
+  width: 50%;
+  height: 100px;
+  float: left;
+}
+
+.chocolate-right {
+  display: inline;
+  height: 100px;
+  float: right;
+}
+
+.chocolate-secondary {
+  width: 798px;
+  padding: 50px;
+}
+
+.link {
+  padding-left: 55px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 27px;
+  color: #ff0033;
 }

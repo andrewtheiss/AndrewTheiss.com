@@ -20,17 +20,26 @@ function generalErrorHandler(errer) {
     console.log("Got an error", error);
 };
 
+function loadChocolateExplorationCodeAsHtml(experience) {
+  $('#chocolate_experience_container').html(experience);
+}
+
 function loadChocolateExplorationCode() {
     var chocolateSubmissionCode = $("#chocolate_code").val();
 
     // Connect to firebase and store in variable firestore
-    var firestore = firebase.firestore();
-
-    const databaseCollectionRef = firestore.collection(chocolateSubmissionCode);
-    databaseCollectionRef.get().then(handleChocolateExplorationCodeReturn).catch(generalErrorHandler);
-
+    //var firestore = firebase.firestore();
+    location.href="/pages/chocolate/experiences/" + chocolateSubmissionCode + ".html";
+    //const databaseCollectionRef = firestore.collection(chocolateSubmissionCode);
+    //databaseCollectionRef.get().then(handleChocolateExplorationCodeReturn).catch(generalErrorHandler);
+    $.ajax({
+      dataType: "json",
+      url: "/pages/chocolate/experiences/" + chocolateSubmissionCode + ".html",
+      success : loadChocolateExplorationCodeAsHtml,
+      //complete: loadChocolateJSONAsHTML
+    });
     $('#chocolate_request_form_container').addClass('hidden');
-    $('#chocolate_come_back').removeClass('hidden');
+    $('#chocolate_experience_container').removeClass('hidden');
 }
 
 
@@ -53,7 +62,7 @@ function createBindings() {
 }
 createBindings();
 
-requestChocolateData();
+//requestChocolateData();
 
 
 /*
