@@ -27,6 +27,10 @@
   min-height: 500px;
 }
 
+.choco-style.nine-hundo {
+  width: 900px;
+}
+
 .choco-bg {
   background-color: rgb(247, 243, 206);
   min-height: 500px;
