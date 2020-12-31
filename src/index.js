@@ -3,6 +3,21 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import firebase from 'firebase/app';
+
+var firebaseConfig = {
+  apiKey: "AIzaSyDTeP-bHkPwE6QxfNpnaJu-F5oV5H7wRDU",
+  authDomain: "advancedtopicscs.firebaseapp.com",
+  databaseURL: "https://advancedtopicscs.firebaseio.com",
+  projectId: "advancedtopicscs",
+  storageBucket: "advancedtopicscs.appspot.com",
+  messagingSenderId: "736168813101",
+  appId: "1:736168813101:web:f014f2542e38d41bc7cea4",
+  measurementId: "G-P7J0VHFL6B"
+};
+
+firebase.initializeApp(firebaseConfig);
+
 
 ReactDOM.render(
   <React.StrictMode>
