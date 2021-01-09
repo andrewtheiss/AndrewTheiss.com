@@ -1,5 +1,5 @@
-import Firebase from 'firebase/app';
-const config = {
+import firebase from 'firebase';
+const prodConfig = {
   apiKey: "AIzaSyDTeP-bHkPwE6QxfNpnaJu-F5oV5H7wRDU",
   authDomain: "advancedtopicscs.firebaseapp.com",
   databaseURL: "https://advancedtopicscs.firebaseio.com",
@@ -10,5 +10,14 @@ const config = {
   measurementId: "G-P7J0VHFL6B"
 };
 
-Firebase.initializeApp(config);
+const config = prodConfig;
+  //process.env.NODE_ENV === 'production' ? prodConfig : devConfig;
+
+class Firebase {
+  constructor() {
+    firebase.initializeApp(config);
+    this.db = firebase.database();
+  }
+}
+
 export default Firebase;

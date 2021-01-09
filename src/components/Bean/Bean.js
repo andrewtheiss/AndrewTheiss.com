@@ -1,11 +1,12 @@
 import React from 'react';
-import Firebase from '../config.js'
-import './bean.css';
+import './Bean.css';
+
+import  { FirebaseContext } from '../Firebase';
 
 class Bean extends React.Component {
   getData() {
-    const db = Firebase.database();
-    const dbRef = db.collection("beans");
+    const db = this.props.firebase.db;
+    db.collection("beans");
   }
   constructor(props) {
     super(props);
