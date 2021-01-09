@@ -1,13 +1,14 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+
 const prodConfig = {
-  apiKey: "AIzaSyDTeP-bHkPwE6QxfNpnaJu-F5oV5H7wRDU",
-  authDomain: "advancedtopicscs.firebaseapp.com",
-  databaseURL: "https://advancedtopicscs.firebaseio.com",
-  projectId: "advancedtopicscs",
-  storageBucket: "advancedtopicscs.appspot.com",
-  messagingSenderId: "736168813101",
-  appId: "1:736168813101:web:f014f2542e38d41bc7cea4",
-  measurementId: "G-P7J0VHFL6B"
+    apiKey: "AIzaSyCCmfrwzGLalOs4iEdep6FHw6VMranrjXY",
+    authDomain: "andrewtheiss-6336c.firebaseapp.com",
+    databaseURL: "https://andrewtheiss-6336c.firebaseio.com",
+    projectId: "andrewtheiss-6336c",
+    storageBucket: "andrewtheiss-6336c.appspot.com",
+    messagingSenderId: "300886092746",
+    appId: "1:300886092746:web:8ad9128065ef7ff22e7d33"
 };
 
 const config = prodConfig;
@@ -16,7 +17,7 @@ const config = prodConfig;
 class Firebase {
   constructor() {
     firebase.initializeApp(config);
-    this.db = firebase.database();
+    this.db = firebase.firestore();
   }
 }
 

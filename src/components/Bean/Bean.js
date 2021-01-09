@@ -4,27 +4,50 @@ import './Bean.css';
 import  { FirebaseContext } from '../Firebase';
 
 class Bean extends React.Component {
-  getData() {
-    const db = this.props.firebase.db;
-    db.collection("beans");
-  }
   constructor(props) {
     super(props);
 
-    // Initialize the state of beans
-    // Every time state is called, render is as well
-    this.state = { beans : [] };
-    this.listRef = React.createRef();
-    this.getData();
+    // When state changes, render is called
+    this.state = {
+      beans : [],
+      selectedBeanId : undefined
+    };
+  }
+
+  // Get data from DB in this function
+  componentDidMount() {
+    const beanCollectionRef = this.props.firebase.db.collection("beans");
+
+    beanCollectionRef.get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      });
+    });
+
+    this.setState({
+      beans : ["Loading"]
+    });
 
   }
+  renderBeanList() {
+
+  }
+
+  renderBean() {
+    
+  }
+
   render() {
     return (
+      <div>
+      <h1>{this.state.beans}</h1>
       <datalist id="beans">
         <option value="Bean1" />
         <option value="Bean2" />
         <option value="Bean3" />
       </datalist>
+      </div>
     );
   }
 }
