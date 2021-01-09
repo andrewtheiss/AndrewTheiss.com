@@ -20,3 +20,12 @@
   width: 1900px;
   z-index: 999;
 }
+
+@media only screen and (max-width: 991px) and (min-width: 769px) {
+  /* CSS that should be displayed if width is equal to or less than 991px and larger
+  than 768px goes here */
+}
+
+@media only screen and (max-width: 991px) {
+  /* CSS that should be displayed if width is equal to or less than 991px goes here */
+}
