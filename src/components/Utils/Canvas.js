@@ -1,6 +1,7 @@
 import React from 'react';
 import PureCanvas from './PureCanvas.js';
 
+
 class Canvas extends React.Component {
   constructor(props) {
     super(props);

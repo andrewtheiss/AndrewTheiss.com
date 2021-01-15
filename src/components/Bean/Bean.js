@@ -8,12 +8,16 @@ class Bean extends React.Component {
   constructor(props) {
     super(props);
     this.componentDidMount = this.componentDidMount.bind(this)
-
+    this.dimensions = {
+      width: 500,
+      height: 500
+    };
     // When state changes, render is called
     this.state = {
       beans : {},
       selectedBeanId : undefined
     };
+    this.selectedBean = {};
   }
 
   // Get data from DB in this function
@@ -42,12 +46,12 @@ class Bean extends React.Component {
 
   render() {
     return (
-      <div>
+      [<div key="0" >
       {Object.keys(this.state.beans).map((key) => (
         <div><b>{key} - </b>{this.state.beans[key].name}</div>
       ))}
-      <FlavorProfile key="0" />
-      </div>
+      </div>,
+      <FlavorProfile bean={this.selectedBean} dimensions={this.dimensions} key="1" />]
     );
   }
 }

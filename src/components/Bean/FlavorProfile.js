@@ -1,5 +1,5 @@
 import React from 'react';
-import Canvas from '../Utils/Canvas.js'
+import StaticCanvas from '../Utils/StaticCanvas.js'
 
 import  { FirebaseContext } from '../Firebase';
 
@@ -16,6 +16,7 @@ class FlavorProfile extends React.Component {
     this.canvasBounding = null;
 
     this.updateAnimationState = this.updateAnimationState.bind(this);
+    this.renderFlavorProfile = this.renderFlavorProfile.bind(this)
     this.state = {
       flavorProfile : {},
       selectedBeanId : undefined,
@@ -25,9 +26,45 @@ class FlavorProfile extends React.Component {
 
   }
 
+  renderFlavorProfile(ctx, width, height) {
+
+    // Draw and label web
+    // Input values if they exist
+    ctx.save();
+    ctx.clearRect(0, 0, width, height);
+    ctx.lineWidth = 1;
+    let spiderPercentageOfSpace = 0.8;
+    let distancePerLevel = (Math.min(width/2, height/2) * spiderPercentageOfSpace) / 5;
+
+    console.log('distancePerLevel  ' + distancePerLevel);
+    let centerx = width / 2;
+    let centery = height / 2;
+    ctx.beginPath();
+    let spiderSize = 9;
+    for (let level = 1; level < 5; level++) {
+
+      let ogX = Math.sin(((2 * Math.PI) / spiderSize)) * distancePerLevel * level;
+      let ogY = Math.cos(((2 * Math.PI) / spiderSize)) * distancePerLevel * level;
+      ctx.moveTo(ogX + centerx,ogY + centery);
+      for (let i = 0; i <= spiderSize; i++) {
+        let angle = ((2 * Math.PI) / spiderSize) * i;
+
+        let x = Math.sin(angle) * distancePerLevel * level;
+        let y = Math.cos(angle) * distancePerLevel * level;
+        ctx.lineTo(x + centerx,y + centery);
+      }
+    }
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.restore();
+    return ctx;
+  }
+
+  // On state change IF state changes, re-render here
   updateAnimationState() {
     this.setState(prevState => ({ angle: prevState.angle + 1 }));
-    this.rAF = requestAnimationFrame(this.updateAnimationState);
+    //this.rAF = requestAnimationFrame(this.updateAnimationState);
   }
 
   componentWillUnmount() {
@@ -55,7 +92,10 @@ class FlavorProfile extends React.Component {
   }
   render() {
     return (
-      <Canvas angle={this.state.angle} />
+      <StaticCanvas
+        staticRenderFunction={this.renderFlavorProfile}
+        dimensions={this.props.dimensions}
+        />
     );
   }
 }

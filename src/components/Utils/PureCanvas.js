@@ -1,5 +1,6 @@
 import React from 'react';
 
+// shouldComponentUpdate is false to prevent re-render of <canvas> html
 class PureCanvas extends React.Component {
   shouldComponentUpdate() {
     return false;
@@ -8,8 +9,8 @@ class PureCanvas extends React.Component {
   render() {
     return (
       <canvas
-        width="300"
-        height="300"
+        width={this.props.dimensions.width}
+        height={this.props.dimensions.height}
         ref={node =>
           node ? this.props.contextRef(node.getContext('2d')) : null
         }
