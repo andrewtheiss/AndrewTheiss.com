@@ -1,4 +1,5 @@
 import React from 'react';
+import FlavorProfile from './FlavorProfile.js'
 import './Bean.css';
 
 import  { FirebaseContext } from '../Firebase';
@@ -45,6 +46,7 @@ class Bean extends React.Component {
       {Object.keys(this.state.beans).map((key) => (
         <div><b>{key} - </b>{this.state.beans[key].name}</div>
       ))}
+      <FlavorProfile key="0" />
       </div>
     );
   }
