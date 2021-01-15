@@ -6,47 +6,45 @@ import  { FirebaseContext } from '../Firebase';
 class Bean extends React.Component {
   constructor(props) {
     super(props);
+    this.componentDidMount = this.componentDidMount.bind(this)
 
     // When state changes, render is called
     this.state = {
-      beans : [],
+      beans : {},
       selectedBeanId : undefined
     };
   }
 
   // Get data from DB in this function
-  componentDidMount() {
+  componentDidMount = () => {
     const beanCollectionRef = this.props.firebase.db.collection("beans");
-
-    beanCollectionRef.get().then(function(querySnapshot) {
-      querySnapshot.forEach(function(doc) {
+    let self = this;
+    beanCollectionRef.get().then(function(beanCollectionDocs) {
+      var beansMap = {};
+      beanCollectionDocs.forEach(function(doc) {
+        beansMap[doc.id] = doc.data();
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
+      //  beansArray.push(doc.data());
+
+      });
+      console.log(beansMap);
+      self.setState({
+        beans : beansMap
       });
     });
-
-    this.setState({
-      beans : ["Loading"]
-    });
-
-  }
-  renderBeanList() {
 
   }
 
   renderBean() {
-    
+
   }
 
   render() {
     return (
       <div>
-      <h1>{this.state.beans}</h1>
-      <datalist id="beans">
-        <option value="Bean1" />
-        <option value="Bean2" />
-        <option value="Bean3" />
-      </datalist>
+      {Object.keys(this.state.beans).map((key) => (
+        <div><b>{key} - </b>{this.state.beans[key].name}</div>
+      ))}
       </div>
     );
   }

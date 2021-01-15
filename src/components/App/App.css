@@ -1,5 +1,6 @@
 .app-container {
   top: 50px;
+  position: relative;
 }
 
 @media (prefers-reduced-motion: no-preference) {
