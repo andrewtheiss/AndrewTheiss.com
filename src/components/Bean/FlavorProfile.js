@@ -61,7 +61,7 @@ class FlavorProfile extends React.Component {
           ctx.textAlign = "center";
           if (i < spiderSize) {
             if (this.props.bean && this.props.bean.flavorArrays) {
-              ctx.fillText(this.props.bean.flavorArrays[i][0] + " " + this.props.bean.flavorArrays[i][1], x + centerx,y + centery);
+              ctx.fillText(this.props.bean.flavorArrays[i][0], x + centerx,y + centery);
             }
           }
         }
@@ -89,7 +89,6 @@ class FlavorProfile extends React.Component {
         let x1 = Math.sin(0) * distancePerLevel * this.props.bean.flavorArrays[0][1];
         let y1 = Math.cos(0) * distancePerLevel * this.props.bean.flavorArrays[0][1];
         ctx.moveTo(x1 + centerx,y1 + centery);
-      console.log(this.props.bean.flavorArrays);
 
       for (let i = 0; i < this.props.bean.flavorArrays.length; i++) {
         let angle = ((2 * Math.PI) / spiderSize) * i;

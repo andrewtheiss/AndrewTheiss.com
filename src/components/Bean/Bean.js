@@ -43,10 +43,11 @@ class Bean extends React.Component {
 
   handleMouseOver(e) {
     var dataID = e.target.getAttribute('data-id');
-    this.previewBean = this.state.beans[dataID];
+    let beanData = this.state.beans[dataID];
 
     // Only if there is a selected bean
-    if (this.previewBean) {
+    if (beanData) {
+      this.previewBean = this.state.beans[dataID];
       this.previewBean['id'] = dataID;
       this.setState({
         previewBeanId : dataID
@@ -56,10 +57,11 @@ class Bean extends React.Component {
 
   handleClick(e) {
     var dataID = e.target.getAttribute('data-id');
-    this.selectedBean = this.state.beans[dataID];
+    let beanData = this.state.beans[dataID];
 
     // Only if there is a selected bean
-    if (this.selectedBean) {
+    if (beanData) {
+      this.selectedBean = this.state.beans[dataID];
       this.selectedBean['id'] = dataID;
       this.selectedBean['flavorArrays'] = this.getFlavorProfileAsArrays(this.selectedBean['flavorProfile']);
       this.setState({
@@ -71,8 +73,11 @@ class Bean extends React.Component {
   getFlavorProfileAsArrays(dataMap) {
     let flavorArrays = [];
     for (const value in dataMap) {
-      flavorArrays.push([value, dataMap[value]]);
+      flavorArrays.push([value[0].toUpperCase() + value.substring(1), dataMap[value]]);
     }
+    flavorArrays.sort(function(a,b) {
+      return a[0].localeCompare(b[0]);
+    });
     return flavorArrays;
   }
 
