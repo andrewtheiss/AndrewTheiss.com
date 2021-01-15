@@ -10,6 +10,9 @@ class StaticCanvas extends React.Component {
 
   saveContext(ctx) {
     this.ctx = ctx;
+
+    this.ctx.imageSmoothingEnabled = true;
+    this.ctx.imageSmoothingQuality = "high";
     this.width = this.ctx.canvas.width;
     this.height = this.ctx.canvas.height;
   }
