@@ -1,10 +1,9 @@
 import React from 'react';
-import FlavorProfile from './FlavorProfile.js'
-import './Bean.css';
+import './Bar.css';
 
 import  { FirebaseContext } from '../Firebase';
 
-class Bean extends React.Component {
+class Bar extends React.Component {
   constructor(props) {
     super(props);
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -13,10 +12,6 @@ class Bean extends React.Component {
     this.dimensions = {
       width: 500,
       height: 500
-    };
-    this.previewDimensions = {
-      width: 300,
-      height: 300
     };
     // When state changes, render is called
     this.state = {
@@ -51,10 +46,8 @@ class Bean extends React.Component {
 
     // Only if there is a selected bean
     if (beanData) {
-      console.log(beanData);
       this.previewBean = this.state.beans[dataID];
       this.previewBean['id'] = dataID;
-      this.previewBean['flavorArrays'] = this.getFlavorProfileAsArrays(this.previewBean['flavorProfile']);
       this.setState({
         previewBeanId : dataID
       });
@@ -89,24 +82,16 @@ class Bean extends React.Component {
 
   render() {
     return (
-      <div className="beanContainer">
-        <div className="beanMasterList" key="b0" >
-        {Object.keys(this.state.beans).map((key) => (
-          <div key={key} data-id={key} onMouseEnter={this.handleMouseOver} onClick={this.handleClick}>
-            <b>{key} - </b>{this.state.beans[key].name}
-          </div>
-        ))}
+      [<div key="0" >
+      {Object.keys(this.state.beans).map((key) => (
+        <div data-id={key} onMouseOver={this.handleMouseOver} onClick={this.handleClick}>
+          <b>{key} - </b>{this.state.beans[key].name}
         </div>
-        <div key="b1" className="beanPreview">
-          <FlavorProfile bean={this.previewBean} dimensions={this.previewDimensions} />
-        </div>
-        <div className="beanOptions">
-          <input type="checkbox" defaultChecked="checked" id="showLatestBeans" name="showLatestBeans" value="showLatestBeans"/>
-            <label htmlFor="showLatestBeans">Show Recent Beans</label></div>
-        <FlavorProfile bean={this.selectedBean} dimensions={this.dimensions} key="b3" />
-      </div>
+      ))}
+      </div>,
+      <Ingredients bean={this.selectedBean} dimensions={this.dimensions} key="1" />]
     );
   }
 }
 
-export default Bean;
+export default Bar;

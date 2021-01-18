@@ -1,0 +1,26 @@
+.beanContainer {
+  width: 900px;
+  margin: 0px auto;
+}
+
+.beanMasterList {
+  width: 500px;
+  border: 1px solid black;
+  overflow-x: hidden;
+  float: left;
+  display: inline-block;
+}
+
+.beanPreview {
+  width: 300px;
+  height: 300px;
+  border: 1px solid gray;
+  display: inline-block;
+  float: right;
+}
+
+.beanOptions {
+  padding: 10px;
+  top: 500px;
+  float: left;
+}

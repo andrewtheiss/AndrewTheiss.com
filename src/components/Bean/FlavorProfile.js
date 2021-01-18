@@ -57,7 +57,7 @@ class FlavorProfile extends React.Component {
         if (level === 5) {
           let x = Math.sin(angle) * distancePerLevel * (level+1);
           let y = Math.cos(angle) * distancePerLevel * (level+1);
-          ctx.font = "15px Comic Sans MS";
+          ctx.font = "18px Comic Sans MS";
           ctx.textAlign = "center";
           if (i < spiderSize) {
             if (this.props.bean && this.props.bean.flavorArrays) {
@@ -141,10 +141,11 @@ class FlavorProfile extends React.Component {
   }
   render() {
     return (
-      <StaticCanvas
+      [<StaticCanvas key="0"
         staticRenderFunction={this.renderFlavorProfile}
         dimensions={this.props.dimensions}
-        />
+        />,
+        <div key="1">{this.props.name}</div>]
     );
   }
 }
