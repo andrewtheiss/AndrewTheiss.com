@@ -1,8 +1,15 @@
 import React from 'react';
 import FlavorProfile from './FlavorProfile.js'
+import BeanDetails from './BeanDetails.js'
 import './Bean.css';
 
-import  { FirebaseContext } from '../Firebase';
+/*
+  TODO : Add sorting so that you can choose beans
+     - in stock
+     - with X level of chocolate or astringency
+     - with total values of Chocoalte > 3 bitter < 2... etc
+*/
+
 
 class Bean extends React.Component {
   constructor(props) {
@@ -51,7 +58,6 @@ class Bean extends React.Component {
 
     // Only if there is a selected bean
     if (beanData) {
-      console.log(beanData);
       this.previewBean = this.state.beans[dataID];
       this.previewBean['id'] = dataID;
       this.previewBean['flavorArrays'] = this.getFlavorProfileAsArrays(this.previewBean['flavorProfile']);
@@ -98,12 +104,13 @@ class Bean extends React.Component {
         ))}
         </div>
         <div key="b1" className="beanPreview">
-          <FlavorProfile bean={this.previewBean} dimensions={this.previewDimensions} />
+          <FlavorProfile preview={true} bean={this.previewBean} dimensions={this.previewDimensions} />
         </div>
         <div className="beanOptions">
           <input type="checkbox" defaultChecked="checked" id="showLatestBeans" name="showLatestBeans" value="showLatestBeans"/>
             <label htmlFor="showLatestBeans">Show Recent Beans</label></div>
         <FlavorProfile bean={this.selectedBean} dimensions={this.dimensions} key="b3" />
+        <BeanDetails bean={this.selectedBean} />
       </div>
     );
   }

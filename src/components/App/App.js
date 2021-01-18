@@ -7,9 +7,6 @@ import  { FirebaseContext } from '../Firebase';
 import Bean from '../Bean/Bean.js'
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     return (
     [

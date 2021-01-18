@@ -4,7 +4,6 @@ import PureCanvas from './PureCanvas.js';
 class StaticCanvas extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.saveContext = this.saveContext.bind(this);
   }
 

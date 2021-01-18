@@ -1,8 +1,6 @@
 import React from 'react';
 import StaticCanvas from '../Utils/StaticCanvas.js'
 
-import  { FirebaseContext } from '../Firebase';
-
 class FlavorProfile extends React.Component {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   canvas: HTMLCanvasElement | null;
@@ -33,9 +31,9 @@ class FlavorProfile extends React.Component {
     // Draw Web
     ctx.save();
     ctx.clearRect(0, 0, width, height);
-    ctx.shadowBlur = 5;
+    ctx.shadowBlur = 1;
+    ctx.lineWidth = 0.3;
     ctx.shadowColor = 'rgb(255, 255, 255)';
-    ctx.lineWidth = 0.5;
     let spiderPercentageOfSpace = 0.7;
     let distancePerLevel = (Math.min(width/2, height/2) * spiderPercentageOfSpace) / 5;
     let centerx = width / 2;
@@ -57,7 +55,11 @@ class FlavorProfile extends React.Component {
         if (level === 5) {
           let x = Math.sin(angle) * distancePerLevel * (level+1);
           let y = Math.cos(angle) * distancePerLevel * (level+1);
-          ctx.font = "18px Comic Sans MS";
+          if (this.props.preview) {
+            ctx.font = "12px Helvetica";
+          } else {
+            ctx.font = "20px Helvetica";
+          }
           ctx.textAlign = "center";
           if (i < spiderSize) {
             if (this.props.bean && this.props.bean.flavorArrays) {
@@ -80,12 +82,16 @@ class FlavorProfile extends React.Component {
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.lineWidth = 3;
-    ctx.shadowBlur = 2;
+    if (this.props.preview) {
+      ctx.lineWidth = 1.5;
+      ctx.shadowBlur = 1;
+    } else {
+      ctx.lineWidth = 3;
+      ctx.shadowBlur = 2;
+    }
     ctx.shadowColor = 'rgb(0, 0, 0)';
     // Draw spider graph
     if (this.props.bean && this.props.bean.flavorArrays) {
-      let arrCount = this.props.bean.flavorArrays.length-1;
         let x1 = Math.sin(0) * distancePerLevel * this.props.bean.flavorArrays[0][1];
         let y1 = Math.cos(0) * distancePerLevel * this.props.bean.flavorArrays[0][1];
         ctx.moveTo(x1 + centerx,y1 + centery);

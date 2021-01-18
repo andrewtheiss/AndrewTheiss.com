@@ -24,3 +24,25 @@
   top: 500px;
   float: left;
 }
+
+.beanDetails {
+  width: 500px;
+  height: 200px;
+  border: 1px solid black;
+}
+
+.beanDetailsName {
+  text-align: center;
+  width: 486px;
+  padding: 7px;
+  font-weight: 500;
+  font-size: 24px;
+}
+
+.beanDetailsCost {
+  padding: 10px;
+}
+
+.beanDetailsNotes {
+  padding: 10px;
+}
