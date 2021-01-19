@@ -12,7 +12,6 @@ class App extends React.Component {
     [
       <Nav  key="0" />,
       <div key="1" className="app-container">
-        This is where the app is
         <FirebaseContext.Consumer>
           {firebase => <Bean firebase={firebase} />}
         </FirebaseContext.Consumer>
