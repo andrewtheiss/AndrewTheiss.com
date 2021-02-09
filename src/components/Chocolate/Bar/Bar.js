@@ -1,7 +1,7 @@
 import React from 'react';
+import Ingredients from '../Ingredients/Ingredients.js'
 import './Bar.css';
 
-import  { FirebaseContext } from '../Firebase';
 
 class Bar extends React.Component {
   constructor(props) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import StaticCanvas from '../Utils/StaticCanvas.js'
+import StaticCanvas from '../../Utils/StaticCanvas.js'
 
 class FlavorProfile extends React.Component {
   canvasRef: React.RefObject<HTMLCanvasElement>;
