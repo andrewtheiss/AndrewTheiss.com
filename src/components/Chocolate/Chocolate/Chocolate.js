@@ -62,4 +62,7 @@ class Chocolate extends React.Component {
   }
 }
 
+// https://blog.bitsrc.io/12-react-ui-layout-grid-components-and-libraries-for-2019-16e8aa5d0b08
+// 6. Autoresponsive React
+
 export default Chocolate;
