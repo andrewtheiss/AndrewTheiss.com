@@ -72,3 +72,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ### added package for react native
 npm i autoresponsive-react-native --save
+
+
+### To build and deploy
+npm run build

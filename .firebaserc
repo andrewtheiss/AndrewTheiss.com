@@ -1,5 +1,13 @@
 {
   "projects": {
     "default": "andrewtheiss-6336c"
+  },
+  "hosting": {
+    "public": "build",  // the only required attribute for Hosting
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
   }
 }
