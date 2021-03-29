@@ -1,4 +1,4 @@
-.nav-header {
+.navigation-top-bar {
   height: 50px;
   background-color: rgb(255, 255, 255);
   border-bottom-color: rgb(97, 97, 97);
@@ -28,4 +28,36 @@
 
 @media only screen and (max-width: 991px) {
   /* CSS that should be displayed if width is equal to or less than 991px goes here */
+}
+
+.navigation-top-bar div {
+  display: inline-block;
+  margin: 5px;
+  padding: 5px;
+}
+
+.navigation-side-bar {
+  height: calc(100% - 66px);
+  position: absolute;
+  padding-top: 20px;
+  top: 30px;
+  display: inline-block;
+  border-right: 2px solid rgba(133, 133, 133, 0.1);
+  width: 200px;
+  padding-left: 0px;
+}
+
+.navigation-side-bar-spacing {
+  display: inline-block;
+  width: 245px;
+}
+
+.navigation-side-bar li {
+  display: block;
+  padding-left: 15px;
+  line-height: 30px;
+}
+
+.navigation-side-bar li:hover {
+  background-color: #dddddd;
 }

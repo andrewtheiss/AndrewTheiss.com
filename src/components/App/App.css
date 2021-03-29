@@ -1,6 +1,7 @@
 .app-container {
-  top: 50px;
-  position: relative;
+  margin-top: 55px;
+  display: inline-block;
+  width: calc(100% - 245px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
