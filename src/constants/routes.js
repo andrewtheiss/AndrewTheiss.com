@@ -1,7 +1,12 @@
 export const LANDING = '/';
-export const SIGN_UP = '/signup';
-export const SIGN_IN = '/signin';
+export const SCRIPTS = '/scripts';
+export const INVENTORY = '/inventory';
+export const LOGIN = '/login';
+export const LOGOUT = '/logout';
+
+export const SIGNIN = '/signin';
+export const SIGNOUT = '/signout';
+
 export const HOME = '/home';
 export const ACCOUNT = '/account';
 export const ADMIN = '/admin';
-export const SCRIPTS = '/scripts';
