@@ -37,7 +37,7 @@ class Navigation extends React.Component {
         <div className="navigation-top-bar">
           <div id="logo">LOGO_HERE</div>
           <div id="navigation-wrap">Andrew Theiss</div>
-          <div class="navigation-session">{logInOutButton}</div>
+          <div className="navigation-session">{logInOutButton}</div>
         </div>
 
         <ul className="navigation-side-bar">

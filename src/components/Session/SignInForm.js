@@ -1,10 +1,10 @@
 import React, {useState} from "react";
-import { Link } from 'react-router-dom'
 
-class SignInPage extends React.Component {
+class SignInForm extends React.Component {
 
   constructor(props) {
     super(props);
+    console.log(this.props);
     this.state = {
       email: '',
       password: '',
@@ -77,19 +77,9 @@ class SignInPage extends React.Component {
             className="bg-red-500 hover:bg-red-600 w-full py-2 text-white">
             Sign in with Google
           </button>
-          <p className="text-center my-3">
-            Don't have an account?{" "}
-            <Link to="signUp" className="text-blue-500 hover:text-blue-600">
-              Sign up here
-            </Link>{" "}
-            <br />{" "}
-            <Link to = "passwordReset" className="text-blue-500 hover:text-blue-600">
-              Forgot Password?
-            </Link>
-          </p>
         </div>
       </div>
     )
   }
 };
-export default SignInPage;
+export default SignInForm;
