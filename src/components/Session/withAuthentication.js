@@ -48,7 +48,6 @@ const withAuthentication = Component => {
       this.listener();
     }
     render() {
-      console.log(this.state);
       return (
         <AuthUserContext.Provider value={this.state.authUser}>
           <Component {...this.props} />
