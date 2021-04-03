@@ -13,11 +13,22 @@ class NavigationMenu extends React.Component {
   constructor(props) {
     super(props);
   }
+  signUpButton() {
+    if (this.props.authUser) {
+      return ('')
+    }
+    return(
+      <li>
+        <Link to={ROUTES.SIGNUP}>Sign Up</Link>
+      </li>
+    );
+  }
   render() {
     const isAuthorized = this.props.authUser;
     let additionalLinks;
     let logInOutButton;
-    if (isAuthorized) {
+    let signUpButton = this.signUpButton();
+    if (this.props.adminUser) {
       additionalLinks = <li><Link to={ROUTES.INVENTORY}>Inventory</Link></li>;
     }
     if (isAuthorized) {
@@ -45,9 +56,7 @@ class NavigationMenu extends React.Component {
           <li>
             <Link to={ROUTES.SCRIPTS}>Scripts</Link>
           </li>
-          <li>
-            <Link to={ROUTES.SIGNUP}>Sign Up</Link>
-          </li>
+          {signUpButton}
           {additionalLinks}
         </ul>
       </header>
