@@ -3,6 +3,7 @@ import './Navigation.css';
 import { Link } from 'react-router-dom'
 
 import * as ROUTES from '../../constants/routes.js'
+import SignOutButton from '../Session/SignOutButton.js';
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -25,7 +26,10 @@ class Navigation extends React.Component {
       additionalLinks = <li><Link to={ROUTES.INVENTORY}>Inventory</Link></li>;
     }
     if (isLoggedIn) {
-      logInOutButton = <button><Link to={ROUTES.SIGNOUT}>Sign Out</Link></button>;
+      logInOutButton =
+      <li>
+        <SignOutButton />
+      </li>;
     } else {
       logInOutButton = <button><Link to={ROUTES.SIGNIN}>Sign In</Link></button>;
     }
