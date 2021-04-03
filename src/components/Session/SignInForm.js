@@ -1,16 +1,10 @@
 import React, {useState} from "react";
-import SessionContext from './Context.js'
 
 class SignInForm extends React.Component {
-  static contextType = SessionContext;
   constructor(props) {
     super(props);
-      console.log(this.contextType);
-
-      console.log(this.props);
-      console.log(this.props.session.context);
     this.handleGoogleLogin = this.handleGoogleLogin.bind(this);
-    this.state = {isLoggedIn: this.props.session.isLoggedIn};
+    this.state = {isLoggedIn: false};
   }
   handleGoogleLogin() {
     var provider = new this.props.firebase.firebase.auth.GoogleAuthProvider();
@@ -66,5 +60,5 @@ class SignInForm extends React.Component {
     )
   }
 };
-SignInForm.contextType = SessionContext;
+
 export default SignInForm;

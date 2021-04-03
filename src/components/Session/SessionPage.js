@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import { FirebaseContext } from '../Firebase';
-import { SessionContext } from '../Session';
 import SignInForm from '../Session/SignInForm.js'
 
 class SessionPage extends React.Component {
@@ -8,11 +7,7 @@ class SessionPage extends React.Component {
   render() {
     return (
       <FirebaseContext.Consumer>
-        {firebase =>
-        <SessionContext.Consumer>
-          {session => <SignInForm firebase={firebase} session={session} />}
-        </SessionContext.Consumer>
-        }
+        {firebase => <SignInForm firebase={firebase} />}
       </FirebaseContext.Consumer>
     )
   }

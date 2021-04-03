@@ -1,7 +1,6 @@
 import React from 'react';
 import './Navigation.css';
 import { Link } from 'react-router-dom'
-import * as Session from './Session.js'
 
 import * as ROUTES from '../../constants/routes.js'
 
