@@ -5,7 +5,11 @@ import { Link } from 'react-router-dom'
 import * as ROUTES from '../../constants/routes.js'
 import SignOutButton from '../Session/SignOutButton.js';
 
-class Navigation extends React.Component {
+const Navigation = ({authUser, adminUser}) => (
+   <NavigationMenu adminUser={adminUser} authUser={authUser}/>
+);
+
+class NavigationMenu extends React.Component {
   constructor(props) {
     super(props);
   }
