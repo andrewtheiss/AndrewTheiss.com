@@ -46,6 +46,9 @@ class Navigation extends React.Component {
           <li>
             <Link to={ROUTES.SCRIPTS}>Scripts</Link>
           </li>
+          <li>
+            <Link to={ROUTES.SIGNUP}>Sign Up</Link>
+          </li>
           {additionalLinks}
         </ul>
       </header>

@@ -10,6 +10,7 @@ import ChocolatePageTest from '../Chocolate/Pages/Test.js'
 import ScriptsPage from '../Scripts/Pages/ScriptsPage.js'
 import InventoryPage from '../Chocolate/Inventory/InventoryPage.js'
 import SessionPage from '../Session/SessionPage.js'
+import SignUpPage from '../Session/SignUpForm.js'
 
 // Temp imports for testing
 import Bean from '../Chocolate/Bean/Bean.js'
@@ -33,6 +34,7 @@ class App extends React.Component {
           </FirebaseContext.Consumer>
           <Route path={ROUTES.SCRIPTS} component={ScriptsPage} />
           <Route path={ROUTES.INVENTORY} component={InventoryPage} />
+          <Route path={ROUTES.SIGNUP} component={SignUpPage} />
           <FirebaseContext.Consumer>
             {firebase => <Route path={ROUTES.SIGNIN} component={SessionPage} value={this.state} firebase={firebase} />}
           </FirebaseContext.Consumer>
