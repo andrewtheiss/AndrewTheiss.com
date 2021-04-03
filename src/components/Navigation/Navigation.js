@@ -8,24 +8,15 @@ import SignOutButton from '../Session/SignOutButton.js';
 class Navigation extends React.Component {
   constructor(props) {
     super(props);
-    //this.handleLoginClick = this.handleLoginClick.bind(this);
-    //this.handleLogoutClick = this.handleLogoutClick.bind(this);
-    this.state = {isLoggedIn: false};
-  }
-  handleLoginClick() {
-
-  }
-  handleLogoutClick() {
-
   }
   render() {
-    const isLoggedIn = this.state.isLoggedIn;
+    const isAuthorized = this.props.authUser;
     let additionalLinks;
     let logInOutButton;
-    if (isLoggedIn) {
+    if (isAuthorized) {
       additionalLinks = <li><Link to={ROUTES.INVENTORY}>Inventory</Link></li>;
     }
-    if (isLoggedIn) {
+    if (isAuthorized) {
       logInOutButton =
       <li>
         <SignOutButton />

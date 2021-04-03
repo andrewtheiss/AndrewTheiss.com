@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Navigation from '../Navigation/Navigation.js';
 import './App.css';
 import { FirebaseContext } from '../Firebase';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 import * as ROUTES from '../../constants/routes.js'
+import { withFirebase } from '../Firebase';
 
 // Import different pages to view based on routing
 import ChocolatePageTest from '../Chocolate/Pages/Test.js'
@@ -19,13 +20,36 @@ import Chocolate from '../Chocolate/Chocolate/Chocolate.js'
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoggedIn: false};
+
+    this.state = {
+      authUser: null,
+      adminUser : null
+    };
+  }
+  componentDidMount() {
+    this.props.firebase.auth.onAuthStateChanged(authUser => {
+
+      if (!authUser) {
+        this.setState({ authUser: null });
+      } else {
+        this.setState({ authUser });
+        var providerData = authUser.providerData[0];
+        if (providerData.displayName == "Andrew Theiss" && providerData.email == "andrew.theiss@gmail.com") {
+            this.setState({ adminUser: true });
+        } else {
+          this.setState({ adminUser: null });
+        }
+      }
+    });
+  }
+  componentWillUnmount() {
+    this.listener();
   }
   render() {
     return (
       <Router key="0" >
         <FirebaseContext.Consumer>
-          {firebase =>  <Navigation firebase={firebase} />}
+          {firebase =>  <Navigation authUser={this.state.authUser} adminUser={this.state.adminUser} firebase={firebase} />}
         </FirebaseContext.Consumer>
 
         <div className="app-container">
@@ -33,7 +57,7 @@ class App extends React.Component {
                 {firebase => <Route exact path={ROUTES.LANDING} component={ChocolatePageTest} firebase={firebase} />}
           </FirebaseContext.Consumer>
           <Route path={ROUTES.SCRIPTS} component={ScriptsPage} />
-          <Route path={ROUTES.INVENTORY} component={InventoryPage} />
+          <Route path={ROUTES.INVENTORY} component={InventoryPage} adminUser={this.state.adminUser} />
           <Route path={ROUTES.SIGNUP} component={SignUpPage} />
           <FirebaseContext.Consumer>
             {firebase => <Route path={ROUTES.SIGNIN} component={SignInPage} firebase={firebase} />}
@@ -44,4 +68,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withFirebase(App);
