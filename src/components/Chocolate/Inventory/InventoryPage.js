@@ -12,9 +12,10 @@ const InventoryPage = () => (
 class InventoryMenu extends React.Component {
 
   render() {
-    console.log(this.props);
+    //console.log(this.props);
     return (
       <div>
+      <AddChocolate />
        <button>Add Chocolate</button>
        </div>
     );
