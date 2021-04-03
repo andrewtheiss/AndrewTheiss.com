@@ -22,3 +22,5 @@ class Ingredients extends React.Component {
   }
 }
  export default Ingredients;
+
+// Wrap with app and https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial
