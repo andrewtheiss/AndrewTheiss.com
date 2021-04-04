@@ -1,5 +1,6 @@
 import React from 'react';
 import { withFirebase } from '../../../Firebase';
+import * as CONSTS from '../constants.js'
 
 
 const BeanOption = ({name, value}) => (
@@ -8,6 +9,15 @@ const BeanOption = ({name, value}) => (
   </option>
 )
 
+const SelectedBean = () => {
+  <div>
+
+  </div>
+}
+
+// Create default bean params
+// weight, beanID,
+
 class BeanSelection extends React.Component {
   constructor(props) {
     super(props);
@@ -15,10 +25,12 @@ class BeanSelection extends React.Component {
     this.renderOptions = this.renderOptions.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.addBean = this.addBean.bind(this);
+    this.onChangeBeanWeight = this.onChangeBeanWeight.bind(this);
 
     this.state = {
       options : '',
-      beans : []
+      beans : [],
+      latestBean : CONSTS.BEAN_DEFAULT
     };
 
   }
@@ -48,16 +60,48 @@ class BeanSelection extends React.Component {
     }
     return beanOptions;
   }
-  addBean() {
+
+  // Verify all fields and package / add a Bean to the state
+  addBean(event) {
+    console.log(event);
     this.props.onChangeBean('new bean values');
+    var addedBean = CONSTS.BEAN_DEFAULT;
+    event.preventDefault();
   }
+
+  onChangeBeanWeight(event) {
+    let latestBean = this.state.latestBean;
+    latestBean.weight = event.target.value;
+    this.setState({ latestBean });
+  }
+
+
+
+
+
   render() {
+    console.log(this.state);
+    console.log("Constants" , CONSTS);
+    const isInvalid = false;// this.state.latestBean.weight !== '' ? true : false;
     const selection = <select key="selectBean">{this.renderOptions()}</select>;
+    //const addedBeans =
+
     return (
       <div key="id1">
         Bean Selection
         {selection}
-        <button key="id2" onClick={this.addBean}>Add Bean</button>
+        <form onSubmit={this.addBean}>
+          <label for="weight">Weight (kg):</label>
+          <input
+           name="wight"
+           value={this.state.latestBean.weight}
+           onChange={this.onChangeBeanWeight}
+           type="text"
+           placeholder=""
+         />
+         <br/>
+          <button disabled={isInvalid} type="submit">Add Bean</button>
+        </form>
       </div>
     );
   }
