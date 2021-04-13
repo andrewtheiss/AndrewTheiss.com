@@ -9,14 +9,17 @@ export const BEAN_DEFAULT = {
   }
 }
 
-export const INGREDIENT_MODIFICATION = {
-  roast : [],
+export const ROAST = {
+  roast : [
+    [0,80]
+  ],
   finalTemp : {
     high : '',
     low : '',
     average : ''
   }
 }
+
 
 export const CHOCOLATE_DEFAULTS = {
 

@@ -26,7 +26,7 @@ const withAuthentication = Component => {
           });
         } else {
           var providerData = authUser.providerData[0];
-          if (providerData.displayName == "Andrew Theiss" && providerData.email == "andrew.theiss@gmail.com") {
+          if (providerData.displayName === "Andrew Theiss" && providerData.email === "andrew.theiss@gmail.com") {
             this.setState({
               authUser : {
                 admin: true,
