@@ -67,38 +67,36 @@ class BeanSelection extends React.Component {
   renderRoastTimeTemp() {
     let roastTimeTemp = '';
     let roast = this.state.latestBean.roast;
-      console.log('rednering single roasts', roast);
+    var self = this;
     if (!roast || roast.length == 0) {
-        roastTimeTemp = <RoastSelection key="0" input={[0,76]} index="0" name="beans" onChangeRoast={this.onChangeRoast} onAddRoast={this.onAddRoast} onRemoveRoast={this.onRemoveRoast} />;
+        roastTimeTemp = <RoastSelection key="0" input={CONSTS.ROAST_INITIAL} index="0" name="beans" onChangeRoast={this.onChangeRoast} onAddRoast={this.onAddRoast} onRemoveRoast={this.onRemoveRoast} />;
     } else {
-      console.log('rednering double roasts', roast);
-      for (var i = 0; i < roast.length; i++) {
-          roastTimeTemp =  <RoastSelection
-            key={i}
-            input={roast[i]}
-            index={i}
-            name="beans"
-            roastIndex={i}
-            onChangeRoast={this.onChangeRoast}
-            onAddRoast={this.onAddRoast}
-            onRemoveRoast={this.onRemoveRoast}
-          />;
-      }
+      roastTimeTemp = roast.map((roastTime, index) =>
+          <RoastSelection
+           key={index}
+           input={roastTime}
+           index={index}
+           name="beans"
+           roastIndex={index}
+           onChangeRoast={self.onChangeRoast}
+           onAddRoast={self.onAddRoast}
+           onRemoveRoast={self.onRemoveRoast}
+         />
+      );
     }
     return roastTimeTemp;
   }
   onChangeRoast(roastIndex, roastData) {
-  //  this.setState({beans});
-    console.log('roastIndex: '+  roastIndex + ' roastData: ' + roastData[0] + " " + roastData[1]);
-
     let latestBean = this.state.latestBean;
     latestBean.roast[roastIndex] = roastData;
-    console.log('laestBean' ,latestBean.roast[roastIndex]);
     this.setState({ latestBean });
   }
-  onAddRoast(roastIndex) {
-  //  this.setState({beans});
-    console.log('addRoastAtIndex '+ roastIndex);
+
+  async onAddRoast(roastIndex) {
+    let latestBean = this.state.latestBean;
+    latestBean.roast.splice(roastIndex+1, 0, CONSTS.ROAST_EMPTY);
+    console.log(latestBean.roast);
+    await this.setState({ latestBean });
   }
   onRemoveRoast(roastIndex) {
     //this.setState({beans});
@@ -108,6 +106,11 @@ class BeanSelection extends React.Component {
 
   // Verify all fields and package / add a Bean to the state
   addBean(event) {
+
+    // TODO - Calculate Roast Times
+
+
+
     console.log(event);
     this.props.onChangeBean('new bean values');
     var addedBean = CONSTS.BEAN_DEFAULT;
@@ -124,7 +127,7 @@ class BeanSelection extends React.Component {
   render() {
     const isInvalid = false;// this.state.latestBean.weight !== '' ? true : false;
     const selection = <select key="selectBean">{this.renderOptions()}</select>;
-    const roastTimeTemp = this.renderRoastTimeTemp();
+    var roastTimeTemp = this.renderRoastTimeTemp();
     //const addedBeans =
 
     return (
@@ -140,6 +143,8 @@ class BeanSelection extends React.Component {
            type="text"
            placeholder=""
          />
+         <br />
+         Roast:
          {roastTimeTemp}
          <br/>
           <button disabled={isInvalid} type="submit">Add Bean</button>

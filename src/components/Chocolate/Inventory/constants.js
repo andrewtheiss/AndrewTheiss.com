@@ -9,6 +9,8 @@ export const BEAN_DEFAULT = {
   }
 }
 
+export const ROAST_INITIAL = [0,80];
+export const ROAST_EMPTY = [0,0];
 export const ROAST = {
   roast : [
     [0,80]

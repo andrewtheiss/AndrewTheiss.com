@@ -15,8 +15,6 @@ class RoastSelection extends React.Component {
     this.onUpdateRoast = this.onUpdateRoast.bind(this);
     this.addTime = this.addTime.bind(this);
     this.removeTime = this.removeTime.bind(this);
-
-    console.log('contructed roast');
     var input;
     if (!this.props || !this.props.input || this.props.input.length === 0) {
       input = [0,0];
@@ -49,18 +47,18 @@ class RoastSelection extends React.Component {
     // Build single roast entry
     return (
       <div>
-        Roast
-        <br />
-          <label htmlFor="time0">Time:</label>
+          <label htmlFor="time0">Elapsed Time: </label>
           <input
+            size="5"
            name="time"
            value={this.state.time}
            onChange={this.changeValue}
            type="text"
            placeholder=""
          />&nbsp;&nbsp;&nbsp;
-         <label htmlFor="temp0">Temp:</label>
+         <label htmlFor="temp0">Temp: </label>
          <input
+          size="5"
           name="temp"
           value={this.state.temp}
           onChange={this.changeValue}
