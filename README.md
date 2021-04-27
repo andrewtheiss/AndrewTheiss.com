@@ -76,3 +76,6 @@ npm i autoresponsive-react-native --save
 
 ### To build and deploy
 npm run build
+
+### Fix all package issues
+npm install npm@latest -g
