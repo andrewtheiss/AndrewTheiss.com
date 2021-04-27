@@ -79,3 +79,6 @@ npm run build
 
 ### Fix all package issues
 npm install npm@latest -g
+npm install resolve
+npm cache clean -f
+npm install -g node

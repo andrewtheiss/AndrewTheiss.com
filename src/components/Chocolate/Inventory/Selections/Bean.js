@@ -71,9 +71,11 @@ class BeanSelection extends React.Component {
     if (!roast || roast.length == 0) {
         roastTimeTemp = <RoastSelection key="0" input={CONSTS.ROAST_INITIAL} index="0" name="beans" onChangeRoast={this.onChangeRoast} onAddRoast={this.onAddRoast} onRemoveRoast={this.onRemoveRoast} />;
     } else {
+    // Creating a unique key forces re-render ONLY each time length is changed
+      var rand = roast.length/3.14159;
       roastTimeTemp = roast.map((roastTime, index) =>
           <RoastSelection
-           key={index}
+           key={index + rand}
            input={roastTime}
            index={index}
            name="beans"
@@ -86,21 +88,21 @@ class BeanSelection extends React.Component {
     }
     return roastTimeTemp;
   }
-  onChangeRoast(roastIndex, roastData) {
+  async onChangeRoast(roastIndex, roastData) {
     let latestBean = this.state.latestBean;
     latestBean.roast[roastIndex] = roastData;
-    this.setState({ latestBean });
+    await this.setState({ latestBean });
   }
 
   async onAddRoast(roastIndex) {
     let latestBean = this.state.latestBean;
     latestBean.roast.splice(roastIndex+1, 0, CONSTS.ROAST_EMPTY);
-    console.log(latestBean.roast);
     await this.setState({ latestBean });
   }
-  onRemoveRoast(roastIndex) {
-    //this.setState({beans});
-    console.log('remove roast at index ' +  roastIndex);
+  async onRemoveRoast(roastIndex) {
+    let latestBean = this.state.latestBean;
+    latestBean.roast.splice(roastIndex, 1);
+    await this.setState({ latestBean });
   }
 
 
