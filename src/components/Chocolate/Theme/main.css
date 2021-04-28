@@ -1,0 +1,7 @@
+.module {
+  border: 1px solid brown;
+}
+
+.module.small {
+  max-width: 500px;
+}

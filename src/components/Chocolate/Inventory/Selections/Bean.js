@@ -1,7 +1,9 @@
 import React from 'react';
 import { withFirebase } from '../../../Firebase';
 import RoastSelection from './Roast.js'
+import RoastFinal from './RoastFinal.js'
 import * as CONSTS from '../constants.js'
+import '../../Theme/main.css';
 
 
 const BeanOption = ({name, value}) => (
@@ -32,8 +34,10 @@ class BeanSelection extends React.Component {
     this.componentDidMount = this.componentDidMount.bind(this);
     this.addBean = this.addBean.bind(this);
     this.onChangeBeanWeight = this.onChangeBeanWeight.bind(this);
-    this.renderRoastTimeTemp = this.renderRoastTimeTemp.bind(this);
+    this.renderRoastTimeTemps = this.renderRoastTimeTemps.bind(this);
+    this.renderFinalTemp = this.renderFinalTemp.bind(this);
     this.onChangeRoast = this.onChangeRoast.bind(this);
+    this.onChangeRoastFinalTemps = this.onChangeRoastFinalTemps.bind(this);
     this.onAddRoast = this.onAddRoast.bind(this);
     this.onRemoveRoast = this.onRemoveRoast.bind(this);
   }
@@ -52,6 +56,7 @@ class BeanSelection extends React.Component {
       });
     });
   }
+
   renderOptions() {
     let beanOptions = '';
     if (!this.state.beans || this.state.beans.length == 0) {
@@ -64,7 +69,7 @@ class BeanSelection extends React.Component {
     return beanOptions;
   }
 
-  renderRoastTimeTemp() {
+  renderRoastTimeTemps() {
     let roastTimeTemp = '';
     let roast = this.state.latestBean.roast;
     var self = this;
@@ -88,9 +93,26 @@ class BeanSelection extends React.Component {
     }
     return roastTimeTemp;
   }
+  renderFinalTemp() {
+    let roastFinalTemps = this.state.latestBean.finalTemps;
+    let self = this;
+    return   <RoastFinal
+       key="roastFinal"
+       input={roastFinalTemps}
+       name="beans"
+       onChangeRoastFinalTemps={self.onChangeRoastFinalTemps}
+     />
+  }
+
   async onChangeRoast(roastIndex, roastData) {
     let latestBean = this.state.latestBean;
     latestBean.roast[roastIndex] = roastData;
+    await this.setState({ latestBean });
+  }
+
+  async onChangeRoastFinalTemps(roastFinalTemp) {
+    let latestBean = this.state.latestBean;
+    latestBean.finalTemp = roastFinalTemp;
     await this.setState({ latestBean });
   }
 
@@ -103,6 +125,12 @@ class BeanSelection extends React.Component {
     let latestBean = this.state.latestBean;
     latestBean.roast.splice(roastIndex, 1);
     await this.setState({ latestBean });
+  }
+
+  onChangeBeanWeight(event) {
+    let latestBean = this.state.latestBean;
+    latestBean.weight = event.target.value;
+    this.setState({ latestBean });
   }
 
 
@@ -119,25 +147,21 @@ class BeanSelection extends React.Component {
     event.preventDefault();
   }
 
-  onChangeBeanWeight(event) {
-    let latestBean = this.state.latestBean;
-    latestBean.weight = event.target.value;
-    this.setState({ latestBean });
-  }
-
 
   render() {
     const isInvalid = false;// this.state.latestBean.weight !== '' ? true : false;
     const selection = <select key="selectBean">{this.renderOptions()}</select>;
-    var roastTimeTemp = this.renderRoastTimeTemp();
-    //const addedBeans =
+    var roastTimeTemp = this.renderRoastTimeTemps();
+    var finalTemp = this.renderFinalTemp();
 
     return (
-      <div key="id1">
+      <div key="id1" className="module small">
         Bean Selection
         {selection}
+        <br />
+        <br />
         <form onSubmit={this.addBean}>
-          <label htmlFor="weight">Weight (kg):</label>
+          <label htmlFor="weight">Nibs Weight (kg):</label>
           <input
            name="wight"
            value={this.state.latestBean.weight}
@@ -146,8 +170,12 @@ class BeanSelection extends React.Component {
            placeholder=""
          />
          <br />
-         Roast:
+         <br />
+         Roast Oven:
          {roastTimeTemp}
+         <br />
+         Bean Final Temp Range:
+         {finalTemp}
          <br/>
           <button disabled={isInvalid} type="submit">Add Bean</button>
         </form>
