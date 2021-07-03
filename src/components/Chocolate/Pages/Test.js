@@ -4,7 +4,7 @@ import  { FirebaseContext } from '../../Firebase';
 // Temp imports for testing
 import Bean from '../Bean/Bean.js'
 import Chocolate from '../Chocolate/Chocolate.js'
-import BarLookupSelection from '../Bar/LookupSelection.js'
+import BarLookup from '../Bar/Lookup.js'
 
 class ChocolatePageTest extends React.Component {
   render() {
@@ -23,7 +23,7 @@ class ChocolatePageTest extends React.Component {
       </div>,
       <div key="3" className="chocolate-container">
         <FirebaseContext.Consumer>
-          {firebase => <BarLookupSelection firebase={firebase} />}
+          {firebase => <BarLookup firebase={firebase} />}
         </FirebaseContext.Consumer>
       </div>
     ]

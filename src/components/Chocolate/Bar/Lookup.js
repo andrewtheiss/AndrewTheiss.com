@@ -1,6 +1,8 @@
 import React from 'react';
+import  { FirebaseContext } from '../../Firebase';
 import Bar from './Bar.js'
 import Ingredients from '../Ingredients/Ingredients.js'
+import BarLookupSelection from './LookupSelection.js'
 import './Lookup.css';
 
 /**
@@ -20,6 +22,7 @@ class BarLookup extends React.Component {
       width: 500,
       height: 500
     };
+
     // When state changes, render is called
     this.state = {
       bars : {},
@@ -36,14 +39,15 @@ class BarLookup extends React.Component {
     const barsCollectionRef = this.props.firebase.db.collection("bars");
     let self = this;
     barsCollectionRef.get().then(function(barCollectionDocs) {
-      var beansMap = {};
+      var barsMap = {};
       barCollectionDocs.forEach(function(doc) {
-        beansMap[doc.id] = doc.data();
+        barsMap[doc.id] = doc.data();
       });
 
       self.setState({
         bars : barsMap
       });
+      console.log(barsMap);
     });
 
   }
@@ -90,13 +94,12 @@ class BarLookup extends React.Component {
 
   render() {
     return (
-      [<BarLookupSelection bean={this.selectedBean} dimensions={this.dimensions} key="0" />,
-      <div key="1" >
-      {Object.keys(this.state.bars).map((key) => (
-        <div data-id={key} onMouseOver={this.handleMouseOver} onClick={this.handleClick}>
-          <b>{key} - </b>{this.state.beans[key].name}
-        </div>
-      ))}
+      [
+     <FirebaseContext.Consumer key="0">
+        {firebase =>  <BarLookupSelection firebase={firebase} /> }
+      </FirebaseContext.Consumer>,
+      <div key="1">
+        <pre>{JSON.stringify(this.state.bars)}</pre>
       </div>
       ]
     );
@@ -104,3 +107,14 @@ class BarLookup extends React.Component {
 }
 
 export default BarLookup;
+
+/*
+,
+<div key="1" >
+{Object.keys(this.state.bars).map((key) => (
+  <div data-id={key} onMouseOver={this.handleMouseOver} onClick={this.handleClick}>
+    <b>{key} - </b>{this.state.beans[key].name}
+  </div>
+))}
+</div>
+*/
