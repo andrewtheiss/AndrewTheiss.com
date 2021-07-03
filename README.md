@@ -82,3 +82,8 @@ npm install npm@latest -g
 npm install resolve
 npm cache clean -f
 npm install -g node
+
+### Manual fix for urllib
+var USER_AGENT = exports.USER_AGENT = ua('node-urllib', pkg.version);
+process.version = 14;
+var NODE_MAJOR_VERSION = parseInt(process.version);// parseInt(process.versions.node.split('.')[0]);
