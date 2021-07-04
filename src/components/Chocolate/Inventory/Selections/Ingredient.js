@@ -6,27 +6,6 @@ import * as CONSTS from '../constants.js'
 import '../../Theme/main.css';
 import MultiSelect from "react-multi-select-component";
 
-
-const BeanOption = ({name, value}) => (
-  <option key={value} val={value}>
-    {value} : {name}
-  </option>
-)
-
-const SelectedBean = () => {
-  <div>
-
-  </div>
-}
-const NoIngredientSelection = () => {
-  <div>
-    No selection
-  </div>
-}
-
-// Create default bean params
-// weight, beanID,
-
 class IngredientSelection extends React.Component {
   constructor(props) {
     super(props);
@@ -52,8 +31,9 @@ class IngredientSelection extends React.Component {
       var ingredientsMap = {};
       var options = [];
       ingredientsCollectionDocs.forEach(function(doc) {
+      var ingWeight = (doc.data()['weight'] === undefined) ? 0 : doc.data()['weight'];
         ingredientsMap[doc.id] = doc.data();
-        options.push({label:doc.data()['name'], value : doc.id});
+        options.push({label:doc.data()['name'], value : doc.id, weight : ingWeight});
       });
 
       self.setState({
@@ -84,14 +64,15 @@ class IngredientSelection extends React.Component {
     // Creating a unique key forces re-render ONLY each time length is changed
       var rand = selected.length/3.14159;
 
-      selectedIngredientsWeights = selected.map((roastTime, index) =>
+      selectedIngredientsWeights = selected.map((ingredient, index) =>
         <IngredientWeight
            key={index + rand}
            label={selected[index].label}
            index={index}
            name={this.props.name}
-           doc={roastTime['value']}
+           doc={ingredient['value']}
            roastIndex={index}
+           weight={ingredient['weight']}
            onUpdateIngredientWeight={self.onUpdateIngredientWeight}
          />
       );
@@ -99,7 +80,19 @@ class IngredientSelection extends React.Component {
     return selectedIngredientsWeights;
   }
 
-  async onUpdateIngredientWeight(label, value) {
+  async onUpdateIngredientWeight(label, newWeight) {
+    console.log(this.state, label, newWeight);
+    var selected = this.state.selected;
+
+    for (var i = 0; i < selected.length; i++) {
+      if (selected[i]['value'] === label) {
+
+        if (!isNaN(newWeight)) {
+          selected[i]['weight'] = Number(newWeight);
+        }
+      }
+    }
+    await this.setState({selected : selected});
     // Find selected by label, add number to that value
     // Make sure the number is correctly fed to the chocolate on load (editing is so different and more work)
 /*

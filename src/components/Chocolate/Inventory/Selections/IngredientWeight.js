@@ -11,7 +11,8 @@ class IngredientWeight extends React.Component {
     this.state = {
       label : this.props.label,
       doc : this.props.doc,
-      value : this.props.value
+      value : this.props.value,
+      weight : this.props.weight
     }
   }
 
@@ -31,8 +32,8 @@ class IngredientWeight extends React.Component {
           <label htmlFor="time0"> {this.props.label}: </label>
           <input
             size="7"
-             name="value"
-             value={this.state.value}
+             name={this.state.doc}
+             value={this.state.weight}
              onChange={this.changeValue}
              type="text"
              placeholder=""
