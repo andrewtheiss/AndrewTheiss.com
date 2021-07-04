@@ -13,8 +13,6 @@ class RoastSelection extends React.Component {
     this.addTime = this.addTime.bind(this);
     this.changeValue = this.changeValue.bind(this);
     this.onUpdateRoast = this.onUpdateRoast.bind(this);
-    this.addTime = this.addTime.bind(this);
-    this.removeTime = this.removeTime.bind(this);
     var input;
     if (!this.props || !this.props.input || this.props.input.length === 0) {
       input = [0,0];

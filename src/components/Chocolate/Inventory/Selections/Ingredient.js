@@ -1,0 +1,138 @@
+import React from 'react';
+import { withFirebase } from '../../../Firebase';
+import IngredientWeight from './IngredientWeight.js'
+import RoastFinal from './RoastFinal.js'
+import * as CONSTS from '../constants.js'
+import '../../Theme/main.css';
+import MultiSelect from "react-multi-select-component";
+
+
+const BeanOption = ({name, value}) => (
+  <option key={value} val={value}>
+    {value} : {name}
+  </option>
+)
+
+const SelectedBean = () => {
+  <div>
+
+  </div>
+}
+const NoIngredientSelection = () => {
+  <div>
+    No selection
+  </div>
+}
+
+// Create default bean params
+// weight, beanID,
+
+class IngredientSelection extends React.Component {
+  constructor(props) {
+    super(props);
+
+    // Find the prop of the ingredient selection
+    console.log(props.name);
+    this.state = {
+      ingredientsMap : '',
+      options : [],
+      selected : []
+    };
+
+    this.setSelected = this.setSelected.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.renderSelectedIngredientsWeight = this.renderSelectedIngredientsWeight.bind(this);
+    this.onUpdateIngredientWeight = this.onUpdateIngredientWeight.bind(this);
+  }
+
+  componentDidMount() {
+    const ingredientsCollectionRef = this.props.firebase.db.collection("ingredients");
+    let self = this;
+    ingredientsCollectionRef.where("category", "==", this.props.name).get().then(function(ingredientsCollectionDocs) {
+      var ingredientsMap = {};
+      var options = [];
+      ingredientsCollectionDocs.forEach(function(doc) {
+        ingredientsMap[doc.id] = doc.data();
+        options.push({label:doc.data()['name'], value : doc.id});
+      });
+
+      self.setState({
+        ingredientsMap : ingredientsMap,
+        options : options
+      });
+      console.log(options);
+    });
+  }
+
+  // Set Selected Ingredients so we can update the value of their weight in grams
+  setSelected(allSelectedItems) {
+    this.setState({ selected : allSelectedItems});
+  }
+
+  /**
+   *  renderSelectedIngredientsWeight
+   *
+   *  Check all selected ingredients of type and allow for value input
+   */
+  renderSelectedIngredientsWeight() {
+    let selectedIngredientsWeights = '';
+    let selected = this.state.selected;
+    var self = this;
+    let hasItems = !(!selected || selected.length == 0);
+    if (hasItems) {
+
+    // Creating a unique key forces re-render ONLY each time length is changed
+      var rand = selected.length/3.14159;
+
+      selectedIngredientsWeights = selected.map((roastTime, index) =>
+        <IngredientWeight
+           key={index + rand}
+           label={selected[index].label}
+           index={index}
+           name={this.props.name}
+           doc={roastTime['value']}
+           roastIndex={index}
+           onUpdateIngredientWeight={self.onUpdateIngredientWeight}
+         />
+      );
+    }
+    return selectedIngredientsWeights;
+  }
+
+  async onUpdateIngredientWeight(label, value) {
+    // Find selected by label, add number to that value
+    // Make sure the number is correctly fed to the chocolate on load (editing is so different and more work)
+/*
+    var options = this.op
+    let latestBean = this.state.latestBean;
+    latestBean.finalTemp = roastFinalTemp;
+    await this.setState({ latestBean });
+    */
+  }
+
+  render() {
+    var selectedIngredients = this.renderSelectedIngredientsWeight();
+
+    return (
+      <div key="id1" className="module small">
+      <pre>{JSON.stringify(this.state.selected)}</pre>
+      <br />
+      <b>{this.props.name} Selection</b>
+      <br />
+
+      <MultiSelect
+        options={this.state.options}
+        value={this.state.selected}
+        onChange={this.setSelected}
+        labelledBy="Select"
+      />
+        <br />
+        <br />
+         <br />
+         {selectedIngredients}
+      </div>
+    );
+  }
+}
+
+export default withFirebase(IngredientSelection);
