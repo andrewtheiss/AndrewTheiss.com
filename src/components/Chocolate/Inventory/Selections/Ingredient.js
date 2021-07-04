@@ -5,6 +5,8 @@ import RoastFinal from './RoastFinal.js'
 import * as CONSTS from '../constants.js'
 import '../../Theme/main.css';
 import MultiSelect from "react-multi-select-component";
+import './selections.css'
+
 
 class IngredientSelection extends React.Component {
   constructor(props) {
@@ -91,28 +93,27 @@ class IngredientSelection extends React.Component {
       }
     }
     await this.setState({selected : selected});
+    this.props.onChangeSelection(this.props.name, this.state.selected);
   }
 
   render() {
     var selectedIngredients = this.renderSelectedIngredientsWeight();
 
     return (
-      <div key="id1" className="module small">
-      <pre>{JSON.stringify(this.state.selected)}</pre>
-      <br />
-      <b>{this.props.name} Selection</b>
-      <br />
-
-      <MultiSelect
-        options={this.state.options}
-        value={this.state.selected}
-        onChange={this.setSelected}
-        labelledBy="Select"
-      />
-        <br />
-        <br />
-         <br />
-         {selectedIngredients}
+      <div key="id1" className="module w700">
+      <div className="floatRight">
+        <b>{this.props.name} Selection</b>
+        <MultiSelect
+          options={this.state.options}
+          value={this.state.selected}
+          onChange={this.setSelected}
+          labelledBy="Select"
+        />
+      </div>
+      <div className="floatLeft">
+        {selectedIngredients}
+       </div>
+       <div className="clearBoth"></div>
       </div>
     );
   }

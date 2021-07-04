@@ -45,20 +45,9 @@ class BarLookupSelection extends React.Component {
     let isChecked = !this.state.includeOlderChocolates;
     this.setState({includeOlderChocolates : isChecked});
   }
-//  const [this.selected, setSelected] = useState([]);
+  
   render() {
     console.log(this.state.bars);
-    const options = [
-      { label: "Grapes 🍇", value: "grapes" },
-      { label: "Mango 🥭", value: "mango" },
-      { label: "Strawberry 🍓", value: "strawberry", disabled: true },
-      { label: "Watermelon 🍉", value: "watermelon" },
-      { label: "Pear 🍐", value: "pear" },
-      { label: "Apple 🍎", value: "apple" },
-      { label: "Tangerine 🍊", value: "tangerine" },
-      { label: "Pineapple 🍍", value: "pineapple" },
-      { label: "Peach 🍑", value: "peach" },
-    ];
 
     return(
       <div className="bottomPad5">
