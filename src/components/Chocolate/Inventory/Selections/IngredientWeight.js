@@ -5,7 +5,6 @@ import * as CONSTS from '../constants.js'
 class IngredientWeight extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.changeValue = this.changeValue.bind(this);
     this.onUpdateIngredientWeight = this.onUpdateIngredientWeight.bind(this);
     this.state = {
@@ -17,26 +16,22 @@ class IngredientWeight extends React.Component {
   }
 
   async changeValue(event) {
-    await this.setState({value : event.target.value});
+    await this.setState({weight : event.target.value});
     this.onUpdateIngredientWeight();
   }
   onUpdateIngredientWeight() {
-    this.props.onUpdateIngredientWeight(this.state.doc, this.state.value);
+    this.props.onUpdateIngredientWeight(this.state.doc, this.state.weight);
   }
   render() {
-
-    // Figure out how many roast entries there average
-    // Build single roast entry
     return (
       <div>
-          <label htmlFor="time0"> {this.props.label}: </label>
+          <label htmlFor="item"> {this.props.label}: </label>
           <input
-            size="7"
-             name={this.state.doc}
-             value={this.state.weight}
-             onChange={this.changeValue}
-             type="text"
-             placeholder=""
+           size="7"
+           name={this.state.doc}
+           value={this.state.weight}
+           onChange={this.changeValue}
+           type="text"
          /> (g)
          </div>
     );

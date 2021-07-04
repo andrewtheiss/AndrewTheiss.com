@@ -40,7 +40,6 @@ class IngredientSelection extends React.Component {
         ingredientsMap : ingredientsMap,
         options : options
       });
-      console.log(options);
     });
   }
 
@@ -81,7 +80,6 @@ class IngredientSelection extends React.Component {
   }
 
   async onUpdateIngredientWeight(label, newWeight) {
-    console.log(this.state, label, newWeight);
     var selected = this.state.selected;
 
     for (var i = 0; i < selected.length; i++) {
@@ -93,14 +91,6 @@ class IngredientSelection extends React.Component {
       }
     }
     await this.setState({selected : selected});
-    // Find selected by label, add number to that value
-    // Make sure the number is correctly fed to the chocolate on load (editing is so different and more work)
-/*
-    var options = this.op
-    let latestBean = this.state.latestBean;
-    latestBean.finalTemp = roastFinalTemp;
-    await this.setState({ latestBean });
-    */
   }
 
   render() {
