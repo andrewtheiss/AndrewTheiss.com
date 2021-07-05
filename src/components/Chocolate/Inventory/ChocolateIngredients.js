@@ -10,7 +10,8 @@ const CHOCOLATE_DEFAULTS = {
   Sweetener : [],
   Dairy : [],
   Cocoa : [],
-  Other : []
+  Other : [],
+  Details : []
 }
 
 class ChocolateIngredients extends React.Component {
@@ -18,12 +19,15 @@ class ChocolateIngredients extends React.Component {
     super(props);
     this.onChangeBeans = this.onChangeBeans.bind(this);
     this.onChangeSelection = this.onChangeSelection.bind(this);
+    this.onChangeDetails = this.onChangeDetails.bind(this);
     this.state = {
       beans : [],
       Sweetener : [],
       Dairy : [],
       Cocoa : [],
-      Other : [] };
+      Other : [],
+      Details : []
+    };
   }
   onChangeBeans(beans) {
     this.setState({beans});
@@ -32,6 +36,10 @@ class ChocolateIngredients extends React.Component {
   }
   onChangeSelection(selectionType, values) {
     this.setState({[selectionType]:values});
+    this.props.onChange(this.state);
+  }
+  onChangeDetails(details) {
+    this.setState({Details:details});
     this.props.onChange(this.state);
   }
   render() {

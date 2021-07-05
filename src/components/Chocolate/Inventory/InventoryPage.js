@@ -16,20 +16,65 @@ class InventoryMenu extends React.Component {
     this.addChocolate = this.addChocolate.bind(this);
     this.updateChocolate = this.updateChocolate.bind(this);
     this.formatChocolateFromState = this.formatChocolateFromState.bind(this);
+    this.getAndFormatChocolateValuesFromSection = this.addAndFormatChocolateValuesFromSection.bind(this);
+    this.addAndFormateChocolateValueDetails = this.addAndFormateChocolateValueDetails.bind(this);
+    this.state = {};
+    this.formattedChocolate = {};
+    this.ingredients = {};
+    this.chocolateToAdd = {};
+    this.totalCost = 0;
+    this.totalWeight = 0;
   }
 
   addChocolate() {
-    console.log('try and add chocolate', this.formatChocolateFromState());
+    this.formatChocolateFromState();
+    console.log('try and add chocolate', this.chocolateToAdd);
   }
 
   formatChocolateFromState() {
+    this.chocolateToAdd = {};
+    this.ingredients = {};
+    this.totalCost = 0;
+    this.totalWeight = 0;
+
+    // Add non-ingredient params FIRST
+    this.addAndFormateChocolateValueDetails();
+
     // Format Beans
-    //
+
+    // Add MultiSelect Sections to ChocolateToAdd
+    const selections = ['Dairy', 'Sweetener', 'Cocoa', 'Other'];
+    for (var i = 0; i < selections.length; i++) {
+      var nextSelection = selections[i];
+      var valuesFromNextSection = this.addAndFormatChocolateValuesFromSection(this.state.values[nextSelection]);
+    }
+    this.chocolateToAdd['ingredients'] = this.ingredients;
+
+    console.log(this.state);
+    // Format items in inventory + autocalculate cost
+
+
     return {};
   }
 
+  addAndFormatChocolateValuesFromSection(values) {
+      for (var i = 0; i < values.length; i++) {
+        this.ingredients[values[i].value] = values[i].weight;
+      }
+  }
+
+  addAndFormateChocolateValueDetails() {
+      if (this.state.values.Details != undefined) {
+        this.chocolateToAdd = this.state.values.Details;
+      }
+  }
+
+  formatStateFromChocolate() {
+
+  }
+
   updateChocolate(values) {
-    console.log(values);
+    console.log('update chocolate',values);
     this.setState({values});
   }
 

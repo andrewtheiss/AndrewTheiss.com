@@ -46,8 +46,9 @@ class IngredientSelection extends React.Component {
   }
 
   // Set Selected Ingredients so we can update the value of their weight in grams
-  setSelected(allSelectedItems) {
-    this.setState({ selected : allSelectedItems});
+  async setSelected(allSelectedItems) {
+    await this.setState({ selected : allSelectedItems});
+    this.props.onChangeSelection(this.props.name, this.state.selected);
   }
 
   /**
