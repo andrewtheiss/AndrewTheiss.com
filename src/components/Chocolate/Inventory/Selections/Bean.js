@@ -4,6 +4,7 @@ import RoastSelection from './Roast.js'
 import RoastFinal from './RoastFinal.js'
 import * as CONSTS from '../constants.js'
 import '../../Theme/main.css';
+import MultiSelect from "react-multi-select-component";
 
 
 const BeanOption = ({name, value}) => (
@@ -28,9 +29,12 @@ class BeanSelection extends React.Component {
     this.state = {
       options : '',
       beans : [],
+      beanOptions : [],
+      selected : [],
       latestBean : CONSTS.BEAN_DEFAULT
     };
-    this.renderOptions = this.renderOptions.bind(this);
+    this.validateBean = this.validateBean.bind(this);
+    this.setSelected = this.setSelected.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.addBean = this.addBean.bind(this);
     this.onChangeBeanWeight = this.onChangeBeanWeight.bind(this);
@@ -46,28 +50,33 @@ class BeanSelection extends React.Component {
     let self = this;
     beansCollectionRef.get().then(function(beanCollectionDocs) {
       var beansMap = {};
+      var beanOptions = [];
       beanCollectionDocs.forEach(function(doc) {
         beansMap[doc.id] = doc.data();
-        //console.log(doc.data());
+        beanOptions.push({
+          label : doc.data()['name'],
+          value : doc.id,
+          pricePerKilogram : self.pricePerLbToKilogramConversion(doc.data()['price'],doc.data()['purchaseLbs'])
+        });
       });
 
       self.setState({
-        beans : beansMap
+        beans : beansMap,
+        beanOptions : beanOptions
       });
+      console.log(beanOptions);
     });
   }
 
-  renderOptions() {
-    let beanOptions = '';
-    if (!this.state.beans || this.state.beans.length == 0) {
-        beanOptions = <BeanOption key="noBeanSelection" value="noSelection" name={"None"} />;
-    } else {
-        beanOptions = Object.keys(this.state.beans).map((key) => (
-          <BeanOption key={key} name={this.state.beans[key].name} value={key}/>
-        ));
-    }
-    return beanOptions;
+  pricePerLbToKilogramConversion(pricePerLb, purchaseLbs) {
+    const lbsPerKg = 0.453592;
+    return (pricePerLb/purchaseLbs)*(1.0/lbsPerKg);
   }
+
+    // Set Selected Ingredients so we can update the value of their weight in grams
+    async setSelected(allSelectedItems) {
+      await this.setState({ selected : allSelectedItems});
+    }
 
   renderRoastTimeTemps() {
     let roastTimeTemp = '';
@@ -93,6 +102,7 @@ class BeanSelection extends React.Component {
     }
     return roastTimeTemp;
   }
+
   renderFinalTemp() {
     let roastFinalTemps = this.state.latestBean.finalTemps;
     let self = this;
@@ -129,42 +139,65 @@ class BeanSelection extends React.Component {
 
   onChangeBeanWeight(event) {
     let latestBean = this.state.latestBean;
-    latestBean.weight = event.target.value;
+    latestBean.weightInKg = event.target.value;
     this.setState({ latestBean });
   }
 
+  validateBean() {
+    var isValid = true;
+
+    if (this.state.selected.length > 1) {
+      alert('too many beans selected');
+      isValid = false;
+    } else if (this.state.selected.length == 0) {
+      alert('no beans selected');
+      isValid = false;
+    }
+
+    if (isValid && this.state.latestBean.weightInKg == "") {
+      alert('no weight of beans');
+      isValid = false;
+    } else if (isValid && isNaN(this.state.latestBean.weightInKg)) {
+      alert('invalid weight');
+      isValid = false;
+    }
+
+    return isValid;
+  }
 
   // Verify all fields and package / add a Bean to the state
   addBean(event) {
+    if (!this.validateBean()) {
+      return;
+    }
 
-    // TODO - Calculate Roast Times
-
-
-
-    console.log(event);
-    this.props.onChangeBean('new bean values');
-    var addedBean = CONSTS.BEAN_DEFAULT;
-    event.preventDefault();
+    this.state.latestBean['pricePerKilogram'] = this.state.selected[0]['pricePerKilogram'];
+    this.state.latestBean['beanId'] = this.state.selected[0]['value'];
+    this.props.onChangeBean(this.state.latestBean);
   }
 
 
   render() {
     const isInvalid = false;// this.state.latestBean.weight !== '' ? true : false;
-    const selection = <select key="selectBean">{this.renderOptions()}</select>;
     var roastTimeTemp = this.renderRoastTimeTemps();
     var finalTemp = this.renderFinalTemp();
 
     return (
       <div key="id1" className="module small">
-        Bean Selection
-        {selection}
+        <b>Bean</b>
+        <MultiSelect
+          options={this.state.beanOptions}
+          value={this.state.selected}
+          onChange={this.setSelected}
+          labelledBy="Select"
+          hasSelectAll={false}
+        />
         <br />
         <br />
-        <form onSubmit={this.addBean}>
-          <label htmlFor="weight">Nibs Weight (kg):</label>
+          <label htmlFor="weightInKg">Nibs Weight (kg):</label>
           <input
-           name="wight"
-           value={this.state.latestBean.weight}
+           name="weightInKg"
+           value={this.state.latestBean.weightInKg}
            onChange={this.onChangeBeanWeight}
            type="text"
            placeholder=""
@@ -177,8 +210,7 @@ class BeanSelection extends React.Component {
          Bean Final Temp Range:
          {finalTemp}
          <br/>
-          <button disabled={isInvalid} type="submit">Add Bean</button>
-        </form>
+          <button disabled={isInvalid} onClick={this.addBean}>Add Bean</button>
       </div>
     );
   }

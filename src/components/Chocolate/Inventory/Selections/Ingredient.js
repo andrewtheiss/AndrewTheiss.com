@@ -37,7 +37,7 @@ class IngredientSelection extends React.Component {
         ingredientsMap[doc.id] = doc.data();
         options.push({label:doc.data()['name'], value : doc.id, weight : ingWeight});
       });
-
+      
       self.setState({
         ingredientsMap : ingredientsMap,
         options : options

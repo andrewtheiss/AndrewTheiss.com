@@ -1,12 +1,13 @@
 export const BEAN_DEFAULT = {
   beanId : '',
-  weight : '',
+  weightInKg : '',
   roast : [[0,80]],
   finalTemp : {
     high : '',
     low : '',
     average : ''
-  }
+  },
+  pricePerKilogram : ''
 }
 
 export const ROAST_INITIAL = [0,80];
