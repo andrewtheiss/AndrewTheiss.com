@@ -40,7 +40,12 @@ class InventoryMenu extends React.Component {
     // Add non-ingredient params FIRST
     this.addAndFormateChocolateValueDetails();
 
-    // Format Beans
+    // Format Beans 4/6/2021 Currently we only support one
+    // Bug where second added bean overrides first one in BeanSummary.js viewer
+    if(this.state.values.Beans.length > 1) {
+      alert('Multiple Beans Not Yet Coded');
+      return;
+    }
 
     // Add MultiSelect Sections to ChocolateToAdd
     const selections = ['Dairy', 'Sweetener', 'Cocoa', 'Other'];
