@@ -4,9 +4,10 @@ import Ingredients from '../Ingredients/Ingredients.js'
 import BeanSelection from './Selections/Bean.js'
 import IngredientSelection from './Selections/Ingredient.js'
 import IngredientDetails from './Selections/Details.js'
+import BeanSummary from './Selections/BeanSummary.js'
 
 const CHOCOLATE_DEFAULTS = {
-  beans : [],
+  Beans : [],
   Sweetener : [],
   Dairy : [],
   Cocoa : [],
@@ -17,21 +18,16 @@ const CHOCOLATE_DEFAULTS = {
 class ChocolateIngredients extends React.Component {
   constructor(props) {
     super(props);
-    this.onChangeBeans = this.onChangeBeans.bind(this);
+    this.onAddBean = this.onAddBean.bind(this);
     this.onChangeSelection = this.onChangeSelection.bind(this);
     this.onChangeDetails = this.onChangeDetails.bind(this);
-    this.state = {
-      beans : [],
-      Sweetener : [],
-      Dairy : [],
-      Cocoa : [],
-      Other : [],
-      Details : []
-    };
+    this.onRemoveBean = this.onRemoveBean.bind(this);
+    this.state = CHOCOLATE_DEFAULTS;
   }
-  onChangeBeans(beans) {
-    this.setState({beans});
-    console.log('Beans state changed', beans);
+  onAddBean(newBean) {
+    var Beans = this.state.Beans;
+    Beans.push(newBean);
+    this.setState({Beans});
     this.props.onChange(this.state);
   }
   onChangeSelection(selectionType, values) {
@@ -42,10 +38,18 @@ class ChocolateIngredients extends React.Component {
     this.setState({Details:details});
     this.props.onChange(this.state);
   }
+  onRemoveBean(beanIndex) {
+    var Beans = this.state.Beans;
+    Beans.splice(Number(beanIndex), 1);
+    this.setState({Beans});
+  }
   render() {
+    var beanSummaryViewer = <BeanSummary input={this.state.Beans} name="Bean Viewer" onRemoveBean={this.onRemoveBean} onEditBean={this.onEditBean}/>;
+
     return (
       <div>
-        <BeanSelection input={this.state.beans} name="beans" onChangeBean={this.onChangeBeans} />
+        <BeanSelection name="beans" onAddBean={this.onAddBean} />
+        {beanSummaryViewer}
         <IngredientSelection input={this.state.Dairy} name="Dairy" onChangeSelection={this.onChangeSelection} />
         <IngredientSelection input={this.state.Sweeteners} name="Sweetener" onChangeSelection={this.onChangeSelection} />
         <IngredientSelection input={this.state.Cocoa} name="Cocoa" onChangeSelection={this.onChangeSelection} />

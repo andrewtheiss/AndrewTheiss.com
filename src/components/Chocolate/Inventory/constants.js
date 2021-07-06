@@ -3,9 +3,9 @@ export const BEAN_DEFAULT = {
   weightInKg : '',
   roast : [[0,80]],
   finalTemp : {
-    high : '',
-    low : '',
-    average : ''
+    high : 0,
+    low : 0,
+    average : 0
   },
   pricePerKilogram : ''
 }

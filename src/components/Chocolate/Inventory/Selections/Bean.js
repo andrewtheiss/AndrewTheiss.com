@@ -6,22 +6,11 @@ import * as CONSTS from '../constants.js'
 import '../../Theme/main.css';
 import MultiSelect from "react-multi-select-component";
 
-
-const BeanOption = ({name, value}) => (
-  <option key={value} val={value}>
-    {value} : {name}
-  </option>
-)
-
-const SelectedBean = () => {
-  <div>
-
-  </div>
-}
-
-// Create default bean params
-// weight, beanID,
-
+/**
+ *  BeanSelection handles selecting all bean details for a chocolate inc:
+ *
+ *  - Bean ID, Weight, Oven Roast Temps
+ */
 class BeanSelection extends React.Component {
   constructor(props) {
     super(props);
@@ -166,14 +155,20 @@ class BeanSelection extends React.Component {
   }
 
   // Verify all fields and package / add a Bean to the state
-  addBean(event) {
+  async addBean(event) {
     if (!this.validateBean()) {
       return;
     }
 
     this.state.latestBean['pricePerKilogram'] = this.state.selected[0]['pricePerKilogram'];
     this.state.latestBean['beanId'] = this.state.selected[0]['value'];
-    this.props.onChangeBean(this.state.latestBean);
+    this.props.onAddBean(this.state.latestBean);
+
+    // Reset Form
+    this.setSelected([]);
+    var latestBean = CONSTS.BEAN_DEFAULT;
+    await this.setState({latestBean});
+
   }
 
 
