@@ -65,7 +65,7 @@ export const CHOCOLATE_DEFAULTS = {
     packaging : '',
     myReview : '',
     toImprove : ''
-  },
+  }
 
   //
 }

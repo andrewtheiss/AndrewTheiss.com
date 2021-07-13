@@ -2,7 +2,6 @@ import React from 'react';
 import Ingredients from '../Ingredients/Ingredients.js'
 import ChocolateIngredients from './ChocolateIngredients.js'
 import IngredientDetails from './Selections/Details.js'
-
 const InventoryPage = () => (
  <div>
    <h1></h1>
@@ -87,8 +86,11 @@ class InventoryMenu extends React.Component {
     //console.log(this.props);
     return (
       <div>
+      <Ingredients />
+        <br />  <br />
         <ChocolateIngredients onChange={this.updateChocolate}/>
         <button onClick={this.addChocolate}>Add Chocolate</button>
+        <br />
        </div>
     );
   }
