@@ -10,6 +10,8 @@ class Ingredients extends React.Component {
     this.formatCategoryOptions = this.formatCategoryOptions.bind(this);
     this.setSelected = this.setSelected.bind(this);
     this.onChangeIngredientProp = this.onChangeIngredientProp.bind(this);
+    this.updateNutritionFacts = this.updateNutritionFacts.bind(this);
+
     // When state changes, render is called
     var categoryCategories = this.formatCategoryOptions();
     this.state = {
@@ -26,7 +28,8 @@ class Ingredients extends React.Component {
       nutritionFacts : {},
       image : '',
       categoryCategories : categoryCategories,
-      categorySelection : []
+      categorySelection : [],
+      changeLog : ''
     };
   }
 
@@ -64,7 +67,11 @@ class Ingredients extends React.Component {
     return nonNutritionParams;
   }
 
-
+  updateNutritionFacts(facts) {
+    let nutritionFacts = facts;
+    console.log('updated nutritionFacts', facts);
+    this.setState({nutritionFacts});
+  }
 
   render() {
     this.nonNutritionParams = this.renderNonNutritionParams();
@@ -81,6 +88,7 @@ class Ingredients extends React.Component {
           labelledBy="Select"
         />
         <br />
+        <IngredientNurtitionFacts onUpdate={this.updateNutritionFacts} facts={this.state.nutritionFacts}/>
        </div>
     );
   }

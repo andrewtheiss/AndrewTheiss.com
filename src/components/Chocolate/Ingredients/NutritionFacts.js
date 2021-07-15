@@ -1,10 +1,19 @@
 import React from 'react';
 import * as CONSTS from './constants.js'
 
+/**
+ *  IngredientNurtitionFacts
+ *
+ *  Input:
+ *  facts :     variable  current nutritionFacts state from parent
+ *  onChange :  function  to update parent state
+ */
 class IngredientNurtitionFacts extends React.Component {
   constructor(props) {
     super(props);
-
+    this.renderNutritionFacts = this.renderNutritionFacts.bind(this);
+    this.onUpdate = this.onUpdate.bind(this);
+    console.log(props);
     this.state = {
 
       caloriesPerServing : 0,
@@ -17,27 +26,51 @@ class IngredientNurtitionFacts extends React.Component {
 
       // All items in Grams unless otherwise stated
       totalFat : 0,
-      saturageFat : 0,
+      saturatedFat : 0,
       tarnsFat : 0,
       cholesterol : 0,
       sodium : 0,
       totalCarbohydrates : 0,
       dietaryFiber : 0,
       totalSugars : 0,
-      Protein : 0,
-      Calcium : 0,
-      Iron : 0,
-      Potassium : 0,
-      VitaminD : 0,
-      G : 0,
+      protein : 0,
+      calcium : 0,
+      iron : 0,
+      potassium : 0,
+      vitaminD : 0,
+      vitaminC : 0,
+      vitaminA : 0,
+      betaCaseinA2 : 0,
+      betaCaseinA1 : 0
 
     };
     this.selectedBean = {};
     this.previewBean = {};
   }
 
+  // Update values in this component and set in parent
+  async onUpdate(event) {
+    await this.setState({[event.target.name]: event.target.value});
+    await this.props.onUpdate(this.state);
+  }
+
+  renderNutritionFacts() {
+    let self = this;
+    let factsForm = Object.keys(this.state).map((key) => (
+      <div key={CONSTS.NUTRITION_LABEL_STRINGS[key]} >
+        <b>{CONSTS.NUTRITION_LABEL_STRINGS[key]}: </b><input name={key} value={self.state[key]} type="text" onChange={this.onUpdate}></input>
+      </div>
+    ));
+    return factsForm;
+  }
+
   render() {
-    return "<div>Ingredient </div>";
+    const factsForm = this.renderNutritionFacts();
+    return (
+      <div key="nutritionFactsForm">
+        {factsForm}
+      </div>
+    );
   }
 }
  export default IngredientNurtitionFacts;
