@@ -6,7 +6,7 @@ import * as CONSTS from './constants.js'
  *
  *  Input:
  *  facts :     variable  current nutritionFacts state from parent
- *  onChange :  function  to update parent state
+ *  onUpdate :  function  to update parent state
  */
 class IngredientNurtitionFacts extends React.Component {
   constructor(props) {

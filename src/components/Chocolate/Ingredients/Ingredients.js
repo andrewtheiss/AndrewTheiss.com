@@ -1,6 +1,7 @@
 import React from 'react';
 import MultiSelect from "react-multi-select-component";
 import IngredientNurtitionFacts from './NutritionFacts.js'
+import IngredientImage from './Image.js'
 import * as CONSTS from './constants.js'
 
 class Ingredients extends React.Component {
@@ -11,6 +12,8 @@ class Ingredients extends React.Component {
     this.setSelected = this.setSelected.bind(this);
     this.onChangeIngredientProp = this.onChangeIngredientProp.bind(this);
     this.updateNutritionFacts = this.updateNutritionFacts.bind(this);
+    this.updateImage = this.updateImage.bind(this);
+    this.addIngredient = this.addIngredient.bind(this);
 
     // When state changes, render is called
     var categoryCategories = this.formatCategoryOptions();
@@ -26,7 +29,7 @@ class Ingredients extends React.Component {
       latestPurchasePrice : 0,
       runningTotalOfPurchasedCosts : 0,
       nutritionFacts : {},
-      image : '',
+      imageBase64 : '',
       categoryCategories : categoryCategories,
       categorySelection : [],
       changeLog : ''
@@ -73,6 +76,15 @@ class Ingredients extends React.Component {
     this.setState({nutritionFacts});
   }
 
+  updateImage(imageUpload) {
+    let imageBase64 = imageUpload.image;
+    this.setState({imageBase64});
+  }
+
+  addIngredient() {
+    console.log('Adding Ingredient', this.state);
+  }
+
   render() {
     this.nonNutritionParams = this.renderNonNutritionParams();
     const options = CONSTS.INGREDIENT_CATEGORIES;
@@ -89,6 +101,8 @@ class Ingredients extends React.Component {
         />
         <br />
         <IngredientNurtitionFacts onUpdate={this.updateNutritionFacts} facts={this.state.nutritionFacts}/>
+        <IngredientImage onUpdate={this.updateImage} image={this.state.image} />
+        <button onClick={this.addIngredient}>Add Ingredient</button>
        </div>
     );
   }
