@@ -1,5 +1,5 @@
 import React from 'react';
-import Ingredients from '../Ingredients/Ingredients.js'
+import IngredientNew from '../Ingredients/New.js'
 import ChocolateIngredients from './ChocolateIngredients.js'
 import IngredientDetails from './Selections/Details.js'
 const InventoryPage = () => (
@@ -86,7 +86,7 @@ class InventoryMenu extends React.Component {
     //console.log(this.props);
     return (
       <div>
-      <Ingredients />
+      <IngredientNew />
         <br />  <br />
         <ChocolateIngredients onChange={this.updateChocolate}/>
         <button onClick={this.addChocolate}>Add Chocolate</button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import Ingredients from '../Ingredients/Ingredients.js'
+import IngredientNew from '../Ingredients/New.js'
 
 import BeanSelection from './Selections/Bean.js'
 import IngredientSelection from './Selections/Ingredient.js'

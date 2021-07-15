@@ -2,9 +2,10 @@ import React from 'react';
 import MultiSelect from "react-multi-select-component";
 import IngredientNurtitionFacts from './NutritionFacts.js'
 import IngredientImage from './Image.js'
+import IngredientPreview from './Preview.js'
 import * as CONSTS from './constants.js'
 
-class Ingredients extends React.Component {
+class IngredientNew extends React.Component {
   constructor(props) {
     super(props);
     this.renderNonNutritionParams = this.renderNonNutritionParams.bind(this);
@@ -23,10 +24,11 @@ class Ingredients extends React.Component {
       notes : '',
       origin : '',
       source : '',
-      totalWeightPerItem : '',
+      totalGramWeightPerItem : '100',
       pricePerKg : 0,
-      countPurchased : 0,
-      latestPurchasePrice : 0,
+      costPerItem : "1.00",
+      countPurchased : 1,
+      latestPurchasePrice : "1.00",
       runningTotalOfPurchasedCosts : 0,
       nutritionFacts : {},
       imageBase64 : '',
@@ -51,10 +53,20 @@ class Ingredients extends React.Component {
   // Set Selected Ingredients so we can update the value of their weight in grams
   async setSelected(categorySelection) {
     await this.setState({categorySelection});
+    let category = '';
+    if (categorySelection.length > 0) {
+      category = categorySelection[0].value;
+      await this.setState({category});
+    }
   }
 
-  onChangeIngredientProp(event) {
-    this.setState({[event.target.name]:event.target.value});
+  async onChangeIngredientProp(event) {
+    await this.setState({[event.target.name]:event.target.value});
+
+    let latestPurchasePrice = this.state.costPerItem;
+    if (event.target.name === 'costPerItem') {
+      this.setState({latestPurchasePrice});
+    }
   }
 
   renderNonNutritionParams() {
@@ -82,11 +94,20 @@ class Ingredients extends React.Component {
   }
 
   addIngredient() {
+
+    // Calculate pricePerKg
+    let pricePerKg = this.state.totalGramWeightPerItem * 1000 / this.state.costPerItem;
+    this.setState({pricePerKg});
+
+    let latestPurchasePrice = this.state.costPerItem;
+    this.setState({latestPurchasePrice});
+
     console.log('Adding Ingredient', this.state);
   }
 
   render() {
     this.nonNutritionParams = this.renderNonNutritionParams();
+    let ingredientPreview = <IngredientPreview ingredient={this.state} />;
     const options = CONSTS.INGREDIENT_CATEGORIES;
     return (
       <div>
@@ -103,8 +124,9 @@ class Ingredients extends React.Component {
         <IngredientNurtitionFacts onUpdate={this.updateNutritionFacts} facts={this.state.nutritionFacts}/>
         <IngredientImage onUpdate={this.updateImage} image={this.state.image} />
         <button onClick={this.addIngredient}>Add Ingredient</button>
+        {ingredientPreview}
        </div>
     );
   }
 }
- export default Ingredients;
+ export default IngredientNew;

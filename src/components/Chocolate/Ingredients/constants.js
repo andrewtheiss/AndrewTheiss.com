@@ -56,7 +56,8 @@ export const NUTRITION_LABEL_STRINGS = {
   notes : 'Notes',
   origin : 'Origin',
   source : 'Source',
-  totalWeightPerItem : 'Total Weight Per Item',
+  totalGramWeightPerItem : 'Total Weight Per Item',
+  costPerItem : 'Cost Per Item',
   pricePerKg : 'Price Per Kg',
   countPurchased : 'Number of Items Purchased',
   latestPurchasePrice : 'Latest Purchase Price',
@@ -72,11 +73,10 @@ export const NUTRITION_PLACEHOLDER_STRINGS = {
   notes : 'A bit sweeter and less savory than euro milk',
   origin : 'USA',
   source : 'Amazon',
-  totalWeightPerItem : '700 g',
-  pricePerKg : '15.30',
+  totalGramWeightPerItem : '700 g',
+  costPerItem : '15.30',
   countPurchased : '1',
-  latestPurchasePrice : '14.99',
-  image : 'imgUrl or I DONT KNOW YET'
+  latestPurchasePrice : '14.99'
 }
 
 export const NUTRITION_MESUREMENTS = {
@@ -119,11 +119,9 @@ export const NON_NUTRITION_PARAMS = {
   notes : '',
   origin : '',
   source : '',
-  totalWeightPerItem : '',
-  pricePerKg : 0,
-  countPurchased : 0,
-  latestPurchasePrice : 0,
-  image : ''
+  totalGramWeightPerItem : '',
+  costPerItem : 0,
+  countPurchased : 0
 }
 
 export const INGREDIENT_CATEGORIES = ['Dairy', 'Sweetener', 'Cocoa', 'Other'];
