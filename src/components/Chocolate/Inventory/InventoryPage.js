@@ -1,5 +1,5 @@
 import React from 'react';
-import IngredientNew from '../Ingredients/New.js'
+import IngredientNew from '../Ingredient/New.js'
 import ChocolateIngredients from './ChocolateIngredients.js'
 import IngredientDetails from './Selections/Details.js'
 const InventoryPage = () => (
@@ -19,7 +19,7 @@ class InventoryMenu extends React.Component {
     this.addAndFormateChocolateValueDetails = this.addAndFormateChocolateValueDetails.bind(this);
     this.state = {};
     this.formattedChocolate = {};
-    this.ingredients = {};
+    this.Ingredient = {};
     this.chocolateToAdd = {};
     this.totalCost = 0;
     this.totalWeight = 0;
@@ -32,7 +32,7 @@ class InventoryMenu extends React.Component {
 
   formatChocolateFromState() {
     this.chocolateToAdd = {};
-    this.ingredients = {};
+    this.Ingredient = {};
     this.totalCost = 0;
     this.totalWeight = 0;
 
@@ -52,7 +52,7 @@ class InventoryMenu extends React.Component {
       var nextSelection = selections[i];
       var valuesFromNextSection = this.addAndFormatChocolateValuesFromSection(this.state.values[nextSelection]);
     }
-    this.chocolateToAdd['ingredients'] = this.ingredients;
+    this.chocolateToAdd['Ingredient'] = this.Ingredient;
 
     console.log(this.state);
     // Format items in inventory + autocalculate cost
@@ -63,7 +63,7 @@ class InventoryMenu extends React.Component {
 
   addAndFormatChocolateValuesFromSection(values) {
       for (var i = 0; i < values.length; i++) {
-        this.ingredients[values[i].value] = values[i].weight;
+        this.Ingredient[values[i].value] = values[i].weight;
       }
   }
 

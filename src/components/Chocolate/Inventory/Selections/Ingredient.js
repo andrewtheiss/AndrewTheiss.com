@@ -8,56 +8,56 @@ import MultiSelect from "react-multi-select-component";
 import './selections.css'
 
 
-class IngredientSelection extends React.Component {
+class Ingredientelection extends React.Component {
   constructor(props) {
     super(props);
 
     // Find the prop of the ingredient selection
     console.log(props.name);
     this.state = {
-      ingredientsMap : '',
+      IngredientMap : '',
       options : [],
       selected : []
     };
 
     this.setSelected = this.setSelected.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.renderSelectedIngredientsWeight = this.renderSelectedIngredientsWeight.bind(this);
+    this.renderSelectedIngredientWeight = this.renderSelectedIngredientWeight.bind(this);
     this.onUpdateIngredientWeight = this.onUpdateIngredientWeight.bind(this);
   }
 
   componentDidMount() {
-    const ingredientsCollectionRef = this.props.firebase.db.collection("ingredients");
+    const IngredientCollectionRef = this.props.firebase.db.collection("Ingredient");
     let self = this;
-    ingredientsCollectionRef.where("category", "==", this.props.name).get().then(function(ingredientsCollectionDocs) {
-      var ingredientsMap = {};
+    IngredientCollectionRef.where("category", "==", this.props.name).get().then(function(IngredientCollectionDocs) {
+      var IngredientMap = {};
       var options = [];
-      ingredientsCollectionDocs.forEach(function(doc) {
+      IngredientCollectionDocs.forEach(function(doc) {
       var ingWeight = (doc.data()['weight'] === undefined) ? 0 : doc.data()['weight'];
-        ingredientsMap[doc.id] = doc.data();
+        IngredientMap[doc.id] = doc.data();
         options.push({label:doc.data()['name'], value : doc.id, weight : ingWeight});
       });
       
       self.setState({
-        ingredientsMap : ingredientsMap,
+        IngredientMap : IngredientMap,
         options : options
       });
     });
   }
 
-  // Set Selected Ingredients so we can update the value of their weight in grams
+  // Set Selected Ingredient so we can update the value of their weight in grams
   async setSelected(allSelectedItems) {
     await this.setState({ selected : allSelectedItems});
     this.props.onChangeSelection(this.props.name, this.state.selected);
   }
 
   /**
-   *  renderSelectedIngredientsWeight
+   *  renderSelectedIngredientWeight
    *
-   *  Check all selected ingredients of type and allow for value input
+   *  Check all selected Ingredient of type and allow for value input
    */
-  renderSelectedIngredientsWeight() {
-    let selectedIngredientsWeights = '';
+  renderSelectedIngredientWeight() {
+    let selectedIngredientWeights = '';
     let selected = this.state.selected;
     var self = this;
     let hasItems = !(!selected || selected.length == 0);
@@ -66,7 +66,7 @@ class IngredientSelection extends React.Component {
     // Creating a unique key forces re-render ONLY each time length is changed
       var rand = selected.length/3.14159;
 
-      selectedIngredientsWeights = selected.map((ingredient, index) =>
+      selectedIngredientWeights = selected.map((ingredient, index) =>
         <IngredientWeight
            key={index + rand}
            label={selected[index].label}
@@ -79,7 +79,7 @@ class IngredientSelection extends React.Component {
          />
       );
     }
-    return selectedIngredientsWeights;
+    return selectedIngredientWeights;
   }
 
   async onUpdateIngredientWeight(label, newWeight) {
@@ -98,7 +98,7 @@ class IngredientSelection extends React.Component {
   }
 
   render() {
-    var selectedIngredients = this.renderSelectedIngredientsWeight();
+    var selectedIngredient = this.renderSelectedIngredientWeight();
 
     return (
       <div key="id1" className="module w700">
@@ -112,7 +112,7 @@ class IngredientSelection extends React.Component {
         />
       </div>
       <div className="floatLeft">
-        {selectedIngredients}
+        {selectedIngredient}
        </div>
        <div className="clearBoth"></div>
       </div>
@@ -120,4 +120,4 @@ class IngredientSelection extends React.Component {
   }
 }
 
-export default withFirebase(IngredientSelection);
+export default withFirebase(Ingredientelection);

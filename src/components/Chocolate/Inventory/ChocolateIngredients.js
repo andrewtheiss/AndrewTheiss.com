@@ -1,8 +1,8 @@
 import React from 'react';
-import IngredientNew from '../Ingredients/New.js'
+import IngredientNew from '../Ingredient/New.js'
 
 import BeanSelection from './Selections/Bean.js'
-import IngredientSelection from './Selections/Ingredient.js'
+import Ingredientelection from './Selections/Ingredient.js'
 import IngredientDetails from './Selections/Details.js'
 import BeanSummary from './Selections/BeanSummary.js'
 
@@ -50,10 +50,10 @@ class ChocolateIngredients extends React.Component {
       <div>
         <BeanSelection name="beans" onAddBean={this.onAddBean} />
         {beanSummaryViewer}
-        <IngredientSelection input={this.state.Dairy} name="Dairy" onChangeSelection={this.onChangeSelection} />
-        <IngredientSelection input={this.state.Sweeteners} name="Sweetener" onChangeSelection={this.onChangeSelection} />
-        <IngredientSelection input={this.state.Cocoa} name="Cocoa" onChangeSelection={this.onChangeSelection} />
-        <IngredientSelection input={this.state.Other} name="Other" onChangeSelection={this.onChangeSelection} />
+        <Ingredientelection input={this.state.Dairy} name="Dairy" onChangeSelection={this.onChangeSelection} />
+        <Ingredientelection input={this.state.Sweeteners} name="Sweetener" onChangeSelection={this.onChangeSelection} />
+        <Ingredientelection input={this.state.Cocoa} name="Cocoa" onChangeSelection={this.onChangeSelection} />
+        <Ingredientelection input={this.state.Other} name="Other" onChangeSelection={this.onChangeSelection} />
         <IngredientDetails input={this.state.details} name="Details" onChangeDetails={this.onChangeDetails} />
       </div>
     );

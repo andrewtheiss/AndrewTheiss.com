@@ -1,6 +1,6 @@
 import React from 'react';
 import NutritionFactsPreview from './NutritionFactsPreview.js'
-import './ingredients.css'
+import './Ingredient.css'
 /**
  *  IngredientImage
  *

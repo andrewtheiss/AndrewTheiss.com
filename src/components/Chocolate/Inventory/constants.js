@@ -36,8 +36,8 @@ export const CHOCOLATE_DEFAULTS = {
     packaged : ''
   },
 
-  // Ingredients all of which are optional segments
-  ingredients : {
+  // Ingredient all of which are optional segments
+  Ingredient : {
      // Beans
      beans : {
 

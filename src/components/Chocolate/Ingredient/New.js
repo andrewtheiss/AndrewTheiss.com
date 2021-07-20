@@ -50,7 +50,7 @@ class IngredientNew extends React.Component {
      return categoryCategories;
   }
 
-  // Set Selected Ingredients so we can update the value of their weight in grams
+  // Set Selected Ingredient so we can update the value of their weight in grams
   async setSelected(categorySelection) {
     await this.setState({categorySelection});
     let category = '';

@@ -1,5 +1,5 @@
 import React from 'react';
-import IngredientNew from '../Ingredients/New.js'
+import IngredientNew from '../Ingredient/New.js'
 import './Bar.css';
 
 

@@ -62,7 +62,7 @@ class BeanSelection extends React.Component {
     return (pricePerLb/purchaseLbs)*(1.0/lbsPerKg);
   }
 
-    // Set Selected Ingredients so we can update the value of their weight in grams
+    // Set Selected Ingredient so we can update the value of their weight in grams
     async setSelected(allSelectedItems) {
       await this.setState({ selected : allSelectedItems});
     }
