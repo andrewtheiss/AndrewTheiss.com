@@ -5,6 +5,7 @@ export const NUTRITION_FACTS = {
 
   // All items in Grams unless otherwise stated
   calories : 0,
+  caloriesFromFat : 0,
   totalFat : 0,
   saturatedFat : 0,
   tarnsFat : 0,
@@ -30,6 +31,7 @@ export const NUTRITION_LABEL_STRINGS = {
   servingsPerContainer : 'Servings Per Container',
   servingSizeInGrams: 'Serving Size',
   caloriesPerServing : 'Calories Per Serving',
+  caloriesFromFat : 'Calories From Fat',
   caloriesPerGram : 'Calories Per Gram',
   calories : 'Calories',
   totalFat : 'Total Fat',
@@ -91,6 +93,7 @@ export const NUTRITION_MESUREMENTS = {
 
 export const NUTRITION_REQUIRED = {
   calories : true,
+  caloriesFromFat : true,
   totalFat : true,
   saturageFat : true,
   tarnsFat : true,

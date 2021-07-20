@@ -14,36 +14,7 @@ class IngredientNurtitionFacts extends React.Component {
     this.renderNutritionFacts = this.renderNutritionFacts.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
     console.log(props);
-    this.state = {
-
-      caloriesPerServing : 0,
-      caloriesPerGram : 0,
-
-      servingsPerContainer : 1,
-      servingSizeInGrams: 0,
-      caloriesPerServing : 0,
-      caloriesPerGram : 0,
-
-      // All items in Grams unless otherwise stated
-      totalFat : 0,
-      saturatedFat : 0,
-      tarnsFat : 0,
-      cholesterol : 0,
-      sodium : 0,
-      totalCarbohydrates : 0,
-      dietaryFiber : 0,
-      totalSugars : 0,
-      protein : 0,
-      calcium : 0,
-      iron : 0,
-      potassium : 0,
-      vitaminD : 0,
-      vitaminC : 0,
-      vitaminA : 0,
-      betaCaseinA2 : 0,
-      betaCaseinA1 : 0
-
-    };
+    this.state = CONSTS.NUTRITION_FACTS;
     this.selectedBean = {};
     this.previewBean = {};
   }

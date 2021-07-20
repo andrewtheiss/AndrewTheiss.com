@@ -1,4 +1,5 @@
 import React from 'react';
+import NutritionFactsPreview from './NutritionFactsPreview.js'
 import './ingredients.css'
 /**
  *  IngredientImage
@@ -10,7 +11,7 @@ class IngredientPreview extends React.Component {
   constructor(props) {
     super(props);
     this.renderNotes = this.renderNotes.bind(this);
-    console.log("preview" ,props);
+    console.log("ingredient preview" ,props);
   }
 
   renderNotes(notes) {
@@ -22,12 +23,13 @@ class IngredientPreview extends React.Component {
 
   render() {
     let notes = this.renderNotes(this.props.ingredient.notes);
+    let nutritionFactsPreview = <NutritionFactsPreview previewData={this.props.ingredient.nutritionFacts}/>;
     return (
       <div key="ingredientPreview">
           <div className="ib">
             <div><b>{this.props.ingredient.name}</b></div>
             <div>Origin: {this.props.ingredient.origin}</div>
-            <div>{this.props.ingredient.category}</div>
+            <div>Type: {this.props.ingredient.category}</div>
             <div>${this.props.ingredient.costPerItem} average per item</div>
             <div>{this.props.ingredient.countPurchased} purchased so far</div>
             <div>Weight: {this.props.ingredient.totalGramWeightPerItem} grams</div>
@@ -39,7 +41,7 @@ class IngredientPreview extends React.Component {
             <img id="img" height="150" src={this.props.ingredient.imageBase64}/>
           </div>
           <div className="ib">
-            Nutrition Facts
+              {nutritionFactsPreview}
           </div>
       </div>
     );

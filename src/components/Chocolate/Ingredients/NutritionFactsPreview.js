@@ -8,41 +8,25 @@ import React from 'react';
 class NutritionFactsPreview extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
-    this.state = {
-      image : ''
-    };
-  }
-
-  handleFileRead = async (event) => {
-    const file = event.target.files[0]
-    const image = await this.convertBase64(file);
-
-    // Validate image is correct size and dimensions
-
-    await this.setState({image});
-    await this.props.onUpdate(this.state);
-  }
-  convertBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file)
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      }
-      fileReader.onerror = (error) => {
-        reject(error);
-      }
-    })
+    console.log('nutritionFacts' , props);
   }
 
   render() {
+    console.log('render preview', this.props);
     return (
-      <div key="ingredientImageUpload">
-        <div>Upload Image</div>
-        <input id="inp" type="file"  onChange={e => this.handleFileRead(e)} ></input>
-        <p id="b64"></p>
-        <img id="img" height="150" src={this.state.image}/>
+      <div className="nutritionFactsOutline">
+        <div className="nutritionFactsLabel">Nutrition Facts</div>
+        <div>Serving Size grams</div>
+        <div>Servings Per Container</div>
+        <div className="amountPerServing">
+          <div className="amountPerServingTitle">Amount Per Serving</div>
+          <div className="cloriesContainer"></div>
+          <div className="calories">Calories</div>
+          <div className="caloriesNumber">{this.props.previewData.caloriesPerServing}</div>
+          <div className="caloriesfromFat">Calories From Fat {this.props.previewData.caloriesFromFat}</div>
+        </div>
+        <div className="secondaryFacts">
+        </div>
       </div>
     );
   }
