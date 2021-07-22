@@ -84,7 +84,6 @@ class IngredientNew extends React.Component {
 
   updateNutritionFacts(facts) {
     let nutritionFacts = facts;
-    console.log('updated nutritionFacts', facts);
     this.setState({nutritionFacts});
   }
 

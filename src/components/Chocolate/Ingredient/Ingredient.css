@@ -65,8 +65,38 @@
   clear: both;
 }
 
+.nutritionFactsSingleRow {
+  border-bottom: 1px solid #ccc;
+}
+
 .nutritionFactsCalories {
   padding-top: 0.4em;
   font-weight: 800;
   font-size: 1.2em;
+}
+
+.nutritionFactsTabSpacing0 {
+  width: 0px;
+  float: left;
+  height: 0px;
+}
+
+.nutritionFactsTabSpacing1 {
+  width: 15px;
+  float: left;
+  height: 2px;
+}
+
+.nutritionFactsTabSpacing2 {
+  width: 30px;
+  float: left;
+  height: 2px;
+}
+
+.nutritionFactsIb {
+  display: inline-block;
+}
+
+.nutritionFactsIb.right {
+  float: right;
 }

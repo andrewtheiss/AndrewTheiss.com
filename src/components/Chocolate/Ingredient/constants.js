@@ -8,7 +8,7 @@ export const NUTRITION_FACTS = {
   caloriesFromFat : 0,
   totalFat : 0,
   saturatedFat : 0,
-  tarnsFat : 0,
+  transFat : 0,
   cholesterol : 0,
   sodium : 0,
   totalCarbohydrates : 0,
@@ -36,7 +36,7 @@ export const NUTRITION_LABEL_STRINGS = {
   calories : 'Calories',
   totalFat : 'Total Fat',
   saturatedFat : 'Saturated Fat',
-  tarnsFat : 'Trans Fat',
+  transFat : 'Trans Fat',
   cholesterol : 'Cholesterol',
   sodium : 'Sodium',
   totalCarbohydrates : 'Total Carbohydrate',
@@ -95,8 +95,8 @@ export const NUTRITION_REQUIRED = {
   calories : true,
   caloriesFromFat : true,
   totalFat : true,
-  saturageFat : true,
-  tarnsFat : true,
+  saturatedFat : true,
+  transFat : true,
   cholesterol : true,
   sodium : true,
   totalCarbohydrates : true,
@@ -107,14 +107,31 @@ export const NUTRITION_REQUIRED = {
   servingSizeInGrams : true
 };
 
-export const NUTRITION_BOLD_LABEL = {
-  totalFat : true,
-  sodium : true,
-  totalCarbohydrates : true,
-  protein : true,
-  calories : true,
-  servingSizeInGrams : true
+export const NUTITION_FACTS_HIDE_PERCENT = {
+  transFat : true,
+  totalSugars : true
+}
+
+export const NUTIRITION_FACTS_PERCENT_DAILY_VALUES = {
+  totalFat : 3
+}
+
+/**
+ *  Used to render Nutirion Facts main properties and determine spacing
+ */
+export const NUTRITION_FACTS_PRIMARY_DETAILS_ORDER_AND_TAB_INDENT = {
+  totalFat : 0,
+  saturatedFat : 1,
+  transFat : 1,
+  cholesterol : 0,
+  sodium : 0,
+  totalCarbohydrates : 0,
+  dietaryFiber : 1,
+  totalSugars : 1,
+  addedSugars  : 2,
+  protein : 0
 };
+
 
 // Category is mandatory but handled via select box
 export const NON_NUTRITION_PARAMS = {
