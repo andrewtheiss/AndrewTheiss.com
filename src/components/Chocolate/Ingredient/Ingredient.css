@@ -129,3 +129,10 @@
   max-width: 200px;
   margin: 0px;
 }
+
+.nutritionFactsPctDailyValues {
+  margin: 2px 0px;
+  float: right;
+  font-weight: bold;
+  font-size: 0.8em;
+}

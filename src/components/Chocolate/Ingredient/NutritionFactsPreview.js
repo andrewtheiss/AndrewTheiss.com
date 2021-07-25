@@ -163,6 +163,13 @@ class NutritionFactsPreview extends React.Component {
           <div className="nutritionFactsCalories">Calories</div>
         </div>
         <div className="nutritionFactsPrimaryDetails">
+          <div className="nutritionFactsSingleRow">
+            <div className="nutritionFactsPctDailyValues">
+            % Daily Value*
+            </div>
+            <div className="nutritionFactsPrimaryDetails"></div>
+          </div>
+
           {primaryDetails}
         </div>
         {secondaryDetailsBuffer}
