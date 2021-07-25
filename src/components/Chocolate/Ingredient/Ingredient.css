@@ -35,10 +35,22 @@
 }
 
 .nutritionFactsLargeBarDivider {
-  height: 4px;
+  height: 0.6em;
   width: 100%;
   margin: 2px auto;
   background-color: black;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.6);
+}
+
+.nutritionFactsMediumBarDivider {
+  height: 0.2em;
+  width: 100%;
+  margin: 2px auto;
+  background-color: black;
+}
+
+.nutritionFactsMediumBarDivider.t2 {
+  margin-top: 4px;
 }
 
 .nutritionFactsAmountPerServing {
@@ -50,7 +62,7 @@
 
 .nutritionFactsCloriesContainer {
   font-size: 1.3em;
-  border-bottom: 3px solid black;
+  border-bottom: 0.2em solid black;
   padding-bottom: 1px;
 }
 
@@ -98,5 +110,22 @@
 }
 
 .nutritionFactsIb.right {
+  padding-left: 10px;
   float: right;
+}
+
+.nutritionFactsSingleRow:last-child {
+  border-bottom: none;
+}
+
+.nutritionFactsFooterDisclaimer {
+  max-width: inherit;
+  font-size: 0.6em;
+  font-weight: 500;
+  margin: 0px;
+}
+
+.nutirionFactsFooterWrapper {
+  max-width: 200px;
+  margin: 0px;
 }

@@ -27,6 +27,10 @@ export const NUTRITION_FACTS = {
   betaCaseinA1 : 0
 };
 
+export const NUTIRION_FACTS_SECONDARY_DETAILS = {
+
+}
+
 export const NUTRITION_LABEL_STRINGS = {
   servingsPerContainer : 'Servings Per Container',
   servingSizeInGrams: 'Serving Size',
@@ -88,7 +92,72 @@ export const NUTRITION_MESUREMENTS = {
   calcium : 'mg',
   iron : 'mg',
   potassium : 'mg',
-  vitamingA : 'ug'
+  vitaminA : 'mcg',
+  vitaminB6 : 'mg',
+  vitaminB12 : 'mcg',
+  vitaminC : 'mg',
+  vitaminD : 'mcg',
+  vitaminE : 'mg',
+  vitaminK : 'mcg',
+  magnesium : 'mg',
+  manganese : 'mg',
+  phosphorus : 'mg',
+  biotin : 'mcg',
+  chloride : 'mg',
+  chormium : 'mcg',
+  copper : 'mg',
+  folicAcid : 'mcg',
+  molybdenum: 'mcg',
+  niacin : 'mg',
+  pantothenicAcid : 'mg',
+  riboflavin : 'mg',
+  selenium : 'mcg',
+  thaimin : 'mg',
+  zinc : 'mg',
+  iodine : 'mcg',
+  choline : 'mg'
+};
+
+// From https://www.fda.gov/media/99069/download July 20, 2021
+// and https://www.dietaryguidelines.gov/sites/default/files/2020-12/Dietary_Guidelines_for_Americans_2020-2025.pdf
+// and https://www.accessdata.fda.gov/scripts/interactivenutritionfactslabel/assets/InteractiveNFL_TotalCarbohydrate_March2020.pdf
+// and https://www.usda.gov/media/blog/2015/03/31/online-nutrition-resources-your-fingertips
+export const NUTRITION_RECOMMENDED_DAILY_AMOUNT = {
+  cholesterol : '300',
+  sodium : '2300',
+  vitaminD : '20',
+  calcium : '1300',
+  iron : '18',
+  potassium : '4700',
+  vitaminA : '900',
+  vitaminB6 : '1.7',
+  vitaminB12 : '2.4',
+  vitaminC : '90',
+  vitaminD : '20',
+  vitaminE : '15',
+  vitaminK : '120',
+  magnesium : '420',
+  manganese : '2.3',
+  phosphorus : '1250',
+  biotin : '30',
+  chloride : '2300',
+  chormium : '35',
+  copper : '0.9',
+  folicAcid : '400',
+  molybdenum: '45',
+  niacin : '16',
+  pantothenicAcid : '5',
+  riboflavin : '1.3',
+  selenium : '55',
+  thaimin : '1.2',
+  zinc : '11',
+  iodine : '150',
+  choline : '550',
+  saturatedFat : '20',
+  addedSugars : '50',
+  totalFat : '50',
+  totalCarbohydrates : '275',
+  dietaryFiber : '28'
 };
 
 export const NUTRITION_REQUIRED = {
@@ -109,7 +178,8 @@ export const NUTRITION_REQUIRED = {
 
 export const NUTITION_FACTS_HIDE_PERCENT = {
   transFat : true,
-  totalSugars : true
+  totalSugars : true,
+  protein : true
 }
 
 export const NUTIRITION_FACTS_PERCENT_DAILY_VALUES = {
@@ -130,6 +200,39 @@ export const NUTRITION_FACTS_PRIMARY_DETAILS_ORDER_AND_TAB_INDENT = {
   totalSugars : 1,
   addedSugars  : 2,
   protein : 0
+};
+
+// We only use this as a key-checker for secondary items showing or not
+// We don't use the values for this CONST, use above values
+export const NUTRITION_FACTS_SECONDARY_ITEMS = {
+  vitaminD : '20',
+  calcium : '1300',
+  iron : '18',
+  potassium : '4700',
+  vitaminA : '900',
+  vitaminB6 : '1.7',
+  vitaminB12 : '2.4',
+  vitaminC : '90',
+  vitaminD : '20',
+  vitaminE : '15',
+  vitaminK : '120',
+  magnesium : '420',
+  manganese : '2.3',
+  phosphorus : '1250',
+  biotin : '30',
+  chloride : '2300',
+  chormium : '35',
+  copper : '0.9',
+  folicAcid : '400',
+  molybdenum: '45',
+  niacin : '16',
+  pantothenicAcid : '5',
+  riboflavin : '1.3',
+  selenium : '55',
+  thaimin : '1.2',
+  zinc : '11',
+  iodine : '150',
+  choline : '550'
 };
 
 
