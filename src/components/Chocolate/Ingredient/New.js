@@ -56,19 +56,19 @@ class IngredientNew extends React.Component {
     await this.setState(this.defaultState);
   }
 
-  async updateRecentlyAdded(name) {
+  updateRecentlyAdded(name) {
       const latestDocRef = this.props.firebase.db.collection("ingredients").doc(name);
       let self = this;
-      await latestDocRef.get().then((doc) => {
+      latestDocRef.get().then((doc) => {
           if (doc.exists) {
               console.log("Document data:", doc.data());
               self.recentlyAdded = doc.data();
+              self.render();
           } else {
-              // doc.data() will be undefined in this case
-              console.log("No such document!");
+              console.log("ERROR - Failed to find recently added item!");
           }
       }).catch((error) => {
-          console.log("Error getting document:", error);
+          console.log("Error getting recently added item:", error);
       });
   }
 
@@ -156,7 +156,8 @@ class IngredientNew extends React.Component {
     let self = this;
     const ingredientsCollectionRef = this.props.firebase.db.collection("ingredients");
     ingredientsCollectionRef.doc(ingredientToWrite.name).set(ingredientToWrite).then(() => {
-      self.updateRecentlyAdded(ingredientToWrite);
+      console.log('updating recent' + ingredientToWrite);
+      self.updateRecentlyAdded(ingredientToWrite.name);
       self.reset();
     });
   }

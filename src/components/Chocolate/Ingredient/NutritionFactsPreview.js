@@ -50,7 +50,7 @@ class NutritionFactsSingleRow extends React.Component {
     // Secondary values only render if they are non-zero or exsit
     // Also secondary values (displayed on the lower 1/2 of the label) are not bold
     if (this.props.secondary === true) {
-      if (this.props.value === undefined || this.props.value === 0) {
+      if (this.props.value === undefined || this.props.value === 0 || this.props.value === '0') {
         return '';
       }
       percent = Math.round(dailyRecommendedPercentValue) + '%';

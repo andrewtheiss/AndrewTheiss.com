@@ -20,7 +20,8 @@ export const NUTRITION_FACTS = {
   potassium : 0,
   vitaminD : 0,
   vitaminC : 0,
-  vitaminA : 0
+  vitaminA : 0,
+  magnesium : 0
 };
 
 export const NUTIRION_FACTS_SECONDARY_DETAILS = {
@@ -63,7 +64,8 @@ export const NUTRITION_LABEL_STRINGS = {
   nutritionFacts : 'Nutrition Facts',
   image : 'Image',
   categoryCategories : 'Category Categories',
-  categorySelection : 'Category Selection'
+  categorySelection : 'Category Selection',
+  magnesium : 'Magnesium'
 }
 
 export const NUTRITION_PLACEHOLDER_STRINGS = {
