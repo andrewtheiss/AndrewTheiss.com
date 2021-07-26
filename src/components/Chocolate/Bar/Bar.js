@@ -1,5 +1,5 @@
 import React from 'react';
-import IngredientNew from '../Ingredient/New.js'
+import AddNewIngredientPage from '../Ingredient/Pages/AddNew.js'
 import './Bar.css';
 
 
@@ -89,7 +89,7 @@ class Bar extends React.Component {
         </div>
       ))}
       </div>,
-      <IngredientNew bean={this.selectedBean} dimensions={this.dimensions} key="1" />]
+      <AddNewIngredientPage bean={this.selectedBean} dimensions={this.dimensions} key="1" />]
     );
   }
 }

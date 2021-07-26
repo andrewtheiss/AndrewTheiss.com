@@ -180,3 +180,17 @@
   font-weight: bold;
   font-size: 0.8em;
 }
+
+/** Ingredient Page Main */
+.inventoryPageAddIngredientContainer {
+  display: block;
+}
+
+.inventoryPageAddIngredientContainer.hidden {
+  display: none;
+}
+
+.inventoryPageAddIngredientViewToggle {
+  margin: 20px;
+  padding-bottom: 20px;
+}

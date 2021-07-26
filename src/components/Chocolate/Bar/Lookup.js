@@ -1,7 +1,7 @@
 import React from 'react';
 import  { FirebaseContext } from '../../Firebase';
 import Bar from './Bar.js'
-import IngredientNew from '../Ingredient/New.js'
+import AddNewIngredientPage from '../Ingredient/Pages/AddNew.js'
 import BarLookupSelection from './LookupSelection.js'
 import './Lookup.css';
 

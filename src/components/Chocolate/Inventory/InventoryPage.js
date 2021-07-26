@@ -1,99 +1,42 @@
 import React from 'react';
 import { FirebaseContext } from '../../Firebase';
-import IngredientNew from '../Ingredient/New.js'
-import ChocolateIngredients from './ChocolateIngredients.js'
-import IngredientDetails from './Selections/Details.js'
-const InventoryPage = () => (
- <div>
-   <h1></h1>
-   <InventoryMenu />
- </div>
-);
+import AddNewIngredientPage from '../Ingredient/Pages/AddNew.js'
+import AddNewChocolatePage from '../Chocolate/Pages/AddNew.js'
 
-class InventoryMenu extends React.Component {
+class InventoryPage extends React.Component {
   constructor(props) {
     super(props);
-    this.addChocolate = this.addChocolate.bind(this);
-    this.updateChocolate = this.updateChocolate.bind(this);
-    this.formatChocolateFromState = this.formatChocolateFromState.bind(this);
-    this.getAndFormatChocolateValuesFromSection = this.addAndFormatChocolateValuesFromSection.bind(this);
-    this.addAndFormateChocolateValueDetails = this.addAndFormateChocolateValueDetails.bind(this);
-    this.state = {};
-    this.formattedChocolate = {};
-    this.Ingredient = {};
-    this.chocolateToAdd = {};
-    this.totalCost = 0;
-    this.totalWeight = 0;
-  }
+    this.toggleAddNewIgredient = this.toggleAddNewIgredient.bind(this);
 
-  addChocolate() {
-    this.formatChocolateFromState();
-    console.log('try and add chocolate', this.chocolateToAdd);
-  }
-
-  formatChocolateFromState() {
-    this.chocolateToAdd = {};
-    this.Ingredient = {};
-    this.totalCost = 0;
-    this.totalWeight = 0;
-
-    // Add non-ingredient params FIRST
-    this.addAndFormateChocolateValueDetails();
-
-    // Format Beans 4/6/2021 Currently we only support one
-    // Bug where second added bean overrides first one in BeanSummary.js viewer
-    if(this.state.values.Beans.length > 1) {
-      alert('Multiple Beans Not Yet Coded');
-      return;
+    this.state = {
+      showAddNewIngredient : false
     }
-
-    // Add MultiSelect Sections to ChocolateToAdd
-    const selections = ['Dairy', 'Sweetener', 'Cocoa', 'Other'];
-    for (var i = 0; i < selections.length; i++) {
-      var nextSelection = selections[i];
-      var valuesFromNextSection = this.addAndFormatChocolateValuesFromSection(this.state.values[nextSelection]);
-    }
-    this.chocolateToAdd['Ingredient'] = this.Ingredient;
-
-    console.log(this.state);
-    // Format items in inventory + autocalculate cost
-
-
-    return {};
   }
 
-  addAndFormatChocolateValuesFromSection(values) {
-      for (var i = 0; i < values.length; i++) {
-        this.Ingredient[values[i].value] = values[i].weight;
-      }
-  }
-
-  addAndFormateChocolateValueDetails() {
-      if (this.state.values.Details != undefined) {
-        this.chocolateToAdd = this.state.values.Details;
-      }
-  }
-
-  formatStateFromChocolate() {
-
-  }
-
-  updateChocolate(values) {
-    console.log('update chocolate',values);
-    this.setState({values});
+  toggleAddNewIgredient() {
+    let showAddNewIngredient = !this.state.showAddNewIngredient;
+    this.setState({showAddNewIngredient});
   }
 
   render() {
-    //console.log(this.props);
+    let toggleAddNewIgredient = (this.state.showAddNewIngredient === true) ? 'Hide Add New Ingredient' : 'Show Add New Ingredient';
+    let toggleAddNewIgredientHiddenClass = (this.state.showAddNewIngredient === true) ? 'inventoryPageAddIngredientContainer' : 'inventoryPageAddIngredientContainer hidden';
+
     return (
       <div>
+        <h1></h1>
         <FirebaseContext.Consumer>
-          {firebase => <IngredientNew firebase={firebase} />}
+          {firebase => <AddNewChocolatePage firebase={firebase} />}
         </FirebaseContext.Consumer>
-        <br />  <br />
-        <ChocolateIngredients onChange={this.updateChocolate}/>
-        <button onClick={this.addChocolate}>Add Chocolate</button>
-        <br />
+
+        <div className="inventoryPageAddIngredientViewToggle">
+          <button onClick={this.toggleAddNewIgredient} className="inventoryPageToggleIngredientView">{toggleAddNewIgredient}</button>
+          <div className={toggleAddNewIgredientHiddenClass}>
+            <FirebaseContext.Consumer>
+              {firebase => <AddNewIngredientPage firebase={firebase} />}
+            </FirebaseContext.Consumer>
+          </div>
+        </div>
        </div>
     );
   }

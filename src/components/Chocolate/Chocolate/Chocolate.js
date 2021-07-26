@@ -1,5 +1,5 @@
 import React from 'react';
-import IngredientNew from '../Ingredient/New.js'
+import AddNewIngredientPage from '../Ingredient/Pages/AddNew.js'
 import ChocolatePreview from './Preview.js'
 import './Chocolate.css';
 

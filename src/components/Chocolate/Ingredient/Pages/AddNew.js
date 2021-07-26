@@ -1,13 +1,13 @@
 import React from 'react';
-import { FirebaseContext } from '../../Firebase';
+import { FirebaseContext } from '../../../Firebase';
 import MultiSelect from "react-multi-select-component";
-import IngredientNurtitionFacts from './NutritionFacts.js'
-import IngredientImage from './Image.js'
-import IngredientPreview from './Preview.js'
-import * as CONSTS from './constants.js'
-import './Ingredient.css'
+import IngredientNurtitionFacts from '../NutritionFacts.js'
+import IngredientImage from '../Image.js'
+import IngredientPreview from '../Preview.js'
+import * as CONSTS from '../constants.js'
+import '../Ingredient.css'
 
-class IngredientNew extends React.Component {
+class AddNewIngredientPage extends React.Component {
   constructor(props) {
     super(props);
     this.renderNonNutritionParams = this.renderNonNutritionParams.bind(this);
@@ -193,4 +193,4 @@ class IngredientNew extends React.Component {
     );
   }
 }
- export default IngredientNew;
+ export default AddNewIngredientPage;
