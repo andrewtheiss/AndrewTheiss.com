@@ -57,12 +57,18 @@ class IngredientNew extends React.Component {
   }
 
   async updateRecentlyAdded(name) {
-      const ingredientsCollectionRef = this.props.firebase.db.collection("ingredients");
+      const latestDocRef = this.props.firebase.db.collection("ingredients").doc(name);
       let self = this;
-      await ingredientsCollectionRef.where("name", "==", name).get().then(function(ingredientCollectionDocs) {
-        ingredientCollectionDocs.forEach(function(doc) {
-          self.recentlyAdded = doc.data();
-        });
+      await latestDocRef.get().then((doc) => {
+          if (doc.exists) {
+              console.log("Document data:", doc.data());
+              self.recentlyAdded = doc.data();
+          } else {
+              // doc.data() will be undefined in this case
+              console.log("No such document!");
+          }
+      }).catch((error) => {
+          console.log("Error getting document:", error);
       });
   }
 
