@@ -1,4 +1,5 @@
 import React from 'react';
+import { FirebaseContext } from '../../Firebase';
 import IngredientNew from '../Ingredient/New.js'
 import ChocolateIngredients from './ChocolateIngredients.js'
 import IngredientDetails from './Selections/Details.js'
@@ -86,7 +87,9 @@ class InventoryMenu extends React.Component {
     //console.log(this.props);
     return (
       <div>
-      <IngredientNew />
+        <FirebaseContext.Consumer>
+          {firebase => <IngredientNew firebase={firebase} />}
+        </FirebaseContext.Consumer>
         <br />  <br />
         <ChocolateIngredients onChange={this.updateChocolate}/>
         <button onClick={this.addChocolate}>Add Chocolate</button>

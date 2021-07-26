@@ -1,9 +1,11 @@
 import React from 'react';
+import { FirebaseContext } from '../../Firebase';
 import MultiSelect from "react-multi-select-component";
 import IngredientNurtitionFacts from './NutritionFacts.js'
 import IngredientImage from './Image.js'
 import IngredientPreview from './Preview.js'
 import * as CONSTS from './constants.js'
+import './Ingredient.css'
 
 class IngredientNew extends React.Component {
   constructor(props) {
@@ -15,17 +17,29 @@ class IngredientNew extends React.Component {
     this.updateNutritionFacts = this.updateNutritionFacts.bind(this);
     this.updateImage = this.updateImage.bind(this);
     this.addIngredient = this.addIngredient.bind(this);
+    this.writeToDatabase = this.writeToDatabase.bind(this);
+    this.getDefaultState = this.getDefaultState.bind(this);
+    this.reset = this.reset.bind(this);
+    this.renderRecentlyAdded = this.renderRecentlyAdded.bind(this);
+    this.updateRecentlyAdded = this.updateRecentlyAdded.bind(this);
 
-    // When state changes, render is called
+    this.defaultState = this.getDefaultState();
+    this.state = this.getDefaultState();
+
+    // After adding we update recently added
+    this.recentlyAdded = null;
+  }
+
+  getDefaultState() {
     var categoryCategories = this.formatCategoryOptions();
-    this.state = {
+    return {
       name : '',
       category : '',
       notes : '',
       origin : '',
       source : '',
       totalGramWeightPerItem : '100',
-      pricePerKg : 0,
+      latestPricePerKg : 0,
       costPerItem : "1.00",
       countPurchased : 1,
       latestPurchasePrice : "1.00",
@@ -38,9 +52,28 @@ class IngredientNew extends React.Component {
     };
   }
 
-  updateElement(event) {
-
+  async reset() {
+    await this.setState(this.defaultState);
   }
+
+  async updateRecentlyAdded(name) {
+      const ingredientsCollectionRef = this.props.firebase.db.collection("ingredients");
+      let self = this;
+      await ingredientsCollectionRef.where("name", "==", name).get().then(function(ingredientCollectionDocs) {
+        ingredientCollectionDocs.forEach(function(doc) {
+          self.recentlyAdded = doc.data();
+        });
+      });
+  }
+
+  renderRecentlyAdded() {
+    if (this.recentlyAdded === null) {
+      return <div></div>;
+    }
+
+    return <IngredientPreview ingredient={this.recentlyAdded} />
+  }
+
   formatCategoryOptions() {
      var categoryCategories = [];
      var categoryOptions = CONSTS.INGREDIENT_CATEGORIES;
@@ -92,38 +125,63 @@ class IngredientNew extends React.Component {
     this.setState({imageBase64});
   }
 
-  addIngredient() {
-
-    // Calculate pricePerKg
-    let pricePerKg = this.state.totalGramWeightPerItem * 1000 / this.state.costPerItem;
-    this.setState({pricePerKg});
-
+  async addIngredient() {
     let latestPurchasePrice = this.state.costPerItem;
     this.setState({latestPurchasePrice});
 
-    console.log('Adding Ingredient', this.state);
+    let runningTotalOfPurchasedCosts = Number(this.state.countPurchased) * Number(this.state.costPerItem);
+    this.setState({runningTotalOfPurchasedCosts});
+
+    let changeLog = "Created entry on:" + new Date().toDateString();
+    this.setState({changeLog});
+
+    let latestPricePerKg = Math.round((Number(this.state.latestPurchasePrice) / Number(this.state.totalGramWeightPerItem)) * 1000000) / 1000;
+    await this.setState({latestPricePerKg});
+
+    let ingredientToWrite = JSON.parse(JSON.stringify(this.state));
+
+    // Cleanup object properties for UI
+    delete ingredientToWrite['categoryCategories'];
+    delete ingredientToWrite['categorySelection'];
+    this.writeToDatabase(ingredientToWrite);
+  }
+
+  writeToDatabase(ingredientToWrite) {
+    let self = this;
+    const ingredientsCollectionRef = this.props.firebase.db.collection("ingredients");
+    ingredientsCollectionRef.doc(ingredientToWrite.name).set(ingredientToWrite).then(() => {
+      self.updateRecentlyAdded(ingredientToWrite);
+      self.reset();
+    });
   }
 
   render() {
     this.nonNutritionParams = this.renderNonNutritionParams();
     let ingredientPreview = <IngredientPreview ingredient={this.state} />;
+    let latestAddedPreview = this.renderRecentlyAdded();
     const options = CONSTS.INGREDIENT_CATEGORIES;
     return (
       <div>
-        <div>Add Ingredient</div>
-        {this.nonNutritionParams}
-
-        <b>Category: </b><MultiSelect
-          options={this.state.categoryCategories}
-          value={this.state.categorySelection}
-          onChange={this.setSelected}
-          labelledBy="Select"
-        />
-        <br />
-        <IngredientNurtitionFacts onUpdate={this.updateNutritionFacts} facts={this.state.nutritionFacts}/>
-        <IngredientImage onUpdate={this.updateImage} image={this.state.image} />
-        <button onClick={this.addIngredient}>Add Ingredient</button>
-        {ingredientPreview}
+        <div className="newIngredientAddDetailsFormContainer ib">
+          <div className="newIngredientAddIngredientTitle">Add Ingredient</div>
+          {this.nonNutritionParams}
+          <div className="newIngredientMultiselectContainer">
+            <b>Category: </b><MultiSelect
+              options={this.state.categoryCategories}
+              value={this.state.categorySelection}
+              onChange={this.setSelected}
+              labelledBy="Select"
+            />
+          </div>
+          <br />
+          <IngredientNurtitionFacts onUpdate={this.updateNutritionFacts} facts={this.state.nutritionFacts}/>
+          <IngredientImage onUpdate={this.updateImage} image={this.state.image} />
+          <button onClick={this.addIngredient}>Add Ingredient</button>
+        </div>
+        <div className="ib fl">
+          {ingredientPreview}
+        </div>
+          {latestAddedPreview}
        </div>
     );
   }

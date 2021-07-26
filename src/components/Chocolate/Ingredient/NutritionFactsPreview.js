@@ -12,11 +12,6 @@ const DefaultDisclaimer = () => (
   </p>
 );
 class AddedSugarDisclaimer extends React.Component {
-  constructor(props) {
-    super(props);
-    console.log(props);
-  }
-
   render() {
     return (  <p className="nutritionFactsFooterDisclaimer">
         1 One servings adds {this.props.value}g of sugar to your diet and
@@ -33,9 +28,6 @@ class AddedSugarDisclaimer extends React.Component {
  *  onUpdateImage :  function  to update parent state
  */
 class NutritionFactsSingleRow extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     let id = CONSTS.NUTRITION_LABEL_STRINGS[this.props.dataKey];
     let spacingClass = "nutritionFactsTabSpacing" + this.props.indentAmount;
@@ -44,7 +36,6 @@ class NutritionFactsSingleRow extends React.Component {
     if (this.props.indentAmount <= 0) {
       id = <Bold value={id}  />;
     }
-    let indent = this.props.indentAmount;
     let units = (CONSTS.NUTRITION_MESUREMENTS[this.props.dataKey] === undefined) ? 'g' : CONSTS.NUTRITION_MESUREMENTS[this.props.dataKey];
     let dailyRecommendedAmount = CONSTS.NUTRITION_RECOMMENDED_DAILY_AMOUNT[this.props.dataKey];
     let dailyRecommendedPercentValue = 100 * (Number(this.props.value) / Number(dailyRecommendedAmount));
@@ -101,11 +92,10 @@ class NutritionFactsPreview extends React.Component {
   generateSecondaryDetailsBuffer() {
     const secondaryDetails = CONSTS.NUTRITION_FACTS_SECONDARY_ITEMS;
     let hasSecondaryDetails = '';
-    for (const [key,value] of Object.entries(secondaryDetails)) {
-      if (this.props.previewData[key]) {
+    for (const key of Object.entries(secondaryDetails)) {
+      if (this.props.previewData[key[0]]) {
         hasSecondaryDetails = <div className="nutritionFactsLargeBarDivider"></div>;
       }
-      console.log(this.props.previewData[key]);
     }
     return hasSecondaryDetails;
   }
@@ -123,11 +113,9 @@ class NutritionFactsPreview extends React.Component {
   }
 
   generateSugarFooterDisclaimer() {
-    let temp = "yea";
     let footerDisclaimer = <div></div>;
     if (this.props.previewData['addedSugars'] > 0) {
       let dailyRecommendedAmount = CONSTS.NUTRITION_RECOMMENDED_DAILY_AMOUNT['addedSugars'];
-      console.log(dailyRecommendedAmount);
       let dailyRecommendedPercentValue = 100 * (Number(this.props.previewData['addedSugars']) / Number(dailyRecommendedAmount));
       footerDisclaimer = <AddedSugarDisclaimer value={this.props.previewData['addedSugars']}  pct={dailyRecommendedPercentValue} />;
     }
@@ -138,12 +126,10 @@ class NutritionFactsPreview extends React.Component {
   document.getElementById(this.footerUniqueId).style.maxWidth = 5 + "px";
     let nutritionFactsRenderedDynamicWidth = document.getElementById(this.uniqueId).getBoundingClientRect().width;
     let finalWidth = Math.round(nutritionFactsRenderedDynamicWidth - 5);
-    console.log(document.getElementById(this.uniqueId).getBoundingClientRect().width);
     document.getElementById(this.footerUniqueId).style.maxWidth = finalWidth + "px";
   }
 
   render() {
-    console.log('render preview', this.props);
     let servingSizeSingularOrPlural = (this.props.previewData.servingsPerContainer === "1") ? 'serving' : 'servings';
     let servingAmountSingularOrPlural = (this.props.previewData.servingSizeInGrams === "1") ? 'gram' : 'grams';
     let primaryDetails = this.generatePrimaryDetails();

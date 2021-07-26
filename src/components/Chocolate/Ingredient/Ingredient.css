@@ -3,8 +3,50 @@
   padding: 10px;
 }
 
+.fl {
+  float: left;
+}
+
+.newIngredientAddIngredientTitle {
+  font-size: 2em;
+  text-align: center;
+  font-weight: bold;
+}
+
+.newIngredientAddDetailsFormContainer {
+  max-width: 500px;
+}
+
+.ingredientPreviewName {
+  font-size: 1.3em;
+  text-align: center;
+  padding-bottom: 5px;
+}
+
 .inventoryNotes {
   max-width: 200px;
+  font-size: 0.8em;
+  line-height: 1em;
+}
+
+.ingredientPreviewImage {
+  margin: 20px;
+}
+
+.ingredientPreviewOverviewDetails {
+  margin: 20px;
+  max-width: 200px;
+  font-size: 1.1em;
+  line-height: 1.2em;
+  word-break: normal;
+}
+
+.ingredientPreviewLineItem {
+  padding-top: 7px;
+}
+
+.newIngredientMultiselectContainer {
+  max-width: 400px;
 }
 
 /**  Nutirion Facts */

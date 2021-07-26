@@ -62,7 +62,7 @@ class IngredientImage extends React.Component {
         <div>Upload Image:   {errorHidden}</div>
         <input id="inp" type="file"  onChange={e => this.handleFileRead(e)} ></input>
         <p id="b64"></p>
-        <img id="img" height="150" src={this.state.image}/>
+        <img id="img" height="150" alt="" src={this.state.image}/>
       </div>
     );
   }

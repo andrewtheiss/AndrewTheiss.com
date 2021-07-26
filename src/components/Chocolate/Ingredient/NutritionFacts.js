@@ -13,7 +13,6 @@ class IngredientNurtitionFacts extends React.Component {
     super(props);
     this.renderNutritionFacts = this.renderNutritionFacts.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
-    console.log(props);
     this.state = CONSTS.NUTRITION_FACTS;
     this.selectedBean = {};
     this.previewBean = {};
@@ -29,7 +28,7 @@ class IngredientNurtitionFacts extends React.Component {
     let self = this;
     let factsForm = Object.keys(this.state).map((key) => (
       <div key={CONSTS.NUTRITION_LABEL_STRINGS[key]} >
-        <b>{CONSTS.NUTRITION_LABEL_STRINGS[key]}: </b><input name={key} value={self.state[key]} type="text" onChange={this.onUpdate}></input>
+        <b>{CONSTS.NUTRITION_LABEL_STRINGS[key]}: </b><input size="5" name={key} value={self.state[key]} type="text" onChange={this.onUpdate}></input>
       </div>
     ));
     return factsForm;

@@ -7,7 +7,7 @@ class IngredientDetails extends React.Component {
     this.state = {
       label : '000-2021-00A',
       cost : -1,
-      creation : '01/01/2021',
+      creation : '01-01-2021',
       grindInHours : 48,
       kgYield : 0,
       notes : '',

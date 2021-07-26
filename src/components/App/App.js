@@ -25,7 +25,9 @@ const App = () => (
             {firebase => <Route exact path={ROUTES.LANDING} component={ChocolatePageTest} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <Route path={ROUTES.SCRIPTS} component={ScriptsPage} />
-      <Route path={ROUTES.INVENTORY} component={InventoryPage} />
+      <FirebaseContext.Consumer>
+          {firebase => <Route path={ROUTES.INVENTORY} component={InventoryPage} firebase={firebase} />}
+      </FirebaseContext.Consumer>
       <Route path={ROUTES.SIGNUP} component={SignUpPage} />
       <FirebaseContext.Consumer>
         {firebase => <Route path={ROUTES.SIGNIN} component={SignInPage} firebase={firebase} />}

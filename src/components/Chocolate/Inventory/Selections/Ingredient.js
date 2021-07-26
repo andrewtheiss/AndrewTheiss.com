@@ -1,8 +1,6 @@
 import React from 'react';
 import { withFirebase } from '../../../Firebase';
 import IngredientWeight from './IngredientWeight.js'
-import RoastFinal from './RoastFinal.js'
-import * as CONSTS from '../constants.js'
 import '../../Theme/main.css';
 import MultiSelect from "react-multi-select-component";
 import './selections.css'
@@ -37,7 +35,7 @@ class Ingredientelection extends React.Component {
         IngredientMap[doc.id] = doc.data();
         options.push({label:doc.data()['name'], value : doc.id, weight : ingWeight});
       });
-      
+
       self.setState({
         IngredientMap : IngredientMap,
         options : options
@@ -60,7 +58,7 @@ class Ingredientelection extends React.Component {
     let selectedIngredientWeights = '';
     let selected = this.state.selected;
     var self = this;
-    let hasItems = !(!selected || selected.length == 0);
+    let hasItems = !(!selected || selected.length === 0 || selected.length === '0');
     if (hasItems) {
 
     // Creating a unique key forces re-render ONLY each time length is changed

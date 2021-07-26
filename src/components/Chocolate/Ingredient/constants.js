@@ -5,7 +5,6 @@ export const NUTRITION_FACTS = {
 
   // All items in Grams unless otherwise stated
   calories : 0,
-  caloriesFromFat : 0,
   totalFat : 0,
   saturatedFat : 0,
   transFat : 0,
@@ -22,9 +21,7 @@ export const NUTRITION_FACTS = {
   potassium : 0,
   vitaminD : 0,
   vitaminC : 0,
-  vitaminA : 0,
-  betaCaseinA2 : 0,
-  betaCaseinA1 : 0
+  vitaminA : 0
 };
 
 export const NUTIRION_FACTS_SECONDARY_DETAILS = {
@@ -35,7 +32,6 @@ export const NUTRITION_LABEL_STRINGS = {
   servingsPerContainer : 'Servings Per Container',
   servingSizeInGrams: 'Serving Size',
   caloriesPerServing : 'Calories Per Serving',
-  caloriesFromFat : 'Calories From Fat',
   caloriesPerGram : 'Calories Per Gram',
   calories : 'Calories',
   totalFat : 'Total Fat',
@@ -55,16 +51,14 @@ export const NUTRITION_LABEL_STRINGS = {
   vitaminD : 'Vitamin D',
   vitaminC : 'Vitamin C',
   vitaminA : 'Vitamin A',
-  betaCaseinA2 : 'Beta-casein A2',
-  betaCaseinA1 : 'Beta-casein A1',
   name : 'Name',
   category : 'Category',
   notes : 'Notes',
-  origin : 'Origin',
+  origin : 'Country Origin - Company',
   source : 'Source',
   totalGramWeightPerItem : 'Total Weight Per Item',
   costPerItem : 'Cost Per Item',
-  pricePerKg : 'Price Per Kg',
+  latestPricePerKg : 'Latest Price Per Kg',
   countPurchased : 'Number of Items Purchased',
   latestPurchasePrice : 'Latest Purchase Price',
   runningTotalOfPurchasedCosts : 'Running Total of All Item Purchase Costs',
@@ -88,7 +82,6 @@ export const NUTRITION_PLACEHOLDER_STRINGS = {
 export const NUTRITION_MESUREMENTS = {
   cholesterol : 'mg',
   sodium : 'mg',
-  vitaminD : 'mcg',
   calcium : 'mg',
   iron : 'mg',
   potassium : 'mg',
@@ -125,7 +118,6 @@ export const NUTRITION_MESUREMENTS = {
 export const NUTRITION_RECOMMENDED_DAILY_AMOUNT = {
   cholesterol : '300',
   sodium : '2300',
-  vitaminD : '20',
   calcium : '1300',
   iron : '18',
   potassium : '4700',
@@ -162,7 +154,6 @@ export const NUTRITION_RECOMMENDED_DAILY_AMOUNT = {
 
 export const NUTRITION_REQUIRED = {
   calories : true,
-  caloriesFromFat : true,
   totalFat : true,
   saturatedFat : true,
   transFat : true,
@@ -205,7 +196,6 @@ export const NUTRITION_FACTS_PRIMARY_DETAILS_ORDER_AND_TAB_INDENT = {
 // We only use this as a key-checker for secondary items showing or not
 // We don't use the values for this CONST, use above values
 export const NUTRITION_FACTS_SECONDARY_ITEMS = {
-  vitaminD : '20',
   calcium : '1300',
   iron : '18',
   potassium : '4700',
