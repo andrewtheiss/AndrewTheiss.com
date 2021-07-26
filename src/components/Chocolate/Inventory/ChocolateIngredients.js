@@ -1,6 +1,4 @@
 import React from 'react';
-import AddNewIngredientPage from '../Ingredient/Pages/AddNew.js'
-
 import BeanSelection from './Selections/Bean.js'
 import Ingredientelection from './Selections/Ingredient.js'
 import IngredientDetails from './Selections/Details.js'

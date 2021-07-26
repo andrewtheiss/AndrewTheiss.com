@@ -1,5 +1,4 @@
 import React from 'react';
-import { FirebaseContext } from '../../../Firebase';
 import MultiSelect from "react-multi-select-component";
 import IngredientNurtitionFacts from '../NutritionFacts.js'
 import IngredientImage from '../Image.js'
@@ -109,9 +108,7 @@ class AddNewIngredientPage extends React.Component {
   }
 
   renderNonNutritionParams() {
-    var nonNutritionItems = CONSTS.NON_NUTRITION_PARAMS;
     var strings = CONSTS.NUTRITION_LABEL_STRINGS;
-    var placeholders = CONSTS.NUTRITION_PLACEHOLDER_STRINGS;
     var self = this;
     var nonNutritionParams = Object.keys(CONSTS.NON_NUTRITION_PARAMS).map((key) => (
       <div key={key} >
@@ -166,7 +163,6 @@ class AddNewIngredientPage extends React.Component {
     this.nonNutritionParams = this.renderNonNutritionParams();
     let ingredientPreview = <IngredientPreview ingredient={this.state} />;
     let latestAddedPreview = this.renderRecentlyAdded();
-    const options = CONSTS.INGREDIENT_CATEGORIES;
     return (
       <div>
         <div className="newIngredientAddDetailsFormContainer ib">
