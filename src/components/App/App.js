@@ -17,6 +17,8 @@ import SignUpPage from '../Session/SignUpForm.js'
 import IngredientPage from '../Chocolate/Ingredient/Pages/IngredientPage.js'
 import BarLookupPage from '../Chocolate/Bar/Pages/Lookup.js'
 import BeanLookupPage from '../Chocolate/Bean/Pages/Lookup.js'
+import CreateNewChocolateBatchPage from '../Chocolate/Batch/Pages/CreateNew.js'
+
 
 
 const App = () => (
@@ -38,7 +40,7 @@ const App = () => (
           {firebase => <Route path={ROUTES.CHOCOLATE.COMPARISON} component={IngredientPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.BATCH} component={IngredientPage} firebase={firebase} />}
+          {firebase => <Route path={ROUTES.CHOCOLATE.BATCH} component={CreateNewChocolateBatchPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
           {firebase => <Route path={ROUTES.CHOCOLATE.BAR} component={BarLookupPage} firebase={firebase} />}

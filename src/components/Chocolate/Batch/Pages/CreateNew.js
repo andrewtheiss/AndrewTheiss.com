@@ -1,10 +1,10 @@
 import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
-import ChocolateIngredients from '../../Inventory/ChocolateIngredients.js'
-import IngredientDetails from '../../Inventory/Selections/Details.js'
+import BatchIngredients from '../BatchIngredients.js'
+import IngredientDetails from '../Selections/Details.js'
 
 
-class AddNewChocolatePage extends React.Component {
+class CreateNewChocolateBatchPage extends React.Component {
   constructor(props) {
     super(props);
     this.addChocolate = this.addChocolate.bind(this);
@@ -83,11 +83,11 @@ class AddNewChocolatePage extends React.Component {
       <div>
 
         <br />  <br />
-        <ChocolateIngredients onChange={this.updateChocolate}/>
+        <BatchIngredients onChange={this.updateChocolate}/>
         <button onClick={this.addChocolate}>Add Chocolate</button>
        </div>
     );
   }
 }
 
-export default AddNewChocolatePage;
+export default CreateNewChocolateBatchPage;

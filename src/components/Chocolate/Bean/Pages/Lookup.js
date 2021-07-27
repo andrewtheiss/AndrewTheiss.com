@@ -3,7 +3,7 @@ import  { FirebaseContext } from '../../../Firebase';
 
 // Temp imports for testing
 import Bean from '../Bean.js'
-import Chocolate from '../../Chocolate/Chocolate.js'
+import Chocolate from '../../Batch/Chocolate.js'
 
 class BeanLookupPage extends React.Component {
   render() {

@@ -182,15 +182,15 @@
 }
 
 /** Ingredient Page Main */
-.inventoryPageAddIngredientContainer {
+.ingredientPageAddIngredientContainer {
   display: block;
 }
 
-.inventoryPageAddIngredientContainer.hidden {
+.ingredientPageAddIngredientContainer.hidden {
   display: none;
 }
 
-.inventoryPageAddIngredientViewToggle {
+.ingredientPageAddIngredientViewToggle {
   margin: 20px;
   padding-bottom: 20px;
 }

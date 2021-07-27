@@ -13,7 +13,7 @@ const CHOCOLATE_DEFAULTS = {
   Details : []
 }
 
-class ChocolateIngredients extends React.Component {
+class BatchIngredients extends React.Component {
   constructor(props) {
     super(props);
     this.onAddBean = this.onAddBean.bind(this);
@@ -58,6 +58,6 @@ class ChocolateIngredients extends React.Component {
   }
 }
 
-export default ChocolateIngredients;
+export default BatchIngredients;
 
 //

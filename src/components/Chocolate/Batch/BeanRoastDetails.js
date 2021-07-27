@@ -1,7 +1,7 @@
 import React from 'react';
 import { FirebaseContext } from '../../Firebase';
-import ChocolateIngredients from '../Inventory/ChocolateIngredients.js'
-import IngredientDetails from '../Inventory/Selections/Details.js'
+import BatchIngredients from '../Batch/BatchIngredients.js'
+import IngredientDetails from '../Batch/Selections/Details.js'
 
 
 class BeanRoastDetails extends React.Component {
@@ -83,7 +83,7 @@ class BeanRoastDetails extends React.Component {
       <div>
 
         <br />  <br />
-        <ChocolateIngredients onChange={this.updateChocolate}/>
+        <BatchIngredients onChange={this.updateChocolate}/>
         <button onClick={this.addChocolate}>Add Chocolate</button>
        </div>
     );

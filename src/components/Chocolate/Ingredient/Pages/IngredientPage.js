@@ -19,13 +19,13 @@ class IngredientPage extends React.Component {
 
   render() {
     let toggleAddNewIgredient = (this.state.showAddNewIngredient === true) ? 'Hide Add New Ingredient' : 'Show Add New Ingredient';
-    let toggleAddNewIgredientHiddenClass = (this.state.showAddNewIngredient === true) ? 'inventoryPageAddIngredientContainer' : 'inventoryPageAddIngredientContainer hidden';
+    let toggleAddNewIgredientHiddenClass = (this.state.showAddNewIngredient === true) ? 'ingredientPageAddIngredientContainer' : 'ingredientPageAddIngredientContainer hidden';
 
     return (
       <div>
         <h1></h1>
-        <div className="inventoryPageAddIngredientViewToggle">
-          <button onClick={this.toggleAddNewIgredient} className="inventoryPageToggleIngredientView">{toggleAddNewIgredient}</button>
+        <div className="ingredientPageAddIngredientViewToggle">
+          <button onClick={this.toggleAddNewIgredient} className="ingredientPageToggleIngredientView">{toggleAddNewIgredient}</button>
           <div className={toggleAddNewIgredientHiddenClass}>
             <FirebaseContext.Consumer>
               {firebase => <AddNewIngredientPage firebase={firebase} />}

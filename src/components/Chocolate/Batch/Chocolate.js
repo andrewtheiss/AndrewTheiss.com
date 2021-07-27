@@ -1,7 +1,7 @@
 import React from 'react';
 import AddNewIngredientPage from '../Ingredient/Pages/AddNew.js'
 import ChocolatePreview from './Preview.js'
-import './Chocolate.css';
+import './Batch.css';
 
 
 class Chocolate extends React.Component {

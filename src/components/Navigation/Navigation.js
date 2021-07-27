@@ -68,22 +68,22 @@ const NavigationAdminAuth = () => (
     </li>
       <ul>
         <li>
+          <Link to={ROUTES.CHOCOLATE.TASTING}>Tasting</Link>
+        </li>
+        <li>
           <Link to={ROUTES.CHOCOLATE.BEAN}>Beans</Link>
         </li>
         <li>
           <Link to={ROUTES.CHOCOLATE.INGREDIENT}>Ingredients</Link>
         </li>
         <li>
-          <Link to={ROUTES.CHOCOLATE.COMPARISON}>Comparison</Link>
-        </li>
-        <li>
           <Link to={ROUTES.CHOCOLATE.BATCH}>Batches</Link>
         </li>
         <li>
-          <Link to={ROUTES.CHOCOLATE.BAR}>Bars</Link>
+          <Link to={ROUTES.CHOCOLATE.COMPARISON}>Comparison</Link>
         </li>
         <li>
-          <Link to={ROUTES.CHOCOLATE.TASTING}>Tasting</Link>
+          <Link to={ROUTES.CHOCOLATE.BAR}>Bars</Link>
         </li>
     </ul>
   </ul>
