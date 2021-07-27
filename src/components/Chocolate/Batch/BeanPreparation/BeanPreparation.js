@@ -7,11 +7,11 @@ import '../../Theme/main.css';
 import MultiSelect from "react-multi-select-component";
 
 /**
- *  BeanSelection handles selecting all bean details for a chocolate inc:
+ *  BeanPreparation handles all bean details for a chocolate inc:
  *
  *  - Bean ID, Weight, Oven Roast Temps
  */
-class BeanSelection extends React.Component {
+class BeanPreparation extends React.Component {
   constructor(props) {
     super(props);
 
@@ -211,4 +211,4 @@ class BeanSelection extends React.Component {
   }
 }
 
-export default withFirebase(BeanSelection);
+export default withFirebase(BeanPreparation);

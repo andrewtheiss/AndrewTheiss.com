@@ -1,6 +1,6 @@
 import React from 'react';
 
-class IngredientDetails extends React.Component {
+class BatchDetails extends React.Component {
   constructor(props) {
     super(props);
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
@@ -30,7 +30,7 @@ class IngredientDetails extends React.Component {
     return (
       <div>
       <br />
-      Ingredient Details
+      Batch Details
       <br />
         Label: <input name="label" value={this.state.label} onChange={this.onUpdateDetails}  type="text"></input>
         <br />
@@ -46,4 +46,4 @@ class IngredientDetails extends React.Component {
   }
 }
 
-export default IngredientDetails;
+export default BatchDetails;

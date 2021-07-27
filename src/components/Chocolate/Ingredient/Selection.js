@@ -1,12 +1,12 @@
 import React from 'react';
-import { withFirebase } from '../../../Firebase';
-import IngredientWeight from './IngredientWeight.js'
-import '../../Theme/main.css';
+import { withFirebase } from '../../Firebase';
+import IngredientSelectionWeight from './SelectionWeight.js'
 import MultiSelect from "react-multi-select-component";
-import './selections.css'
+import '../Theme/main.css';
+import './Ingredient.css'
 
 
-class Ingredientelection extends React.Component {
+class IngredientSelection extends React.Component {
   constructor(props) {
     super(props);
 
@@ -25,7 +25,7 @@ class Ingredientelection extends React.Component {
   }
 
   componentDidMount() {
-    const IngredientCollectionRef = this.props.firebase.db.collection("Ingredient");
+    const IngredientCollectionRef = this.props.firebase.db.collection("ingredients");
     let self = this;
     IngredientCollectionRef.where("category", "==", this.props.name).get().then(function(IngredientCollectionDocs) {
       var IngredientMap = {};
@@ -33,7 +33,11 @@ class Ingredientelection extends React.Component {
       IngredientCollectionDocs.forEach(function(doc) {
       var ingWeight = (doc.data()['weight'] === undefined) ? 0 : doc.data()['weight'];
         IngredientMap[doc.id] = doc.data();
-        options.push({label:doc.data()['name'], value : doc.id, weight : ingWeight});
+        options.push({
+          label:doc.data()['name'],
+          value : doc.id,
+          weight : ingWeight
+          });
       });
 
       self.setState({
@@ -65,7 +69,7 @@ class Ingredientelection extends React.Component {
       var rand = selected.length/3.14159;
 
       selectedIngredientWeights = selected.map((ingredient, index) =>
-        <IngredientWeight
+        <IngredientSelectionWeight
            key={index + rand}
            label={selected[index].label}
            index={index}
@@ -118,4 +122,4 @@ class Ingredientelection extends React.Component {
   }
 }
 
-export default withFirebase(Ingredientelection);
+export default withFirebase(IngredientSelection);

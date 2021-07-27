@@ -1,0 +1,63 @@
+import React from 'react';
+import BeanPreparation from './BeanPreparation/BeanPreparation.js'
+import IngredientSelection from '../Ingredient/Selection.js'
+import BatchDetails from './Details.js'
+import BeanPreparationSummary from './BeanPreparation/BeanPreparationSummary.js'
+
+const CHOCOLATE_DEFAULTS = {
+  Beans : [],
+  Sweetener : [],
+  Dairy : [],
+  Cocoa : [],
+  Other : [],
+  Details : []
+}
+
+class CombineBatchIngredients extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onAddBean = this.onAddBean.bind(this);
+    this.onChangeSelection = this.onChangeSelection.bind(this);
+    this.onChangeDetails = this.onChangeDetails.bind(this);
+    this.onRemoveBean = this.onRemoveBean.bind(this);
+    this.state = CHOCOLATE_DEFAULTS;
+  }
+  onAddBean(newBean) {
+    var Beans = this.state.Beans;
+    Beans.push(newBean);
+    this.setState({Beans});
+    this.props.onChange(this.state);
+  }
+  onChangeSelection(selectionType, values) {
+    this.setState({[selectionType]:values});
+    this.props.onChange(this.state);
+  }
+  onChangeDetails(details) {
+    this.setState({Details:details});
+    this.props.onChange(this.state);
+  }
+  onRemoveBean(beanIndex) {
+    var Beans = this.state.Beans;
+    Beans.splice(Number(beanIndex), 1);
+    this.setState({Beans});
+  }
+  render() {
+    var beanSummaryViewer = <BeanPreparationSummary input={this.state.Beans} name="Bean Viewer" onRemoveBean={this.onRemoveBean} onEditBean={this.onEditBean}/>;
+
+    return (
+      <div>
+        <BeanPreparation name="beans" onAddBean={this.onAddBean} />
+        {beanSummaryViewer}
+        <IngredientSelection input={this.state.Dairy} name="Dairy" onChangeSelection={this.onChangeSelection} />
+        <IngredientSelection input={this.state.Sweeteners} name="Sweetener" onChangeSelection={this.onChangeSelection} />
+        <IngredientSelection input={this.state.Cocoa} name="Cocoa" onChangeSelection={this.onChangeSelection} />
+        <IngredientSelection input={this.state.Other} name="Other" onChangeSelection={this.onChangeSelection} />
+        <BatchDetails input={this.state.details} name="Details" onChangeDetails={this.onChangeDetails} />
+      </div>
+    );
+  }
+}
+
+export default CombineBatchIngredients;
+
+//

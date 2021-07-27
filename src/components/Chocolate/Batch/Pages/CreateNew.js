@@ -1,8 +1,5 @@
 import React from 'react';
-import { FirebaseContext } from '../../../Firebase';
-import BatchIngredients from '../BatchIngredients.js'
-import IngredientDetails from '../Selections/Details.js'
-
+import CombineBatchIngredients from '../CombineIngredients.js'
 
 class CreateNewChocolateBatchPage extends React.Component {
   constructor(props) {
@@ -83,7 +80,7 @@ class CreateNewChocolateBatchPage extends React.Component {
       <div>
 
         <br />  <br />
-        <BatchIngredients onChange={this.updateChocolate}/>
+        <CombineBatchIngredients onChange={this.updateChocolate}/>
         <button onClick={this.addChocolate}>Add Chocolate</button>
        </div>
     );

@@ -1,6 +1,6 @@
 import React from 'react';
 
-class IngredientWeight extends React.Component {
+class IngredientSelectionWeight extends React.Component {
   constructor(props) {
     super(props);
     this.changeValue = this.changeValue.bind(this);
@@ -36,4 +36,4 @@ class IngredientWeight extends React.Component {
   }
 }
 
-export default IngredientWeight;
+export default IngredientSelectionWeight;

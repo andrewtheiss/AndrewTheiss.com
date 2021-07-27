@@ -5,3 +5,20 @@
 .module.small {
   max-width: 500px;
 }
+
+.floatRight {
+  float: right;
+  width: 300px;
+}
+
+.w700 {
+  width: 700px;
+}
+
+.floatLeft {
+  float: left;
+}
+
+.clearBoth {
+  clear: both;
+}
