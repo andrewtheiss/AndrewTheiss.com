@@ -1,11 +1,13 @@
 import React from 'react';
 import CombineBatchIngredients from '../CombineIngredients.js'
+import NutritionCalculator from '../../Ingredient/NutritionCalculator.js'
+import  { FirebaseContext } from '../../../Firebase';
 
 class CreateNewChocolateBatchPage extends React.Component {
   constructor(props) {
     super(props);
     this.addChocolate = this.addChocolate.bind(this);
-    this.updateChocolate = this.updateChocolate.bind(this);
+    this.updateBatchDetails = this.updateBatchDetails.bind(this);
     this.formatChocolateFromState = this.formatChocolateFromState.bind(this);
     this.getAndFormatChocolateValuesFromSection = this.addAndFormatChocolateValuesFromSection.bind(this);
     this.addAndFormateChocolateValueDetails = this.addAndFormateChocolateValueDetails.bind(this);
@@ -42,7 +44,7 @@ class CreateNewChocolateBatchPage extends React.Component {
     const selections = ['Dairy', 'Sweetener', 'Cocoa', 'Other'];
     for (var i = 0; i < selections.length; i++) {
       var nextSelection = selections[i];
-      var valuesFromNextSection = this.addAndFormatChocolateValuesFromSection(this.state.values[nextSelection]);
+      this.addAndFormatChocolateValuesFromSection(this.state.values[nextSelection]);
     }
     this.chocolateToAdd['Ingredient'] = this.Ingredient;
 
@@ -60,7 +62,7 @@ class CreateNewChocolateBatchPage extends React.Component {
   }
 
   addAndFormateChocolateValueDetails() {
-      if (this.state.values.Details != undefined) {
+      if (this.state.values.Details !== undefined) {
         this.chocolateToAdd = this.state.values.Details;
       }
   }
@@ -69,19 +71,21 @@ class CreateNewChocolateBatchPage extends React.Component {
 
   }
 
-  updateChocolate(values) {
+  updateBatchDetails(values) {
     console.log('update chocolate',values);
     this.setState({values});
   }
 
   render() {
-    //console.log(this.props);
+
     return (
       <div>
-
         <br />  <br />
-        <CombineBatchIngredients onChange={this.updateChocolate}/>
+        <CombineBatchIngredients onChange={this.updateBatchDetails}/>
         <button onClick={this.addChocolate}>Add Chocolate</button>
+          <FirebaseContext.Consumer>
+            {firebase => <NutritionCalculator ingredients={this.state} firebase={firebase} />}
+          </FirebaseContext.Consumer>
        </div>
     );
   }

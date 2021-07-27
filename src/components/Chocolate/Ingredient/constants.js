@@ -238,3 +238,4 @@ export const NON_NUTRITION_PARAMS = {
 }
 
 export const INGREDIENT_CATEGORIES = ['Dairy', 'Sweetener', 'Cocoa', 'Other'];
+export const BEAN_NUTRITION_DB_ID = "Cacao Beans";
