@@ -11,9 +11,11 @@ import { AuthUserContext } from '../Session';
 // Import different pages to view based on routing
 import ChocolatePageTest from '../Chocolate/Pages/Test.js'
 import ScriptsPage from '../Scripts/Pages/ScriptsPage.js'
-import InventoryPage from '../Chocolate/Inventory/InventoryPage.js'
 import SignInPage from '../Session/SignInPage.js'
 import SignUpPage from '../Session/SignUpForm.js'
+
+// Chocolate Pages
+import IngredientPage from '../Chocolate/Ingredient/Pages/IngredientPage.js'
 
 
 const App = () => (
@@ -26,7 +28,22 @@ const App = () => (
       </FirebaseContext.Consumer>
       <Route path={ROUTES.SCRIPTS} component={ScriptsPage} />
       <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.INVENTORY} component={InventoryPage} firebase={firebase} />}
+          {firebase => <Route path={ROUTES.CHOCOLATE.BEAN} component={IngredientPage} firebase={firebase} />}
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+          {firebase => <Route path={ROUTES.CHOCOLATE.INGREDIENTS} component={IngredientPage} firebase={firebase} />}
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+          {firebase => <Route path={ROUTES.CHOCOLATE.COMPARISON} component={IngredientPage} firebase={firebase} />}
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+          {firebase => <Route path={ROUTES.CHOCOLATE.BATCH} component={IngredientPage} firebase={firebase} />}
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+          {firebase => <Route path={ROUTES.CHOCOLATE.BAR} component={IngredientPage} firebase={firebase} />}
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+          {firebase => <Route path={ROUTES.CHOCOLATE.TASTING} component={IngredientPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <Route path={ROUTES.SIGNUP} component={SignUpPage} />
       <FirebaseContext.Consumer>
@@ -36,3 +53,7 @@ const App = () => (
   </Router>
 );
 export default withAuthentication(App);
+/*
+https://reactrouter.com/web/example/nesting
+https://reactrouter.com/web/example/auth-workflow
+  */
