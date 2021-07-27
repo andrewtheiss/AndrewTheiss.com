@@ -9,13 +9,14 @@ import { withAuthentication } from '../Session';
 import { AuthUserContext } from '../Session';
 
 // Import different pages to view based on routing
-import ChocolatePageTest from '../Chocolate/Pages/Test.js'
 import ScriptsPage from '../Scripts/Pages/ScriptsPage.js'
 import SignInPage from '../Session/SignInPage.js'
 import SignUpPage from '../Session/SignUpForm.js'
 
 // Chocolate Pages
 import IngredientPage from '../Chocolate/Ingredient/Pages/IngredientPage.js'
+import BarLookupPage from '../Chocolate/Bar/Pages/Lookup.js'
+import BeanLookupPage from '../Chocolate/Bean/Pages/Lookup.js'
 
 
 const App = () => (
@@ -24,14 +25,14 @@ const App = () => (
 
     <div className="app-container">
       <FirebaseContext.Consumer>
-            {firebase => <Route exact path={ROUTES.LANDING} component={ChocolatePageTest} firebase={firebase} />}
+            {firebase => <Route exact path={ROUTES.LANDING} component={BeanLookupPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <Route path={ROUTES.SCRIPTS} component={ScriptsPage} />
       <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.BEAN} component={IngredientPage} firebase={firebase} />}
+          {firebase => <Route path={ROUTES.CHOCOLATE.BEAN} component={BeanLookupPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.INGREDIENTS} component={IngredientPage} firebase={firebase} />}
+          {firebase => <Route path={ROUTES.CHOCOLATE.INGREDIENT} component={IngredientPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
           {firebase => <Route path={ROUTES.CHOCOLATE.COMPARISON} component={IngredientPage} firebase={firebase} />}
@@ -40,7 +41,7 @@ const App = () => (
           {firebase => <Route path={ROUTES.CHOCOLATE.BATCH} component={IngredientPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.BAR} component={IngredientPage} firebase={firebase} />}
+          {firebase => <Route path={ROUTES.CHOCOLATE.BAR} component={BarLookupPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
           {firebase => <Route path={ROUTES.CHOCOLATE.TASTING} component={IngredientPage} firebase={firebase} />}
