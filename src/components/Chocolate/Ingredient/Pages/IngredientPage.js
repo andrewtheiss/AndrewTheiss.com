@@ -23,7 +23,7 @@ class IngredientPage extends React.Component {
 
     return (
       <div>
-        <h1></h1>
+        <h1>Ingredient Page</h1>
         <div className="ingredientPageAddIngredientViewToggle">
           <button onClick={this.toggleAddNewIgredient} className="ingredientPageToggleIngredientView">{toggleAddNewIgredient}</button>
           <div className={toggleAddNewIgredientHiddenClass}>

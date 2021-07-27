@@ -71,7 +71,7 @@ class BeanSelection extends React.Component {
     let roastTimeTemp = '';
     let roast = this.state.latestBean.roast;
     var self = this;
-    if (!roast || roast.length == 0) {
+    if (!roast || roast.length === 0) {
         roastTimeTemp = <RoastSelection key="0" input={CONSTS.ROAST_INITIAL} index="0" name="beans" onChangeRoast={this.onChangeRoast} onAddRoast={this.onAddRoast} onRemoveRoast={this.onRemoveRoast} />;
     } else {
     // Creating a unique key forces re-render ONLY each time length is changed
@@ -138,12 +138,12 @@ class BeanSelection extends React.Component {
     if (this.state.selected.length > 1) {
       alert('too many beans selected');
       isValid = false;
-    } else if (this.state.selected.length == 0) {
+    } else if (this.state.selected.length === 0) {
       alert('no beans selected');
       isValid = false;
     }
 
-    if (isValid && this.state.latestBean.weightInKg == "") {
+    if (isValid && (this.state.latestBean.weightInKg === "")) {
       alert('no weight of beans');
       isValid = false;
     } else if (isValid && isNaN(this.state.latestBean.weightInKg)) {

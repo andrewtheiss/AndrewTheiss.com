@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import * as ROUTES from '../../constants/routes.js'
 import SignOutButton from '../Session/SignOutButton.js';
 import { AuthUserContext } from '../Session';
-import { withAuthentication } from '../Session';
 
 const Navigation = () => (
   <div className="navigation-side-bar-spacing">
@@ -80,7 +79,7 @@ const NavigationAdminAuth = () => (
           <Link to={ROUTES.CHOCOLATE.BATCH}>Batches</Link>
         </li>
         <li>
-          <Link to={ROUTES.CHOCOLATE.COMPARISON}>Comparison</Link>
+          <Link to={ROUTES.CHOCOLATE.INTENTION}>Intention</Link>
         </li>
         <li>
           <Link to={ROUTES.CHOCOLATE.BAR}>Bars</Link>

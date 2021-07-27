@@ -1,6 +1,4 @@
 import React from 'react';
-import * as CONSTS from '../constants.js'
-
 
 class IngredientWeight extends React.Component {
   constructor(props) {

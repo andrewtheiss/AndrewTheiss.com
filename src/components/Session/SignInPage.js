@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { SignUpLink } from './SignUpForm';
+//import { SignUpLink } from './SignUpForm';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
@@ -30,15 +30,15 @@ class SignInFormBase extends React.Component {
     this.props.firebase.auth.signInWithPopup(provider)
     .then((result) => {
         /** @type {firebase.auth.OAuthCredential} */
-        var credential = result.credential;
+        //var credential = result.credential;
 
         // This gives you a Google Access Token. You can use it to access the Google API.
-        var token = credential.accessToken;
+        //var token = credential.accessToken;
         // The signed-in user info.
         var user = result.user;
 
         var providerData = user.providerData[0];
-        if (providerData.displayName == "Andrew Theiss" && providerData.email == "andrew.theiss@gmail.com") {
+        if (providerData.displayName === "Andrew Theiss" && providerData.email === "andrew.theiss@gmail.com") {
           //this.props.session.user = providerData.uid;
         //  this.props.session.isLoggedIn = true;
           this.setState({isLoggedIn: true});
@@ -51,12 +51,12 @@ class SignInFormBase extends React.Component {
 
         this.props.history.push(ROUTES.LANDING);
         // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
+      //  var errorCode = error.code;
+        //var errorMessage = error.message;
         // The email of the user's account used.
-        var email = error.email;
+      //  var email = error.email;
         // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
+      //  var credential = error.credential;
         // ...
     });
 
@@ -64,7 +64,6 @@ class SignInFormBase extends React.Component {
   render() {
     const { email, password, error } = this.state;
     const isInvalid = password === '' || email === '';
-    const isLoggedIn = false;
     let signIn = <div className="mt-8">
         <div>
           <button

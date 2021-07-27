@@ -4,9 +4,7 @@ import './App.css';
 import { FirebaseContext } from '../Firebase';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 import * as ROUTES from '../../constants/routes.js'
-import { withFirebase } from '../Firebase';
 import { withAuthentication } from '../Session';
-import { AuthUserContext } from '../Session';
 
 // Import different pages to view based on routing
 import ScriptsPage from '../Scripts/Pages/ScriptsPage.js'
@@ -18,8 +16,6 @@ import IngredientPage from '../Chocolate/Ingredient/Pages/IngredientPage.js'
 import BarLookupPage from '../Chocolate/Bar/Pages/Lookup.js'
 import BeanLookupPage from '../Chocolate/Bean/Pages/Lookup.js'
 import CreateNewChocolateBatchPage from '../Chocolate/Batch/Pages/CreateNew.js'
-
-
 
 const App = () => (
   <Router>
@@ -37,7 +33,7 @@ const App = () => (
           {firebase => <Route path={ROUTES.CHOCOLATE.INGREDIENT} component={IngredientPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.COMPARISON} component={IngredientPage} firebase={firebase} />}
+          {firebase => <Route path={ROUTES.CHOCOLATE.INTENTION} component={IngredientPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
           {firebase => <Route path={ROUTES.CHOCOLATE.BATCH} component={CreateNewChocolateBatchPage} firebase={firebase} />}

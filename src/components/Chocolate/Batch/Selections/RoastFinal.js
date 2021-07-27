@@ -1,5 +1,4 @@
 import React from 'react';
-import * as CONSTS from '../constants.js'
 
 class RoastFinal extends React.Component {
   constructor(props) {

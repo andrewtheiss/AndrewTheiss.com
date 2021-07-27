@@ -11,7 +11,7 @@ export const CHOCOLATE = {
   INGREDIENT : '/chocolate/ingredient',
   BATCH : '/chocolate/batch',
   BAR : '/chocolate/bar',
-  COMPARISON : '/chocolate/comparison',
+  INTENTION : '/chocolate/intention',
   TASTING : '/chocolate/tasting',
   LANDING : '/chocolate',
   BEAN : '/chocolate/bean'

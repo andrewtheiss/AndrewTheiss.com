@@ -15,7 +15,6 @@ import './Lookup.css';
 class BarLookup extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
     this.handleClick = this.handleClick.bind(this);
