@@ -117,8 +117,29 @@ class NutritionCalculator extends React.Component {
 
   generateOrderedIngredientList() {
     let ingredientString = "Ingredients: ";
-      this.orderedIngredientList.sort(function(a,b){
-        return b.quantity - a.quantity;
+
+    // Consolidate Duplicates (for things like multiple beans to not show Cocoa Beans twice)
+    let duplicateCheck = {};
+    let duplicateFound = false;
+    let index = this.orderedIngredientList.length;
+    while(index--) {
+      if (duplicateCheck[this.orderedIngredientList[index].label] === undefined) {
+        duplicateCheck[this.orderedIngredientList[index].label] = Number(this.orderedIngredientList[index].quantity);
+      } else {
+        duplicateCheck[this.orderedIngredientList[index].label] += Number(this.orderedIngredientList[index].quantity);
+        this.orderedIngredientList.splice(index,1);
+        duplicateFound = true;
+      }
+    }
+    if (duplicateFound) {
+      index = this.orderedIngredientList.length;
+      while(index--) {
+        this.orderedIngredientList[index].quantity = duplicateCheck[this.orderedIngredientList[index].label];
+      }
+    }
+
+    this.orderedIngredientList.sort(function(a,b){
+      return b.quantity - a.quantity;
     });
 
     // Find boundary for ingredients which 'Contains 2% or less of the following:'

@@ -33,7 +33,7 @@ class RoastFinal extends React.Component {
     } else if (high === 0) {
         average = low;
     } else {
-      average = high / low;
+      average = Math.round(10*(high / low))/10;
     }
     await this.setState({ average : average});
   }

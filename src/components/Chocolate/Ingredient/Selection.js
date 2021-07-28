@@ -11,7 +11,6 @@ class IngredientSelection extends React.Component {
     super(props);
 
     // Find the prop of the ingredient selection
-    console.log(props.name);
     this.state = {
       IngredientMap : '',
       options : [],

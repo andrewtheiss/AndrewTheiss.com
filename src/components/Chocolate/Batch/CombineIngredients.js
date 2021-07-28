@@ -23,25 +23,32 @@ class CombineBatchIngredients extends React.Component {
     this.onRemoveBean = this.onRemoveBean.bind(this);
     this.state = CHOCOLATE_DEFAULTS;
   }
+
   onAddBean(newBean) {
+    let newBeanObj = JSON.parse(JSON.stringify(newBean));
     var Beans = this.state.Beans;
-    Beans.push(newBean);
+    Beans.push(newBeanObj);
     this.setState({Beans});
     this.props.onChange(this.state);
   }
+
   onChangeSelection(selectionType, values) {
     this.setState({[selectionType]:values});
     this.props.onChange(this.state);
   }
+
   onChangeDetails(details) {
     this.setState({Details:details});
     this.props.onChange(this.state);
   }
+
   onRemoveBean(beanIndex) {
     var Beans = this.state.Beans;
     Beans.splice(Number(beanIndex), 1);
     this.setState({Beans});
+    this.props.onChange(this.state);
   }
+
   render() {
     var beanSummaryViewer = <BeanPreparationSummary input={this.state.Beans} name="Bean Viewer" onRemoveBean={this.onRemoveBean} onEditBean={this.onEditBean}/>;
 
