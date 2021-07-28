@@ -16,12 +16,13 @@ class CreateNewChocolateBatchPage extends React.Component {
 
     this.state = {};
     this.formattedChocolate = {};
-    this.Ingredient = {};
+    this.batchIngredients = {};
     this.chocolateToAdd = {};
 
     // Added via views specific to this
     this.weightInGrams = 0;
     this.ingredientTotalCost = 0;
+    this.ingredientList = "";
   }
 
   addChocolateBatch() {
@@ -31,7 +32,7 @@ class CreateNewChocolateBatchPage extends React.Component {
 
   formatChocolateFromState() {
     this.chocolateToAdd = {};
-    this.Ingredient = {};
+    this.batchIngredients = {};
 
     // Add non-ingredient params FIRST
     this.addAndFormateChocolateValueDetails();
@@ -49,7 +50,7 @@ class CreateNewChocolateBatchPage extends React.Component {
       var nextSelection = selections[i];
       this.addAndFormatChocolateValuesFromSection(this.state.values[nextSelection]);
     }
-    this.chocolateToAdd['Ingredient'] = this.Ingredient;
+    this.chocolateToAdd['batchIngredients'] = this.batchIngredients;
 
     console.log(this.state);
     // Format items in inventory + autocalculate cost
@@ -60,7 +61,7 @@ class CreateNewChocolateBatchPage extends React.Component {
 
   addAndFormatChocolateValuesFromSection(values) {
       for (var i = 0; i < values.length; i++) {
-        this.Ingredient[values[i].value] = values[i].weight;
+        this.batchIngredients[values[i].value] = values[i].weight;
       }
   }
 
@@ -86,8 +87,11 @@ class CreateNewChocolateBatchPage extends React.Component {
   }
 
   updateIngredientTotalCost(ingredientTotalCost) {
-    console.log('cost updated', ingredientTotalCost);
     this.ingredientTotalCost = ingredientTotalCost;
+  }
+
+  updateIngredientList(formattedIngredientList) {
+    this.ingredientList = formattedIngredientList;
   }
 
   render() {

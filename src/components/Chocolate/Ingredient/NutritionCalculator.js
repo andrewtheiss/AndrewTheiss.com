@@ -19,11 +19,12 @@ class NutritionCalculator extends React.Component {
     this.addToRunningTotal = this.addToRunningTotal.bind(this);
     this.onUpdateTotalCost = this.onUpdateTotalCost.bind(this);
     this.renderCostCalculator = this.renderCostCalculator.bind(this)
-
+    this.generateOrderedIngredientList = this.generateOrderedIngredientList.bind(this);
     this.state = {
       ingredientsDb : {}
     };
     this.temporaryNutritionTotal = CONSTS.NUTRITION_FACTS;
+    this.orderedIngredientList = [];
   }
 
   componentDidMount() {
@@ -69,6 +70,8 @@ class NutritionCalculator extends React.Component {
 
   recalculateTotal() {
     this.temporaryNutritionTotal = CONSTS.NUTRITION_FACTS;
+    this.orderedIngredientList = [];
+
     for (const key in this.temporaryNutritionTotal) {
       this.temporaryNutritionTotal[key] = 0;
     }
@@ -80,6 +83,7 @@ class NutritionCalculator extends React.Component {
         let ingredientType = this.props.selectedIngredients.values[objectKeysToCheck[i]];
         for (var j = 0; j < ingredientType.length; j++) {
           this.addToRunningTotal(ingredientType[j].label, ingredientType[j].weight);
+          this.orderedIngredientList.push({label : ingredientType[j].label, quantity : ingredientType[j].weight});
         }
       }
 
@@ -87,6 +91,7 @@ class NutritionCalculator extends React.Component {
       let beans = this.props.selectedIngredients.values['Beans'];
       for (let i = 0; i < beans.length; i++) {
         this.addToRunningTotal(CONSTS.BEAN_NUTRITION_DB_ID, beans[i].weightInGrams);
+        this.orderedIngredientList.push({label : CONSTS.BEAN_NUTRITION_DB_ID, quantity : beans[i].weightInGrams});
       }
     }
 
@@ -102,6 +107,21 @@ class NutritionCalculator extends React.Component {
     }
 
     return this.temporaryNutritionTotal;
+  }
+
+  generateOrderedIngredientList() {
+    let ingredientString = "";
+    console.log(this.orderedIngredientList);
+      this.orderedIngredientList.sort(function(a,b){
+        return b.quantity - a.quantity;
+    });
+    for (var i = 0; i < this.orderedIngredientList.length; i++) {
+      ingredientString += this.orderedIngredientList[i].label;
+      if (i !== this.orderedIngredientList.length -1) {
+        ingredientString += ", "
+      }
+    }
+    console.log(ingredientString);
   }
 
   // Optional if we want to calculate cost we can add a module which will pass it
@@ -123,6 +143,8 @@ class NutritionCalculator extends React.Component {
     let total = this.recalculateTotal();
     let nutritionFactsPreview = <NutritionFactsPreview previewData={total}/>;
     let costCalulation = this.renderCostCalculator();
+    let orderedIngredientList = this.generateOrderedIngredientList();
+
     return (
       <div>
         <div className="nutritionCalculator">
