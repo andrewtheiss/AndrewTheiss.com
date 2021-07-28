@@ -22,7 +22,7 @@ class IngredientPreview extends React.Component {
 
   render() {
     let notes = this.renderNotes(this.props.ingredient.notes);
-    let nutritionFactsPreview = <NutritionFactsPreview previewData={this.props.ingredient.nutritionFacts}/>;
+    let nutritionFactsPreview = <NutritionFactsPreview previewData={this.props.ingredient.nutritionFacts} ingredientList={this.props.ingredient.nutritionFactsIngredientLabel}/>;
     return (
       <div key="ingredientPreview">
           <div className="ib">

@@ -74,6 +74,7 @@ class NutritionFactsPreview extends React.Component {
     this.generateSecondaryDetails = this.generateSecondaryDetails.bind(this);
     this.generateSecondaryDetailsBuffer = this.generateSecondaryDetailsBuffer.bind(this);
     this.generateSugarFooterDisclaimer = this.generateSugarFooterDisclaimer.bind(this);
+    this.generateIngredientsList = this.generateIngredientsList.bind(this);
 
     // Super hacky way to get dynamically expanding 100% width to adjust for textwrap
     let id = Math.floor(Math.random() * 1000000);
@@ -122,6 +123,17 @@ class NutritionFactsPreview extends React.Component {
     return footerDisclaimer;
   }
 
+  generateIngredientsList() {
+    if (this.props.overrideIngreientBox || this.props.ingredientList === undefined || this.props.ingredientList === "") {
+      return <div></div>;
+    }
+    return (
+      <div className="nutritionCalculatorIngredientsBox">
+        <div className="nutritionFactsIngredients">Ingredients: {this.props.ingredientList}</div>
+      </div>
+    );
+  }
+
   componentDidUpdate() {
   document.getElementById(this.footerUniqueId).style.maxWidth = 5 + "px";
     let nutritionFactsRenderedDynamicWidth = document.getElementById(this.uniqueId).getBoundingClientRect().width;
@@ -136,38 +148,42 @@ class NutritionFactsPreview extends React.Component {
     let secondaryDetailsBuffer = this.generateSecondaryDetailsBuffer();
     let secondaryDetails = this.generateSecondaryDetails();
     let sugarDisclaimer = this.generateSugarFooterDisclaimer();
+    let ingredientsList = this.generateIngredientsList();
     return (
-      <div id={this.uniqueId} className="nutritionFactsOutline">
-        <div className="nutritionFactsLabel">Nutrition Facts</div>
-        <div className="nutritionFactsServingsPerContainer">{this.props.previewData.servingsPerContainer} {servingSizeSingularOrPlural} per container</div>
-        <div className="nutritionFactsServingSizeLabel">Serving Size </div>
-        <div className="nutritionFactsServingSizeAmount">{this.props.previewData.servingSizeInGrams} {servingAmountSingularOrPlural}</div>
-        <div className="nutritionFactsLargeBarDivider"></div>
-        <div className="nutritionFactsCloriesContainer">
-        <div className="nutritionFactsCaloriesNumber">{this.props.previewData.calories}</div>
-          <div className="nutritionFactsAmountPerServing">Amount Per Serving</div>
-          <div className="nutritionFactsCalories">Calories</div>
-        </div>
-        <div className="nutritionFactsPrimaryDetails">
-          <div className="nutritionFactsSingleRow">
-            <div className="nutritionFactsPctDailyValues">
-            % Daily Value*
-            </div>
-            <div className="nutritionFactsPrimaryDetails"></div>
+      <div>
+        <div id={this.uniqueId} className="nutritionFactsOutline">
+          <div className="nutritionFactsLabel">Nutrition Facts</div>
+          <div className="nutritionFactsServingsPerContainer">{this.props.previewData.servingsPerContainer} {servingSizeSingularOrPlural} per container</div>
+          <div className="nutritionFactsServingSizeLabel">Serving Size </div>
+          <div className="nutritionFactsServingSizeAmount">{this.props.previewData.servingSizeInGrams} {servingAmountSingularOrPlural}</div>
+          <div className="nutritionFactsLargeBarDivider"></div>
+          <div className="nutritionFactsCloriesContainer">
+          <div className="nutritionFactsCaloriesNumber">{this.props.previewData.calories}</div>
+            <div className="nutritionFactsAmountPerServing">Amount Per Serving</div>
+            <div className="nutritionFactsCalories">Calories</div>
           </div>
+          <div className="nutritionFactsPrimaryDetails">
+            <div className="nutritionFactsSingleRow">
+              <div className="nutritionFactsPctDailyValues">
+              % Daily Value*
+              </div>
+              <div className="nutritionFactsPrimaryDetails"></div>
+            </div>
 
-          {primaryDetails}
+            {primaryDetails}
+          </div>
+          {secondaryDetailsBuffer}
+          <div className="nutritionFactsSecondaryDetails">
+            {secondaryDetails}
+          </div>
+          <div className="nutritionFactsMediumBarDivider t2"></div>
+          <div id={this.footerUniqueId} className="nutirionFactsFooterWrapper">
+          {this.generateDefalutFooterDisclaimer()}
+          {sugarDisclaimer}
+          </div>
+          <div className="nutirionFactsFooterFinal"></div>
         </div>
-        {secondaryDetailsBuffer}
-        <div className="nutritionFactsSecondaryDetails">
-          {secondaryDetails}
-        </div>
-        <div className="nutritionFactsMediumBarDivider t2"></div>
-        <div id={this.footerUniqueId} className="nutirionFactsFooterWrapper">
-        {this.generateDefalutFooterDisclaimer()}
-        {sugarDisclaimer}
-        </div>
-        <div className="nutirionFactsFooterFinal"></div>
+        {ingredientsList}
       </div>
     );
   }

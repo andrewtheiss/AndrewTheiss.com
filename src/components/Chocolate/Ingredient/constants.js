@@ -65,7 +65,8 @@ export const NUTRITION_LABEL_STRINGS = {
   image : 'Image',
   categoryCategories : 'Category Categories',
   categorySelection : 'Category Selection',
-  magnesium : 'Magnesium'
+  magnesium : 'Magnesium',
+  nutritionFactsIngredientLabel : 'Nutrition Facts Ingredient Label'
 }
 
 export const NUTRITION_PLACEHOLDER_STRINGS = {
@@ -76,7 +77,8 @@ export const NUTRITION_PLACEHOLDER_STRINGS = {
   totalGramWeightPerItem : '700 g',
   costPerItem : '15.30',
   countPurchased : '1',
-  latestPurchasePrice : '14.99'
+  latestPurchasePrice : '14.99',
+  nutritionFactsIngredientLabel : "Whole Milk Powder"
 }
 
 export const NUTRITION_MESUREMENTS = {
@@ -234,7 +236,8 @@ export const NON_NUTRITION_PARAMS = {
   source : '',
   totalGramWeightPerItem : '',
   costPerItem : 0,
-  countPurchased : 0
+  countPurchased : 0,
+  nutritionFactsIngredientLabel : ''
 }
 
 export const INGREDIENT_CATEGORIES = ['Dairy', 'Sweetener', 'Cocoa', 'Other'];

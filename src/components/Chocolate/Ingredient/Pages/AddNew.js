@@ -43,6 +43,7 @@ class AddNewIngredientPage extends React.Component {
       countPurchased : 1,
       latestPurchasePrice : "1.00",
       runningTotalOfPurchasedCosts : 0,
+      nutritionFactsIngredientLabel : '',
       nutritionFacts : {},
       imageBase64 : '',
       categoryCategories : categoryCategories,

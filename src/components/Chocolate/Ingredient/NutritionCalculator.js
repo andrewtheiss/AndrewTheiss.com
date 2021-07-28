@@ -2,6 +2,7 @@ import React from 'react';
 import  * as CONSTS from './constants.js'
 import NutritionFactsPreview from './NutritionFactsPreview.js'
 import CostCalculator from './CostCalculator.js'
+import './Ingredient.css'
 /**
  *  NutritionCalculator
  *
@@ -83,7 +84,12 @@ class NutritionCalculator extends React.Component {
         let ingredientType = this.props.selectedIngredients.values[objectKeysToCheck[i]];
         for (var j = 0; j < ingredientType.length; j++) {
           this.addToRunningTotal(ingredientType[j].label, ingredientType[j].weight);
-          this.orderedIngredientList.push({label : ingredientType[j].label, quantity : ingredientType[j].weight});
+          if (this.state.ingredientsDb !== undefined && this.state.ingredientsDb[ingredientType[j].label] !== undefined) {
+            this.orderedIngredientList.push({
+              label : this.state.ingredientsDb[ingredientType[j].label].nutritionFactsIngredientLabel,
+              quantity : ingredientType[j].weight
+            });
+          }
         }
       }
 
@@ -110,18 +116,29 @@ class NutritionCalculator extends React.Component {
   }
 
   generateOrderedIngredientList() {
-    let ingredientString = "";
-    console.log(this.orderedIngredientList);
+    let ingredientString = "Ingredients: ";
       this.orderedIngredientList.sort(function(a,b){
         return b.quantity - a.quantity;
     });
+
+    // Find boundary for ingredients which 'Contain 2% or less of the following:'
+    let twoPercent = this.temporaryNutritionTotal["servingSizeInGrams"] * 0.02;
+    let flaggedTwoPercent = false;
+
+    // Render ingredient list sorted by ingredient weight
     for (var i = 0; i < this.orderedIngredientList.length; i++) {
+      if (!flaggedTwoPercent && (this.orderedIngredientList[i].quantity < twoPercent)) {
+        flaggedTwoPercent = true;
+        ingredientString += 'Contain 2% or less of the following: ';
+      }
       ingredientString += this.orderedIngredientList[i].label;
-      if (i !== this.orderedIngredientList.length -1) {
-        ingredientString += ", "
+      if (i !== this.orderedIngredientList.length - 1) {
+        ingredientString += ", ";
+      } else {
+        ingredientString += ".";
       }
     }
-    console.log(ingredientString);
+    return ingredientString;
   }
 
   // Optional if we want to calculate cost we can add a module which will pass it
@@ -141,7 +158,7 @@ class NutritionCalculator extends React.Component {
 
   render() {
     let total = this.recalculateTotal();
-    let nutritionFactsPreview = <NutritionFactsPreview previewData={total}/>;
+    let nutritionFactsPreview = <NutritionFactsPreview previewData={total} overrideIngreientBox={true}/>;
     let costCalulation = this.renderCostCalculator();
     let orderedIngredientList = this.generateOrderedIngredientList();
 
@@ -150,6 +167,9 @@ class NutritionCalculator extends React.Component {
         <div className="nutritionCalculator">
           Nutrition Facts Summary
           {nutritionFactsPreview}
+        </div>
+        <div className="nutritionCalculatorIngredientsBox">
+          {orderedIngredientList}
         </div>
         <div className="nutritionCalculatorCost">
           {costCalulation}
