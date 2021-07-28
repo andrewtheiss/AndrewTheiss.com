@@ -4,9 +4,9 @@ import React from 'react';
 
 const BeanPreparationSummarySingle = ({bean, value, remove, beanDetails}) => (
   <div key={"Bean" + value}>
-    <button key={value + value} onClick={remove} value={value}>X</button> {bean}  Weight: {beanDetails.weightInGrams} grams 
+    <button key={value + value} onClick={remove} value={value}>X</button> {bean}  Weight: {beanDetails.weightInGrams} grams
       <div>Final Temps...  High:{beanDetails.finalTemp.high}  Low:{beanDetails.finalTemp.low} Average:{beanDetails.finalTemp.average}</div>
-      <div>Roast has <b>{beanDetails.roast.length}</b> number of roast measurements</div>
+      <div>Roast has <b>{Object.keys(beanDetails.roast).length}</b> number of roast measurements</div>
   </div>
 )
 

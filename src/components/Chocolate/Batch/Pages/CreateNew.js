@@ -48,7 +48,6 @@ class CreateNewChocolateBatchPage extends React.Component {
     this.formatChocolateForPublicAddition();
 
     let self = this;
-    this.state.values.Beans = [];
     console.log('try and add chocolate', this.chocolateToAdd.label, this.chocolateToAdd, this.state);
     const publicBatchesCollectionRef = this.props.firebase.db.collection("batchesPublic");
     //publicBatchesCollectionRef.doc(this.chocolateToAdd.label).set(this.chocolateToAdd).then(() => {
