@@ -18,34 +18,35 @@ class BarLookupSelection extends React.Component {
     };
   }
 
-    // Get all bars from the database
-    // TODO - Filter bars by creation date to only grab newer bars
-    componentDidMount = () => {
-      const barsCollectionRef = this.props.firebase.db.collection("bars");
-      let self = this;
-      barsCollectionRef.get().then(function(barCollectionDocs) {
-        var barsMap = {};
-        var barOptions = [];
-        barCollectionDocs.forEach(function(doc) {
-          barsMap[doc.id] = doc.data();
-          barOptions.push({label:doc.id, value : doc.data()['chocolate']});
-        });
-
-        self.setState({
-          bars : barsMap,
-          barOptions : barOptions
-        });
+  // Get all bars from the database
+  // TODO - Filter bars by creation date to only grab newer bars
+  componentDidMount = () => {
+    const barsCollectionRef = this.props.firebase.db.collection("bars");
+    let self = this;
+    barsCollectionRef.get().then(function(barCollectionDocs) {
+      var barsMap = {};
+      var barOptions = [];
+      barCollectionDocs.forEach(function(doc) {
+        barsMap[doc.id] = doc.data();
+        barOptions.push({label:doc.id, value : doc.data()['chocolate']});
       });
 
-    }
+      self.setState({
+        bars : barsMap,
+        barOptions : barOptions
+      });
+    });
+  }
+
   setSelected(allSelectedItems) {
     this.setState({ selected : allSelectedItems});
   }
+  
   toggleCheckbox() {
     let isChecked = !this.state.includeOlderChocolates;
     this.setState({includeOlderChocolates : isChecked});
   }
-  
+
   render() {
     console.log(this.state.bars);
 

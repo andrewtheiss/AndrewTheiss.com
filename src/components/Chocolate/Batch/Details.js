@@ -1,4 +1,5 @@
 import React from 'react';
+import MultiSelect from "react-multi-select-component";
 
 class BatchDetails extends React.Component {
   constructor(props) {
@@ -6,16 +7,33 @@ class BatchDetails extends React.Component {
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
     this.state = {
       label : '000-2021-00A',
-      cost : -1,
       creation : '2021-02-07',
       grindInHours : 48,
-      kgYield : 0,
-      notes : '',
-      objective : '',
-      packaging : '',
-      summary : ''
+      intention : [],
+      comments : ''
     };
     this.props.onChangeDetails(this.state);
+  }
+
+  componentDidMount = () => {
+    const intentionCollectionRef = this.props.firebase.db.collection("intention");
+    let self = this;
+    intentionCollectionRef.get().then(function(intentionCollectionDocs) {
+      /*
+      var barsMap = {};
+      var barOptions = [];
+      barCollectionDocs.forEach(function(doc) {
+        barsMap[doc.id] = doc.data();
+        barOptions.push({label:doc.id, value : doc.data()['chocolate']});
+      });
+
+      self.setState({
+        bars : barsMap,
+        barOptions : barOptions
+      });
+      */
+    });
+
   }
 
   async onUpdateDetails(event) {
@@ -26,21 +44,19 @@ class BatchDetails extends React.Component {
     this.props.onChangeDetails(this.state);
   }
 
+  onUpdateWeight
+
   render() {
     return (
       <div>
-      <br />
-      Batch Details
-      <br />
-        Label: <input name="label" value={this.state.label} onChange={this.onUpdateDetails}  type="text"></input>
+        Batch Details
         <br />
+        Label: <input name="label" value={this.state.label} onChange={this.onUpdateDetails}  type="text"></input><br />
         Creation: <input name="creation" onChange={this.onUpdateDetails} value={this.state.creation} type="date"></input><br />
         Grind In Hours: <input name="grindInHours"  onChange={this.onUpdateDetails} value={this.state.grindInHours} type="text"></input><br />
-        Yield (kg): <input name="kgYield" onChange={this.onUpdateDetails} value={this.state.kgYield} type="text"></input><br />
-        Notes: <input name="notes"  onChange={this.onUpdateDetails}  value={this.state.notes} type="textarea"></input><br />
-        Objective: <input name="objective"  onChange={this.onUpdateDetails} value={this.state.objective} type="textarea"></input><br />
-        Packing: <input name="packaging" onChange={this.onUpdateDetails} value={this.state.packaging} type="textarea"></input><br />
-        Summary: <input name="summary" onChange={this.onUpdateDetails} value={this.state.summary} type="textarea"></input><br />
+        <div className="fl">Comments: </div><textarea rows="2" cols="40" name="notes"  onChange={this.onUpdateDetails}  value={this.state.notes} type="textarea"></textarea><br />
+        Intention(s):
+        <br />
        </div>
     );
   }

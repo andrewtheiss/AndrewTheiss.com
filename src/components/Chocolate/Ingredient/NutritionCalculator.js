@@ -1,23 +1,27 @@
 import React from 'react';
 import  * as CONSTS from './constants.js'
 import NutritionFactsPreview from './NutritionFactsPreview.js'
+import CostCalculator from './CostCalculator.js'
 /**
  *  NutritionCalculator
  *
  *  Calculator will continually re-calculate the running total of nutrition facts
+ *
+ *  Two inputs :
+        this.props.selectedIngredients (has selected ingredients)
+        this.state.ingredientsDb (has ingredients inventory list)
  */
 
 class NutritionCalculator extends React.Component {
   constructor(props) {
     super(props);
-    console.log('nutritionFactsProps' , props);
     this.recalculateTotal = this.recalculateTotal.bind(this);
-    this.normalizeAndAddToTotal = this.normalizeAndAddToTotal.bind(this);
+    this.addToRunningTotal = this.addToRunningTotal.bind(this);
+    this.onUpdateTotalCost = this.onUpdateTotalCost.bind(this);
+    this.renderCostCalculator = this.renderCostCalculator.bind(this)
 
     this.state = {
-      individualItems : {},
-      total : {},
-      ingredients : []
+      ingredientsDb : {}
     };
     this.temporaryNutritionTotal = CONSTS.NUTRITION_FACTS;
   }
@@ -26,25 +30,22 @@ class NutritionCalculator extends React.Component {
     const IngredientCollectionRef = this.props.firebase.db.collection("ingredients");
     let self = this;
     IngredientCollectionRef.get().then(function(IngredientCollectionDocs) {
-      var ingredients = {};
+      var ingredientsDb = {};
       IngredientCollectionDocs.forEach(function(doc) {
-        ingredients[doc.id] = doc.data();
+        ingredientsDb[doc.id] = doc.data();
       });
 
       self.setState({
-        ingredients : ingredients
+        ingredientsDb : ingredientsDb
       });
     });
   }
 
-
-  normalizeAndAddToTotal(id, weightInGrams) {
+  addToRunningTotal(id, weightInGrams) {
     let self = this;
-    if (this.state.ingredients[id] !== undefined) {
-      let ingredientNutritionFacts = this.state.ingredients[id].nutritionFacts;
-      let multiplierForPer100GramConversion = 100 / ingredientNutritionFacts.servingSizeInGrams;
+    if (this.state.ingredientsDb[id] !== undefined) {
+      let ingredientNutritionFacts = this.state.ingredientsDb[id].nutritionFacts;
       for (const [key, value] of Object.entries(ingredientNutritionFacts)) {
-        console.log(self.temporaryNutritionTotal[key], key, value, multiplierForPer100GramConversion, weightInGrams);
 
         if (!self.temporaryNutritionTotal[key]) {
           self.temporaryNutritionTotal[key] = 0;
@@ -52,7 +53,6 @@ class NutritionCalculator extends React.Component {
 
         self.temporaryNutritionTotal[key] = Number(self.temporaryNutritionTotal[key]) + (weightInGrams * Number(value) / ingredientNutritionFacts.servingSizeInGrams);
       }
-      // Loop through each object and add to summary
     }
   }
 
@@ -73,42 +73,65 @@ class NutritionCalculator extends React.Component {
       this.temporaryNutritionTotal[key] = 0;
     }
 
-    if (this.props.ingredients.values !== undefined) {
+    if (this.props.selectedIngredients.values !== undefined) {
 
       let objectKeysToCheck = ['Cocoa','Dairy','Other','Sweetener'];
       for (var i = 0; i < objectKeysToCheck.length; i++) {
-        let ingredientType = this.props.ingredients.values[objectKeysToCheck[i]];
-        console.log("ingredient type" , ingredientType);
+        let ingredientType = this.props.selectedIngredients.values[objectKeysToCheck[i]];
         for (var j = 0; j < ingredientType.length; j++) {
-          this.normalizeAndAddToTotal(ingredientType[j].label, ingredientType[j].weight);
+          this.addToRunningTotal(ingredientType[j].label, ingredientType[j].weight);
         }
       }
 
       // Handle Beans separately
-      let beans = this.props.ingredients.values['Beans'];
+      let beans = this.props.selectedIngredients.values['Beans'];
       for (let i = 0; i < beans.length; i++) {
-        this.normalizeAndAddToTotal(CONSTS.BEAN_NUTRITION_DB_ID, beans[i].weightInKg * 1000);
+        this.addToRunningTotal(CONSTS.BEAN_NUTRITION_DB_ID, beans[i].weightInGrams);
       }
     }
-    console.log(this.temporaryNutritionTotal);
 
     // Manually set some values and round others
+    this.temporaryNutritionTotal["servingsPerContainer"] = 1;
     for (const key in this.temporaryNutritionTotal) {
       this.temporaryNutritionTotal[key] = Math.round(this.temporaryNutritionTotal[key]);
     }
-    this.temporaryNutritionTotal["servingsPerContainer"] = 1;
+
+    // Update Parent Weight
+    if (this.props.onUpdateWeight !== undefined) {
+      this.props.onUpdateWeight(this.temporaryNutritionTotal["servingSizeInGrams"]);
+    }
 
     return this.temporaryNutritionTotal;
+  }
+
+  // Optional if we want to calculate cost we can add a module which will pass it
+  // through here.  This method already goes through ALL the data.
+  onUpdateTotalCost(totalCost) {
+    if (this.props.onUpdateTotalCost !== undefined) {
+      this.props.onUpdateTotalCost(totalCost);
+    }
+  }
+
+  renderCostCalculator() {
+    if (Object.keys(this.state.ingredientsDb).length === 0) {
+      return <div></div>;
+    }
+    return <CostCalculator ingredientsDb={this.state.ingredientsDb} selectedIngredients={this.props.selectedIngredients} onUpdateTotalCost={this.onUpdateTotalCost} />;
   }
 
   render() {
     let total = this.recalculateTotal();
     let nutritionFactsPreview = <NutritionFactsPreview previewData={total}/>;
-
+    let costCalulation = this.renderCostCalculator();
     return (
       <div>
-        Nutrition Facts Summary
-        {nutritionFactsPreview}
+        <div className="nutritionCalculator">
+          Nutrition Facts Summary
+          {nutritionFactsPreview}
+        </div>
+        <div className="nutritionCalculatorCost">
+          {costCalulation}
+        </div>
       </div>
     );
   }

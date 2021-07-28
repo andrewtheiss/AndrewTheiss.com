@@ -3,6 +3,7 @@ import BeanPreparation from './BeanPreparation/BeanPreparation.js'
 import IngredientSelection from '../Ingredient/Selection.js'
 import BatchDetails from './Details.js'
 import BeanPreparationSummary from './BeanPreparation/BeanPreparationSummary.js'
+import  { FirebaseContext } from '../../Firebase';
 
 const CHOCOLATE_DEFAULTS = {
   Beans : [],
@@ -52,7 +53,9 @@ class CombineBatchIngredients extends React.Component {
         <IngredientSelection input={this.state.Sweeteners} name="Sweetener" onChangeSelection={this.onChangeSelection} />
         <IngredientSelection input={this.state.Cocoa} name="Cocoa" onChangeSelection={this.onChangeSelection} />
         <IngredientSelection input={this.state.Other} name="Other" onChangeSelection={this.onChangeSelection} />
-        <BatchDetails input={this.state.details} name="Details" onChangeDetails={this.onChangeDetails} />
+        <FirebaseContext.Consumer>
+            {firebase => <BatchDetails input={this.state.details} name="Details" onChangeDetails={this.onChangeDetails} firebase={firebase}/>}
+        </FirebaseContext.Consumer>
       </div>
     );
   }

@@ -128,7 +128,7 @@ class BeanPreparation extends React.Component {
 
   onChangeBeanWeight(event) {
     let latestBean = this.state.latestBean;
-    latestBean.weightInKg = event.target.value;
+    latestBean.weightInGrams = event.target.value;
     this.setState({ latestBean });
   }
 
@@ -143,10 +143,10 @@ class BeanPreparation extends React.Component {
       isValid = false;
     }
 
-    if (isValid && (this.state.latestBean.weightInKg === "")) {
+    if (isValid && (this.state.latestBean.weightInGrams === "")) {
       alert('no weight of beans');
       isValid = false;
-    } else if (isValid && isNaN(this.state.latestBean.weightInKg)) {
+    } else if (isValid && isNaN(this.state.latestBean.weightInGrams)) {
       alert('invalid weight');
       isValid = false;
     }
@@ -189,10 +189,10 @@ class BeanPreparation extends React.Component {
         />
         <br />
         <br />
-          <label htmlFor="weightInKg">Nibs Weight (kg):</label>
+          <label htmlFor="weightInGrams">Nibs Weight (grams):</label>
           <input
-           name="weightInKg"
-           value={this.state.latestBean.weightInKg}
+           name="weightInGrams"
+           value={this.state.latestBean.weightInGrams}
            onChange={this.onChangeBeanWeight}
            type="text"
            placeholder=""

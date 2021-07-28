@@ -1,6 +1,6 @@
 export const BEAN_DEFAULT = {
   beanId : '',
-  weightInKg : '',
+  weightInGrams : '',
   roast : [[0,80]],
   finalTemp : {
     high : 0,
