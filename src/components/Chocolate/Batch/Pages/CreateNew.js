@@ -1,20 +1,37 @@
 import React from 'react';
 import CombineBatchIngredients from '../CombineIngredients.js'
 import NutritionCalculator from '../../Ingredient/NutritionCalculator.js'
-import  { FirebaseContext } from '../../../Firebase';
+import { FirebaseContext } from '../../../Firebase';
 import "../Batch.css"
+
+/*
+ *  Routing routes all Components with Route 'props' this taket
+ */
+class CreateNewChocolateBatchPage_Route extends React.Component {
+  render() {
+    return (
+      <div>
+      <FirebaseContext.Consumer>
+          {firebase => <CreateNewChocolateBatchPage firebase={firebase}/>}
+      </FirebaseContext.Consumer>
+      </div>
+    )
+  };
+};
 
 class CreateNewChocolateBatchPage extends React.Component {
   constructor(props) {
     super(props);
     this.addChocolateBatch = this.addChocolateBatch.bind(this);
     this.updateBatchDetails = this.updateBatchDetails.bind(this);
-    this.formatChocolateFromState = this.formatChocolateFromState.bind(this);
+    this.formatChocolateForPublicAddition = this.formatChocolateForPublicAddition.bind(this);
     this.getAndFormatChocolateValuesFromSection = this.addAndFormatChocolateValuesFromSection.bind(this);
-    this.addAndFormateChocolateValueDetails = this.addAndFormateChocolateValueDetails.bind(this);
+    this.addAndFormatChocolateValueDetails = this.addAndFormatChocolateValueDetails.bind(this);
     this.updateWeight = this.updateWeight.bind(this);
     this.updateIngredientTotalCost = this.updateIngredientTotalCost.bind(this);
-
+    this.updateNutritionFacts = this.updateNutritionFacts.bind(this);
+    this.updateIngredientList = this.updateIngredientList.bind(this);
+    console.log(this.props);
     this.state = {};
     this.formattedChocolate = {};
     this.batchIngredients = {};
@@ -24,19 +41,32 @@ class CreateNewChocolateBatchPage extends React.Component {
     this.weightInGrams = 0;
     this.ingredientTotalCost = 0;
     this.ingredientList = "";
+    this.nutritionFacts = {};
   }
 
   addChocolateBatch() {
-    this.formatChocolateFromState();
-    console.log('try and add chocolate', this.chocolateToAdd);
+    this.formatChocolateForPublicAddition();
+
+    let self = this;
+    this.state.values.Beans = [];
+    console.log('try and add chocolate', this.chocolateToAdd.label, this.chocolateToAdd, this.state);
+    const publicBatchesCollectionRef = this.props.firebase.db.collection("batchesPublic");
+    //publicBatchesCollectionRef.doc(this.chocolateToAdd.label).set(this.chocolateToAdd).then(() => {
+    //  console.log('added public batch');
+    //});
+    const batchesCollectionRef = this.props.firebase.db.collection("batches");
+    batchesCollectionRef.doc(this.chocolateToAdd.label).set(this.state).then(() => {
+      console.log('added batch');
+    });
+  //  console.log('try and add chocolate', this.chocolateToAdd.label, this.state);
   }
 
-  formatChocolateFromState() {
+  formatChocolateForPublicAddition() {
     this.chocolateToAdd = {};
     this.batchIngredients = {};
 
     // Add non-ingredient params FIRST
-    this.addAndFormateChocolateValueDetails();
+    this.addAndFormatChocolateValueDetails();
 
     // Add MultiSelect Sections to ChocolateToAdd
     const selections = ['Dairy', 'Sweetener', 'Cocoa', 'Other'];
@@ -46,11 +76,9 @@ class CreateNewChocolateBatchPage extends React.Component {
     }
     this.chocolateToAdd['batchIngredients'] = this.batchIngredients;
 
-    console.log(this.state);
-    // Format items in inventory + autocalculate cost
-
-
-    return {};
+    // Add Nutrition Facts, Ingredients View List,
+    this.chocolateToAdd['ingredients'] = this.ingredientList;
+    this.chocolateToAdd['nutritionFacts'] = this.nutritionFacts;
   }
 
   addAndFormatChocolateValuesFromSection(values) {
@@ -59,7 +87,7 @@ class CreateNewChocolateBatchPage extends React.Component {
       }
   }
 
-  addAndFormateChocolateValueDetails() {
+  addAndFormatChocolateValueDetails() {
     if (this.state.values.Details !== undefined) {
       this.chocolateToAdd = this.state.values.Details;
     }
@@ -72,7 +100,6 @@ class CreateNewChocolateBatchPage extends React.Component {
   }
 
   updateBatchDetails(values) {
-    console.log('update chocolate',values);
     this.setState({values});
   }
 
@@ -88,6 +115,10 @@ class CreateNewChocolateBatchPage extends React.Component {
     this.ingredientList = formattedIngredientList;
   }
 
+  updateNutritionFacts(nutritionFacts) {
+    this.nutritionFacts = nutritionFacts;
+  }
+
   render() {
     return (
       <div className="batchCreationContainer">
@@ -100,7 +131,15 @@ class CreateNewChocolateBatchPage extends React.Component {
         </div>
         <div className="batchCreation rightSide">
           <FirebaseContext.Consumer>
-            {firebase => <NutritionCalculator selectedIngredients={this.state} firebase={firebase} onUpdateWeight={this.updateWeight}  onUpdateTotalCost={this.updateIngredientTotalCost}/>}
+            {firebase => <NutritionCalculator
+              selectedIngredients={this.state}
+              firebase={firebase}
+              onUpdateNutritionFacts={this.updateNutritionFacts}
+              onUpdateIngredientList={this.updateIngredientList}
+              onUpdateWeight={this.updateWeight}
+              onUpdateTotalCost={this.updateIngredientTotalCost}
+              />
+            }
           </FirebaseContext.Consumer>
         </div>
         <div className="batchCreationClear"></div>
@@ -109,4 +148,4 @@ class CreateNewChocolateBatchPage extends React.Component {
   }
 }
 
-export default CreateNewChocolateBatchPage;
+export default CreateNewChocolateBatchPage_Route;

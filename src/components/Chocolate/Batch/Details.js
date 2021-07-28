@@ -9,7 +9,7 @@ class BatchDetails extends React.Component {
       label : '000-2021-00A',
       creation : '2021-02-07',
       grindInHours : 48,
-      intention : [],
+      intention : {},
       comments : ''
     };
     this.props.onChangeDetails(this.state);
@@ -39,7 +39,6 @@ class BatchDetails extends React.Component {
   async onUpdateDetails(event) {
     var state = this.state;
     state[event.target.name] = event.target.value;
-    console.log({[event.target.name] : event.target.value});
     await this.setState(state);
     this.props.onChangeDetails(this.state);
   }

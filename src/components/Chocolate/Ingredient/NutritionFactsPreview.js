@@ -7,7 +7,7 @@ const SpacingDiv = (spacingClass) => (<div className={spacingClass.value}></div>
 const DefaultDisclaimer = () => (
   <p key="nutritionFactsDefaultDisclaimer" className="nutritionFactsFooterDisclaimer">
     * The % Daily Value (DV) tells you how much a nutrient in
-    a serving of food contributes to a daily diet, 200 calories
+    a serving of food contributes to a daily diet, 2000 calories
     a day is used for general nutrition advice.
   </p>
 );
@@ -65,6 +65,7 @@ class NutritionFactsPreview extends React.Component {
     this.generateSecondaryDetails = this.generateSecondaryDetails.bind(this);
     this.generateSecondaryDetailsBuffer = this.generateSecondaryDetailsBuffer.bind(this);
     this.generateIngredientsList = this.generateIngredientsList.bind(this);
+    this.updateListeners = this.updateListeners.bind(this);
 
     // Super hacky way to get dynamically expanding 100% width to adjust for textwrap
     let id = Math.floor(Math.random() * 1000000);
@@ -115,10 +116,16 @@ class NutritionFactsPreview extends React.Component {
   }
 
   componentDidUpdate() {
-  document.getElementById(this.footerUniqueId).style.maxWidth = 5 + "px";
+    document.getElementById(this.footerUniqueId).style.maxWidth = 5 + "px";
     let nutritionFactsRenderedDynamicWidth = document.getElementById(this.uniqueId).getBoundingClientRect().width;
     let finalWidth = Math.round(nutritionFactsRenderedDynamicWidth - 5);
     document.getElementById(this.footerUniqueId).style.maxWidth = finalWidth + "px";
+  }
+
+  updateListeners() {
+    if (this.props.updateNutritionFactsListener !== undefined) {
+      this.props.updateNutritionFactsListener(this.props.previewData);
+    }
   }
 
   render() {
@@ -128,6 +135,7 @@ class NutritionFactsPreview extends React.Component {
     let secondaryDetailsBuffer = this.generateSecondaryDetailsBuffer();
     let secondaryDetails = this.generateSecondaryDetails();
     let ingredientsList = this.generateIngredientsList();
+    this.updateListeners();
     return (
       <div>
         <div id={this.uniqueId} className="nutritionFactsOutline">

@@ -159,6 +159,10 @@ class NutritionCalculator extends React.Component {
         ingredientString += ".";
       }
     }
+
+    if (this.props.onUpdateIngredientList !== undefined) {
+      this.props.onUpdateIngredientList(ingredientString);
+    }
     return ingredientString;
   }
 
@@ -179,10 +183,9 @@ class NutritionCalculator extends React.Component {
 
   render() {
     let total = this.recalculateTotal();
-    let nutritionFactsPreview = <NutritionFactsPreview previewData={total} overrideIngreientBox={true}/>;
+    let nutritionFactsPreview = <NutritionFactsPreview updateNutritionFactsListener={this.props.onUpdateNutritionFacts} previewData={total} overrideIngreientBox={true}/>;
     let costCalulation = this.renderCostCalculator();
     let orderedIngredientList = this.generateOrderedIngredientList();
-
     return (
       <div>
         <div className="nutritionCalculator">
