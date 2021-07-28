@@ -71,23 +71,24 @@ class BeanPreparation extends React.Component {
     let roastTimeTemp = '';
     let roast = this.state.latestBean.roast;
     var self = this;
-    if (!roast || roast.length === 0) {
+    if (!roast || Object.keys(roast).length === 0) {
         roastTimeTemp = <RoastSelection key="0" input={CONSTS.ROAST_INITIAL} index="0" name="beans" onChangeRoast={this.onChangeRoast} onAddRoast={this.onAddRoast} onRemoveRoast={this.onRemoveRoast} />;
     } else {
     // Creating a unique key forces re-render ONLY each time length is changed
-      var rand = roast.length/3.14159;
-      roastTimeTemp = roast.map((roastTime, index) =>
-          <RoastSelection
-           key={index + rand}
-           input={roastTime}
-           index={index}
-           name="beans"
-           roastIndex={index}
-           onChangeRoast={self.onChangeRoast}
-           onAddRoast={self.onAddRoast}
-           onRemoveRoast={self.onRemoveRoast}
-         />
-      );
+      var rand = Object.keys(roast).length/3.14159;
+
+      roastTimeTemp = Object.keys(roast).map((roastTime, index) => (
+        <RoastSelection
+         key={index + rand}
+         input={roast[index]}
+         index={index}
+         name="beans"
+         roastIndex={index}
+         onChangeRoast={self.onChangeRoast}
+         onAddRoast={self.onAddRoast}
+         onRemoveRoast={self.onRemoveRoast}
+       />
+      ));
     }
     return roastTimeTemp;
   }
@@ -95,7 +96,7 @@ class BeanPreparation extends React.Component {
   renderFinalTemp() {
     let roastFinalTemps = this.state.latestBean.finalTemps;
     let self = this;
-    return   <RoastFinal
+    return <RoastFinal
        key="roastFinal"
        input={roastFinalTemps}
        name="beans"
@@ -116,13 +117,29 @@ class BeanPreparation extends React.Component {
   }
 
   async onAddRoast(roastIndex) {
+    let newRoastLocation = roastIndex+1;
     let latestBean = this.state.latestBean;
-    latestBean.roast.splice(roastIndex+1, 0, CONSTS.ROAST_EMPTY);
+    let objectArraySize = Object.keys(latestBean.roast).length;
+    let tempReadyToInsert = CONSTS.ROAST_EMPTY;
+    let tempNeedToSave = {};
+    for (var i = newRoastLocation; i < objectArraySize+1; i++) {    // Start at the tail end and bubble all the objects down
+      if (latestBean.roast[i]) {      // If the desired insert location is not blank..
+        tempNeedToSave = latestBean.roast[i];        // Save the value to bump forward
+        latestBean.roast[i] = tempReadyToInsert;      // Overwrite it with the previous one
+        tempReadyToInsert = tempNeedToSave;    // Set the saved one as the next insert location
+      } else {
+        latestBean.roast[i] = tempReadyToInsert; // Insert the last one!
+      }
+    }
     await this.setState({ latestBean });
   }
   async onRemoveRoast(roastIndex) {
     let latestBean = this.state.latestBean;
-    latestBean.roast.splice(roastIndex, 1);
+    let objectArraySize = Object.keys(latestBean.roast).length;
+    for (var i = roastIndex; i < objectArraySize; i++) {
+      latestBean.roast[i] = latestBean.roast[i+1];
+    }
+    delete latestBean.roast[objectArraySize-1];
     await this.setState({ latestBean });
   }
 

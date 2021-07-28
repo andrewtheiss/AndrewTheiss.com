@@ -1,7 +1,9 @@
 export const BEAN_DEFAULT = {
   beanId : '',
   weightInGrams : '',
-  roast : [{elapsedTimeInMinutes : 0, tempInF : 80}],
+  roast : {
+    0 : {elapsedTimeInMinutes : 0, tempInF : 80}
+  },
   finalTemp : {
     high : 0,
     low : 0,
@@ -13,9 +15,9 @@ export const BEAN_DEFAULT = {
 export const ROAST_INITIAL = {elapsedTimeInMinutes : 0, tempInF : 80};
 export const ROAST_EMPTY = {elapsedTimeInMinutes : 0, tempInF : 0};
 export const ROAST = {
-  roast : [
-    {elapsedTimeInMinutes : 0, tempInF : 0}
-  ],
+  roast : {
+    0 : {elapsedTimeInMinutes : 0, tempInF : 0}
+  },
   finalTemp : {
     high : '',
     low : '',

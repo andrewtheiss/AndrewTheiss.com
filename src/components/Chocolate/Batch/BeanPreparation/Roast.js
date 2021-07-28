@@ -3,14 +3,13 @@ import React from 'react';
 class RoastSelection extends React.Component {
   constructor(props) {
     super(props);
-    console.log('roast' , props);
     this.removeTime = this.removeTime.bind(this);
     this.addTime = this.addTime.bind(this);
     this.changeValue = this.changeValue.bind(this);
     this.onUpdateRoast = this.onUpdateRoast.bind(this);
 
     var input;
-    if (!this.props || !this.props.input || this.props.input.length === 0) {
+    if (!this.props || !this.props.input || Object.keys(this.props.input).length === 0) {
       input = {elapsedTimeInMinutes : 0, tempInF : 0};
     } else {
       input = this.props.input;
@@ -41,11 +40,11 @@ class RoastSelection extends React.Component {
   }
 
   render() {
-
+    let uniqueKey = this.props.index + "roastSelection";
     // Figure out how many roast entries there average
     // Build single roast entry
     return (
-      <div>
+      <div key={uniqueKey}>
           <label htmlFor="time0">Elapsed Time: </label>
           <input
             size="5"
@@ -66,7 +65,7 @@ class RoastSelection extends React.Component {
         />&nbsp;&nbsp;&nbsp;
         <button onClick={this.removeTime}>-</button>&nbsp;
         <button onClick={this.addTime}>+</button>
-         </div>
+      </div>
     );
   }
 }
