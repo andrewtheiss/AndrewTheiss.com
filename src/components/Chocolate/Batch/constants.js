@@ -1,7 +1,7 @@
 export const BEAN_DEFAULT = {
   beanId : '',
   weightInGrams : '',
-  roast : [[0,80]],
+  roast : [{elapsedTimeInMinutes : 0, tempInF : 80}],
   finalTemp : {
     high : 0,
     low : 0,
@@ -10,11 +10,11 @@ export const BEAN_DEFAULT = {
   pricePerKilogram : ''
 }
 
-export const ROAST_INITIAL = [0,80];
-export const ROAST_EMPTY = [0,0];
+export const ROAST_INITIAL = {elapsedTimeInMinutes : 0, tempInF : 80};
+export const ROAST_EMPTY = {elapsedTimeInMinutes : 0, tempInF : 0};
 export const ROAST = {
   roast : [
-    [0,80]
+    {elapsedTimeInMinutes : 0, tempInF : 0}
   ],
   finalTemp : {
     high : '',

@@ -3,20 +3,22 @@ import React from 'react';
 class RoastSelection extends React.Component {
   constructor(props) {
     super(props);
+    console.log('roast' , props);
     this.removeTime = this.removeTime.bind(this);
     this.addTime = this.addTime.bind(this);
     this.changeValue = this.changeValue.bind(this);
     this.onUpdateRoast = this.onUpdateRoast.bind(this);
+
     var input;
     if (!this.props || !this.props.input || this.props.input.length === 0) {
-      input = [0,0];
+      input = {elapsedTimeInMinutes : 0, tempInF : 0};
     } else {
       input = this.props.input;
     }
     this.state = {
-      time : input[0],
-      temp : input[1]
-    }
+      elapsedTimeInMinutes : input.elapsedTimeInMinutes,
+      tempInF : input.tempInF
+    };
   }
 
   removeTime() {
@@ -29,10 +31,15 @@ class RoastSelection extends React.Component {
     await this.setState({[event.target.name] : event.target.value});
     this.onUpdateRoast();
   }
+
   onUpdateRoast() {
-    let latestRoast = [this.state.time, this.state.temp];
+    let latestRoast = {
+      elapsedTimeInMinutes : this.state.elapsedTimeInMinutes,
+      tempInF : this.state.tempInF
+    };
     this.props.onChangeRoast(this.props.index, latestRoast);
   }
+
   render() {
 
     // Figure out how many roast entries there average
@@ -42,8 +49,8 @@ class RoastSelection extends React.Component {
           <label htmlFor="time0">Elapsed Time: </label>
           <input
             size="5"
-           name="time"
-           value={this.state.time}
+           name="elapsedTimeInMinutes"
+           value={this.state.elapsedTimeInMinutes}
            onChange={this.changeValue}
            type="text"
            placeholder=""
@@ -51,8 +58,8 @@ class RoastSelection extends React.Component {
          <label htmlFor="temp0">Temp: </label>
          <input
           size="5"
-          name="temp"
-          value={this.state.temp}
+          name="tempInF"
+          value={this.state.tempInF}
           onChange={this.changeValue}
           type="text"
           placeholder=""
