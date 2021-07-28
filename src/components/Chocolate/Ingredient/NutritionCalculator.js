@@ -74,15 +74,16 @@ class NutritionCalculator extends React.Component {
     }
 
     if (this.props.ingredients.values !== undefined) {
-      /*
-      let objectKeysToCheck = ['Cocoa','Dairy','Details','Other','Sweetener'];
+
+      let objectKeysToCheck = ['Cocoa','Dairy','Other','Sweetener'];
       for (var i = 0; i < objectKeysToCheck.length; i++) {
         let ingredientType = this.props.ingredients.values[objectKeysToCheck[i]];
+        console.log("ingredient type" , ingredientType);
         for (var j = 0; j < ingredientType.length; j++) {
-          this.normalizeAndAddToTotal();
+          this.normalizeAndAddToTotal(ingredientType[j].label, ingredientType[j].weight);
         }
       }
-      */
+
       // Handle Beans separately
       let beans = this.props.ingredients.values['Beans'];
       for (let i = 0; i < beans.length; i++) {
@@ -90,6 +91,13 @@ class NutritionCalculator extends React.Component {
       }
     }
     console.log(this.temporaryNutritionTotal);
+
+    // Manually set some values and round others
+    for (const key in this.temporaryNutritionTotal) {
+      this.temporaryNutritionTotal[key] = Math.round(this.temporaryNutritionTotal[key]);
+    }
+    this.temporaryNutritionTotal["servingsPerContainer"] = 1;
+
     return this.temporaryNutritionTotal;
   }
 
