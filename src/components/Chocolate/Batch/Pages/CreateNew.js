@@ -2,6 +2,7 @@ import React from 'react';
 import CombineBatchIngredients from '../CombineIngredients.js'
 import NutritionCalculator from '../../Ingredient/NutritionCalculator.js'
 import  { FirebaseContext } from '../../../Firebase';
+import "../Batch.css"
 
 class CreateNewChocolateBatchPage extends React.Component {
   constructor(props) {
@@ -95,17 +96,21 @@ class CreateNewChocolateBatchPage extends React.Component {
   }
 
   render() {
-
     return (
-      <div>
-        <br />
-        <FirebaseContext.Consumer>
-            {firebase => <CombineBatchIngredients onChange={this.updateBatchDetails} firebase={firebase}/>}
-        </FirebaseContext.Consumer>
-        <button onClick={this.addChocolateBatch}>Add Chocolate</button>
-        <FirebaseContext.Consumer>
-          {firebase => <NutritionCalculator selectedIngredients={this.state} firebase={firebase} onUpdateWeight={this.updateWeight}  onUpdateTotalCost={this.updateIngredientTotalCost}/>}
-        </FirebaseContext.Consumer>
+      <div className="batchCreationContainer">
+        <div className="batchCreation leftSide">
+          <br />
+          <FirebaseContext.Consumer>
+              {firebase => <CombineBatchIngredients onChange={this.updateBatchDetails} firebase={firebase}/>}
+          </FirebaseContext.Consumer>
+          <button onClick={this.addChocolateBatch}>Add Chocolate</button>
+        </div>
+        <div className="batchCreation rightSide">
+          <FirebaseContext.Consumer>
+            {firebase => <NutritionCalculator selectedIngredients={this.state} firebase={firebase} onUpdateWeight={this.updateWeight}  onUpdateTotalCost={this.updateIngredientTotalCost}/>}
+          </FirebaseContext.Consumer>
+        </div>
+        <div className="batchCreationClear"></div>
        </div>
     );
   }

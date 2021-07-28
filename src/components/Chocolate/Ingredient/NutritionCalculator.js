@@ -121,7 +121,7 @@ class NutritionCalculator extends React.Component {
         return b.quantity - a.quantity;
     });
 
-    // Find boundary for ingredients which 'Contain 2% or less of the following:'
+    // Find boundary for ingredients which 'Contains 2% or less of the following:'
     let twoPercent = this.temporaryNutritionTotal["servingSizeInGrams"] * 0.02;
     let flaggedTwoPercent = false;
 
@@ -129,7 +129,7 @@ class NutritionCalculator extends React.Component {
     for (var i = 0; i < this.orderedIngredientList.length; i++) {
       if (!flaggedTwoPercent && (this.orderedIngredientList[i].quantity < twoPercent)) {
         flaggedTwoPercent = true;
-        ingredientString += 'Contain 2% or less of the following: ';
+        ingredientString += 'Contains 2% or less of the following: ';
       }
       ingredientString += this.orderedIngredientList[i].label;
       if (i !== this.orderedIngredientList.length - 1) {

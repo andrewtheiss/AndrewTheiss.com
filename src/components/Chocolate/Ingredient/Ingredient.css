@@ -213,8 +213,9 @@
 }
 
 .nutritionCalculatorIngredientsBox {
+  line-height: 1.1em;
   font-size: 0.9em;
   margin: 5px 0px;
   border: 2px solid black;
-  padding: 5px;
+  padding: 2px 4px;
 }

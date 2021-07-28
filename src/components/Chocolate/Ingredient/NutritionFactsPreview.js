@@ -11,15 +11,6 @@ const DefaultDisclaimer = () => (
     a day is used for general nutrition advice.
   </p>
 );
-class AddedSugarDisclaimer extends React.Component {
-  render() {
-    return (  <p className="nutritionFactsFooterDisclaimer">
-        1 One servings adds {this.props.value}g of sugar to your diet and
-        represents {Math.round(this.props.pct*10)/10}% of the Daily Value for Added Sugars.
-      </p>
-    )
-  }
-};
 
 /**
  *  IngredientImage
@@ -73,7 +64,6 @@ class NutritionFactsPreview extends React.Component {
     this.generatePrimaryDetails = this.generatePrimaryDetails.bind(this);
     this.generateSecondaryDetails = this.generateSecondaryDetails.bind(this);
     this.generateSecondaryDetailsBuffer = this.generateSecondaryDetailsBuffer.bind(this);
-    this.generateSugarFooterDisclaimer = this.generateSugarFooterDisclaimer.bind(this);
     this.generateIngredientsList = this.generateIngredientsList.bind(this);
 
     // Super hacky way to get dynamically expanding 100% width to adjust for textwrap
@@ -113,16 +103,6 @@ class NutritionFactsPreview extends React.Component {
     return footerDisclaimer;
   }
 
-  generateSugarFooterDisclaimer() {
-    let footerDisclaimer = <div></div>;
-    if (this.props.previewData['addedSugars'] > 0) {
-      let dailyRecommendedAmount = CONSTS.NUTRITION_RECOMMENDED_DAILY_AMOUNT['addedSugars'];
-      let dailyRecommendedPercentValue = 100 * (Number(this.props.previewData['addedSugars']) / Number(dailyRecommendedAmount));
-      footerDisclaimer = <AddedSugarDisclaimer value={this.props.previewData['addedSugars']}  pct={dailyRecommendedPercentValue} />;
-    }
-    return footerDisclaimer;
-  }
-
   generateIngredientsList() {
     if (this.props.overrideIngreientBox || this.props.ingredientList === undefined || this.props.ingredientList === "") {
       return <div></div>;
@@ -147,7 +127,6 @@ class NutritionFactsPreview extends React.Component {
     let primaryDetails = this.generatePrimaryDetails();
     let secondaryDetailsBuffer = this.generateSecondaryDetailsBuffer();
     let secondaryDetails = this.generateSecondaryDetails();
-    let sugarDisclaimer = this.generateSugarFooterDisclaimer();
     let ingredientsList = this.generateIngredientsList();
     return (
       <div>
@@ -179,7 +158,7 @@ class NutritionFactsPreview extends React.Component {
           <div className="nutritionFactsMediumBarDivider t2"></div>
           <div id={this.footerUniqueId} className="nutirionFactsFooterWrapper">
           {this.generateDefalutFooterDisclaimer()}
-          {sugarDisclaimer}
+
           </div>
           <div className="nutirionFactsFooterFinal"></div>
         </div>
