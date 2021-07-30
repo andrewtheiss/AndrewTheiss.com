@@ -21,7 +21,18 @@ class CombineBatchIngredients extends React.Component {
     this.onChangeSelection = this.onChangeSelection.bind(this);
     this.onChangeDetails = this.onChangeDetails.bind(this);
     this.onRemoveBean = this.onRemoveBean.bind(this);
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
     this.state = CHOCOLATE_DEFAULTS;
+
+  }
+
+  componentDidUpdate(previousProps) {
+    if (previousProps.selectedIngredients !== this.props.selectedIngredients) {
+      if (this.props.selectedIngredients.values) {
+        let state = this.props.selectedIngredients.values;
+        this.setState(state);
+      }
+    }
   }
 
   onAddBean(newBean) {
@@ -37,8 +48,8 @@ class CombineBatchIngredients extends React.Component {
     this.props.onChange(this.state);
   }
 
-  onChangeDetails(details) {
-    this.setState({Details:details});
+  onChangeDetails(Details) {
+    this.setState({Details:Details});
     this.props.onChange(this.state);
   }
 
@@ -51,17 +62,16 @@ class CombineBatchIngredients extends React.Component {
 
   render() {
     var beanSummaryViewer = <BeanPreparationSummary input={this.state.Beans} name="Bean Viewer" onRemoveBean={this.onRemoveBean} onEditBean={this.onEditBean}/>;
-
     return (
       <div>
         <BeanPreparation name="beans" onAddBean={this.onAddBean} />
         {beanSummaryViewer}
         <IngredientSelection input={this.state.Dairy} name="Dairy" onChangeSelection={this.onChangeSelection} />
-        <IngredientSelection input={this.state.Sweeteners} name="Sweetener" onChangeSelection={this.onChangeSelection} />
+        <IngredientSelection input={this.state.Sweetener} name="Sweetener" onChangeSelection={this.onChangeSelection} />
         <IngredientSelection input={this.state.Cocoa} name="Cocoa" onChangeSelection={this.onChangeSelection} />
         <IngredientSelection input={this.state.Other} name="Other" onChangeSelection={this.onChangeSelection} />
         <FirebaseContext.Consumer>
-            {firebase => <BatchDetails input={this.state.details} name="Details" onChangeDetails={this.onChangeDetails} firebase={firebase}/>}
+            {firebase => <BatchDetails input={this.state.Details} name="Details" onChangeDetails={this.onChangeDetails} firebase={firebase}/>}
         </FirebaseContext.Consumer>
       </div>
     );

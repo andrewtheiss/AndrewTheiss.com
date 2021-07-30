@@ -1,7 +1,7 @@
 export const BEAN_DEFAULT = {
   beanId : '',
-  nibWeightInGrams : '',
-  beanWeightInGrams : '',
+  nibWeightInGrams : 0,
+  beanWeightInGrams : 0,
   roast : {
     0 : {elapsedTimeInMinutes : 0, tempInF : 80}
   },

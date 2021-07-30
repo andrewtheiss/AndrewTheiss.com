@@ -33,7 +33,6 @@ class CreateNewChocolateBatch extends React.Component {
 
     // Variables to check Edit
     this.batchToEdit = undefined;
-    console.log(this.props.batchToEdit);
   }
 
   componentDidUpdate(prevProps) {
@@ -98,11 +97,11 @@ class CreateNewChocolateBatch extends React.Component {
     let nibWeightInGrams = 0;
     let Beans = this.state.values.Beans;
     for (var i = 0; i < Beans.length; i++) {
-      beanWeightInGrams += Beans[i].beanWeightInGrams;
-      nibWeightInGrams += Beans[i].nibWeightInGrams;
+      beanWeightInGrams += Number(Beans[i].beanWeightInGrams);
+      nibWeightInGrams += Number(Beans[i].nibWeightInGrams);
     }
-    this.chocolateToAdd['beanWeightInGrams'] = beanWeightInGrams;
-    this.chocolateToAdd['nibWeightInGrams'] = nibWeightInGrams;
+    this.chocolateToAdd['beanWeightInGrams'] = Number(beanWeightInGrams);
+    this.chocolateToAdd['nibWeightInGrams'] = Number(nibWeightInGrams);
     this.chocolateToAdd['ingredientTotalCost'] = this.ingredientTotalCost;
   }
 
@@ -139,7 +138,7 @@ class CreateNewChocolateBatch extends React.Component {
         <div className="batchCreation leftSide">
           <br />
           <FirebaseContext.Consumer>
-              {firebase => <CombineBatchIngredients onChange={this.updateBatchDetails} firebase={firebase}/>}
+              {firebase => <CombineBatchIngredients selectedIngredients={this.state} onChange={this.updateBatchDetails} firebase={firebase}/>}
           </FirebaseContext.Consumer>
           <button onClick={this.addChocolateBatch}>Add Chocolate</button>
         </div>

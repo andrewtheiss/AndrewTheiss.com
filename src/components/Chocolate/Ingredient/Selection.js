@@ -23,6 +23,13 @@ class IngredientSelection extends React.Component {
     this.onUpdateIngredientWeight = this.onUpdateIngredientWeight.bind(this);
   }
 
+  componentDidUpdate(previousProps) {
+    if (this.props.input !== previousProps.input) {
+      let selected = this.props.input;
+      this.setState({selected});
+    }
+  }
+
   componentDidMount() {
     const IngredientCollectionRef = this.props.firebase.db.collection("ingredients");
     let self = this;

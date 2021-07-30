@@ -22,6 +22,12 @@ class BatchDetails extends React.Component {
     this.intentionOptions = [];
   }
 
+  componentDidUpdate(previousProps) {
+    if (this.props.input !== previousProps.input) {
+      this.setState(this.props.input);
+    }
+  }
+
   componentDidMount = () => {
     const intentionCollectionRef = this.props.firebase.db.collection("intention");
     //let self = this;

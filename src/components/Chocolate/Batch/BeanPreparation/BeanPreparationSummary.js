@@ -17,7 +17,6 @@ const BeanPreparationSummarySingle = ({bean, value, remove, beanDetails}) => (
 class BeanPreparationSummary extends React.Component {
   constructor(props) {
     super(props);
-    console.log('beanSummary',props);
     this.removeBean = this.removeBean.bind(this);
   }
   removeBean(beanId) {
