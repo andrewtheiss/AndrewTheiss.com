@@ -28,15 +28,19 @@ class CostCalculator extends React.Component {
       let objectKeysToCheck = ['Cocoa','Dairy','Other','Sweetener'];
       for (var i = 0; i < objectKeysToCheck.length; i++) {
         let ingredientType = this.props.selectedIngredients.values[objectKeysToCheck[i]];
-        for (var j = 0; j < ingredientType.length; j++) {
-          this.addToRunningTotal(ingredientType[j].label, ingredientType[j].weight);
+        if (ingredientType !== undefined) {
+          for (var j = 0; j < ingredientType.length; j++) {
+            this.addToRunningTotal(ingredientType[j].label, ingredientType[j].weight);
+          }
         }
       }
 
       // Handle Beans separately
       let beans = this.props.selectedIngredients.values['Beans'];
-      for (let i = 0; i < beans.length; i++) {
-        this.totalIngredientCost += (beans[i].pricePerKilogram / 1000) * beans[i].beanWeightInGrams;
+      if (beans !== undefined) {
+        for (let i = 0; i < beans.length; i++) {
+          this.totalIngredientCost += (beans[i].pricePerKilogram / 1000) * beans[i].beanWeightInGrams;
+        }
       }
     }
 

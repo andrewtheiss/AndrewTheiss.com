@@ -1,25 +1,11 @@
 import React from 'react';
-import CombineBatchIngredients from '../CombineIngredients.js'
-import NutritionCalculator from '../../Ingredient/NutritionCalculator.js'
-import { FirebaseContext } from '../../../Firebase';
-import "../Batch.css"
+import CombineBatchIngredients from './CombineIngredients.js'
+import NutritionCalculator from '../Ingredient/NutritionCalculator.js'
+import { FirebaseContext } from '../../Firebase';
+import "./Batch.css"
 
-/*
- *  Routing routes all Components with Route 'props' this taket
- */
-class CreateNewChocolateBatchPage_Route extends React.Component {
-  render() {
-    return (
-      <div>
-      <FirebaseContext.Consumer>
-          {firebase => <CreateNewChocolateBatchPage firebase={firebase}/>}
-      </FirebaseContext.Consumer>
-      </div>
-    )
-  };
-};
 
-class CreateNewChocolateBatchPage extends React.Component {
+class CreateNewChocolateBatch extends React.Component {
   constructor(props) {
     super(props);
     this.addChocolateBatch = this.addChocolateBatch.bind(this);
@@ -32,7 +18,8 @@ class CreateNewChocolateBatchPage extends React.Component {
     this.updateNutritionFacts = this.updateNutritionFacts.bind(this);
     this.updateIngredientList = this.updateIngredientList.bind(this);
     this.addBeansToBatchIngredients = this.addBeansToBatchIngredients.bind(this);
-    console.log(this.props);
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
+
     this.state = {};
     this.formattedChocolate = {};
     this.batchIngredients = {};
@@ -43,12 +30,27 @@ class CreateNewChocolateBatchPage extends React.Component {
     this.ingredientTotalCost = 0;
     this.ingredientList = "";
     this.nutritionFacts = {};
+
+    // Variables to check Edit
+    this.batchToEdit = undefined;
+    console.log(this.props.batchToEdit);
   }
+
+  componentDidUpdate(prevProps) {
+    let isEdit = (this.props.batchToEdit === undefined) ? false : true;
+    if (isEdit && this.props.batchToEdit !== prevProps.batchToEdit) {
+      if (this.batchToEdit === undefined && this.props.batchToEdit !== undefined) {
+        this.batchToEdit = this.props.batchToEdit;
+        let values = this.props.batchToEdit;
+        this.updateBatchDetails(values.values);
+      }
+    }
+  }
+
 
   addChocolateBatch() {
     this.formatChocolateForPublicAddition();
 
-    let self = this;
     console.log('try and add chocolate', this.chocolateToAdd.label, this.chocolateToAdd, this.state);
     const publicBatchesCollectionRef = this.props.firebase.db.collection("batchesPublic");
     publicBatchesCollectionRef.doc(this.chocolateToAdd.label).set(this.chocolateToAdd).then(() => {
@@ -92,8 +94,15 @@ class CreateNewChocolateBatchPage extends React.Component {
     if (this.state.values.Details !== undefined) {
       this.chocolateToAdd = this.state.values.Details;
     }
-    this.chocolateToAdd['beanWeightInGrams'] = this.beanWeightInGrams;
-    this.chocolateToAdd['nibWeightInGrams'] = this.nibWeightInGrams;
+    let beanWeightInGrams = 0;
+    let nibWeightInGrams = 0;
+    let Beans = this.state.values.Beans;
+    for (var i = 0; i < Beans.length; i++) {
+      beanWeightInGrams += Beans[i].beanWeightInGrams;
+      nibWeightInGrams += Beans[i].nibWeightInGrams;
+    }
+    this.chocolateToAdd['beanWeightInGrams'] = beanWeightInGrams;
+    this.chocolateToAdd['nibWeightInGrams'] = nibWeightInGrams;
     this.chocolateToAdd['ingredientTotalCost'] = this.ingredientTotalCost;
   }
 
@@ -104,8 +113,8 @@ class CreateNewChocolateBatchPage extends React.Component {
     }
   }
 
-  updateBatchDetails(values) {
-    this.setState({values});
+  async updateBatchDetails(values) {
+    await this.setState({values});
   }
 
   updateWeight(batchWeightInGrams) {
@@ -153,4 +162,4 @@ class CreateNewChocolateBatchPage extends React.Component {
   }
 }
 
-export default CreateNewChocolateBatchPage_Route;
+export default CreateNewChocolateBatch;

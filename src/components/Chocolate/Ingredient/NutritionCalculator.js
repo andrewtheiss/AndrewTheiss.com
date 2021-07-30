@@ -82,22 +82,26 @@ class NutritionCalculator extends React.Component {
       let objectKeysToCheck = ['Cocoa','Dairy','Other','Sweetener'];
       for (var i = 0; i < objectKeysToCheck.length; i++) {
         let ingredientType = this.props.selectedIngredients.values[objectKeysToCheck[i]];
-        for (var j = 0; j < ingredientType.length; j++) {
-          this.addToRunningTotal(ingredientType[j].label, ingredientType[j].weight);
-          if (this.state.ingredientsDb !== undefined && this.state.ingredientsDb[ingredientType[j].label] !== undefined) {
-            this.orderedIngredientList.push({
-              label : this.state.ingredientsDb[ingredientType[j].label].nutritionFactsIngredientLabel,
-              quantity : ingredientType[j].weight
-            });
+        if (ingredientType !== undefined) {
+          for (var j = 0; j < ingredientType.length; j++) {
+            this.addToRunningTotal(ingredientType[j].label, ingredientType[j].weight);
+            if (this.state.ingredientsDb !== undefined && this.state.ingredientsDb[ingredientType[j].label] !== undefined) {
+              this.orderedIngredientList.push({
+                label : this.state.ingredientsDb[ingredientType[j].label].nutritionFactsIngredientLabel,
+                quantity : ingredientType[j].weight
+              });
+            }
           }
         }
       }
 
       // Handle Beans separately
       let beans = this.props.selectedIngredients.values['Beans'];
-      for (let i = 0; i < beans.length; i++) {
-        this.addToRunningTotal(CONSTS.BEAN_NUTRITION_DB_ID, beans[i].nibWeightInGrams);
-        this.orderedIngredientList.push({label : CONSTS.BEAN_NUTRITION_DB_ID, quantity : beans[i].nibWeightInGrams});
+      if (beans !== undefined) {
+        for (let i = 0; i < beans.length; i++) {
+          this.addToRunningTotal(CONSTS.BEAN_NUTRITION_DB_ID, beans[i].nibWeightInGrams);
+          this.orderedIngredientList.push({label : CONSTS.BEAN_NUTRITION_DB_ID, quantity : beans[i].nibWeightInGrams});
+        }
       }
     }
 
@@ -189,7 +193,6 @@ class NutritionCalculator extends React.Component {
     return (
       <div>
         <div className="nutritionCalculator">
-          Nutrition Facts Summary
           {nutritionFactsPreview}
         </div>
         <div className="nutritionCalculatorIngredientsBox">

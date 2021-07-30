@@ -22,3 +22,12 @@
 .batchCreationClear {
   clear: both;
 }
+
+.batchCreationDetailsIntentionSelection {
+  width: 500px;
+}
+
+/* Search / Lookup */
+.batchLookupContainer {
+  max-width: 300px;
+}

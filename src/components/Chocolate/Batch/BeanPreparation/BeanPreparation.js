@@ -54,7 +54,6 @@ class BeanPreparation extends React.Component {
         beans : beansMap,
         beanOptions : beanOptions
       });
-      console.log(beanOptions);
     });
   }
 
@@ -168,7 +167,7 @@ class BeanPreparation extends React.Component {
     }
 
     if (isValid && (this.state.latestBean.nibWeightInGrams === "")) {
-      alert('no weight of nibs');
+      alert('no nib weight');
       isValid = false;
     } else if (isValid && isNaN(this.state.latestBean.nibWeightInGrams)) {
       alert('invalid weight');
@@ -223,7 +222,7 @@ class BeanPreparation extends React.Component {
            placeholder=""
          />
          <br />
-          <label htmlFor="nibWeightInGrams">Nibs Weight (grams):</label>
+          <label htmlFor="nibWeightInGrams">Nib Weight (grams):</label>
           <input
            size="7"
            name="nibWeightInGrams"

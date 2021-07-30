@@ -37,7 +37,6 @@ class Bar extends React.Component {
         beans : beansMap
       });
     });
-
   }
 
   handleMouseOver(e) {
