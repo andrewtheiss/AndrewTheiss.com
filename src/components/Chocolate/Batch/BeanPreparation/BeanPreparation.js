@@ -27,6 +27,7 @@ class BeanPreparation extends React.Component {
     this.componentDidMount = this.componentDidMount.bind(this);
     this.addBean = this.addBean.bind(this);
     this.onChangeBeanWeight = this.onChangeBeanWeight.bind(this);
+    this.onChangenibWeight = this.onChangenibWeight.bind(this);
     this.renderRoastTimeTemps = this.renderRoastTimeTemps.bind(this);
     this.renderFinalTemp = this.renderFinalTemp.bind(this);
     this.onChangeRoast = this.onChangeRoast.bind(this);
@@ -145,7 +146,13 @@ class BeanPreparation extends React.Component {
 
   onChangeBeanWeight(event) {
     let latestBean = this.state.latestBean;
-    latestBean.weightInGrams = event.target.value;
+    latestBean.beanWeightInGrams = event.target.value;
+    this.setState({ latestBean });
+  }
+
+  onChangenibWeight(event) {
+    let latestBean = this.state.latestBean;
+    latestBean.nibWeightInGrams = event.target.value;
     this.setState({ latestBean });
   }
 
@@ -160,10 +167,10 @@ class BeanPreparation extends React.Component {
       isValid = false;
     }
 
-    if (isValid && (this.state.latestBean.weightInGrams === "")) {
-      alert('no weight of beans');
+    if (isValid && (this.state.latestBean.nibWeightInGrams === "")) {
+      alert('no weight of nibs');
       isValid = false;
-    } else if (isValid && isNaN(this.state.latestBean.weightInGrams)) {
+    } else if (isValid && isNaN(this.state.latestBean.nibWeightInGrams)) {
       alert('invalid weight');
       isValid = false;
     }
@@ -206,11 +213,22 @@ class BeanPreparation extends React.Component {
         />
         <br />
         <br />
-          <label htmlFor="weightInGrams">Nibs Weight (grams):</label>
+          <label htmlFor="beanWeightInGrams">Bean Weight (grams):</label>
           <input
-           name="weightInGrams"
-           value={this.state.latestBean.weightInGrams}
+           size="7"
+           name="beanWeightInGrams"
+           value={this.state.latestBean.beanWeightInGrams}
            onChange={this.onChangeBeanWeight}
+           type="text"
+           placeholder=""
+         />
+         <br />
+          <label htmlFor="nibWeightInGrams">Nibs Weight (grams):</label>
+          <input
+           size="7"
+           name="nibWeightInGrams"
+           value={this.state.latestBean.nibWeightInGrams}
+           onChange={this.onChangenibWeight}
            type="text"
            placeholder=""
          />

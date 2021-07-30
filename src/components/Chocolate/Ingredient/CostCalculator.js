@@ -13,10 +13,10 @@ class CostCalculator extends React.Component {
     this.totalIngredientCost = 0;
   }
 
-  addToRunningTotal(id, weightInGrams) {
+  addToRunningTotal(id, beanWeightInGrams) {
     if (this.props.ingredientsDb[id] !== undefined) {
       let ingredientPricePerKg = this.props.ingredientsDb[id].latestPricePerKg;
-      this.totalIngredientCost += (ingredientPricePerKg / 1000) * weightInGrams;
+      this.totalIngredientCost += (ingredientPricePerKg / 1000) * beanWeightInGrams;
     }
   }
 
@@ -36,7 +36,7 @@ class CostCalculator extends React.Component {
       // Handle Beans separately
       let beans = this.props.selectedIngredients.values['Beans'];
       for (let i = 0; i < beans.length; i++) {
-        this.totalIngredientCost += (beans[i].pricePerKilogram / 1000) * beans[i].weightInGrams;
+        this.totalIngredientCost += (beans[i].pricePerKilogram / 1000) * beans[i].beanWeightInGrams;
       }
     }
 

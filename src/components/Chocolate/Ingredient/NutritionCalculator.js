@@ -43,7 +43,7 @@ class NutritionCalculator extends React.Component {
     });
   }
 
-  addToRunningTotal(id, weightInGrams) {
+  addToRunningTotal(id, nibWeightInGrams) {
     let self = this;
     if (this.state.ingredientsDb[id] !== undefined) {
       let ingredientNutritionFacts = this.state.ingredientsDb[id].nutritionFacts;
@@ -53,7 +53,7 @@ class NutritionCalculator extends React.Component {
           self.temporaryNutritionTotal[key] = 0;
         }
 
-        self.temporaryNutritionTotal[key] = Number(self.temporaryNutritionTotal[key]) + (weightInGrams * Number(value) / ingredientNutritionFacts.servingSizeInGrams);
+        self.temporaryNutritionTotal[key] = Number(self.temporaryNutritionTotal[key]) + (nibWeightInGrams * Number(value) / ingredientNutritionFacts.servingSizeInGrams);
       }
     }
   }
@@ -96,8 +96,8 @@ class NutritionCalculator extends React.Component {
       // Handle Beans separately
       let beans = this.props.selectedIngredients.values['Beans'];
       for (let i = 0; i < beans.length; i++) {
-        this.addToRunningTotal(CONSTS.BEAN_NUTRITION_DB_ID, beans[i].weightInGrams);
-        this.orderedIngredientList.push({label : CONSTS.BEAN_NUTRITION_DB_ID, quantity : beans[i].weightInGrams});
+        this.addToRunningTotal(CONSTS.BEAN_NUTRITION_DB_ID, beans[i].nibWeightInGrams);
+        this.orderedIngredientList.push({label : CONSTS.BEAN_NUTRITION_DB_ID, quantity : beans[i].nibWeightInGrams});
       }
     }
 

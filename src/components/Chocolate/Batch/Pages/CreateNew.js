@@ -31,6 +31,7 @@ class CreateNewChocolateBatchPage extends React.Component {
     this.updateIngredientTotalCost = this.updateIngredientTotalCost.bind(this);
     this.updateNutritionFacts = this.updateNutritionFacts.bind(this);
     this.updateIngredientList = this.updateIngredientList.bind(this);
+    this.addBeansToBatchIngredients = this.addBeansToBatchIngredients.bind(this);
     console.log(this.props);
     this.state = {};
     this.formattedChocolate = {};
@@ -50,9 +51,9 @@ class CreateNewChocolateBatchPage extends React.Component {
     let self = this;
     console.log('try and add chocolate', this.chocolateToAdd.label, this.chocolateToAdd, this.state);
     const publicBatchesCollectionRef = this.props.firebase.db.collection("batchesPublic");
-    //publicBatchesCollectionRef.doc(this.chocolateToAdd.label).set(this.chocolateToAdd).then(() => {
-    //  console.log('added public batch');
-    //});
+    publicBatchesCollectionRef.doc(this.chocolateToAdd.label).set(this.chocolateToAdd).then(() => {
+      console.log('added public batch');
+    });
     const batchesCollectionRef = this.props.firebase.db.collection("batches");
     batchesCollectionRef.doc(this.chocolateToAdd.label).set(this.state).then(() => {
       console.log('added batch');
@@ -74,6 +75,7 @@ class CreateNewChocolateBatchPage extends React.Component {
       this.addAndFormatChocolateValuesFromSection(this.state.values[nextSelection]);
     }
     this.chocolateToAdd['batchIngredients'] = this.batchIngredients;
+    this.addBeansToBatchIngredients();
 
     // Add Nutrition Facts, Ingredients View List,
     this.chocolateToAdd['ingredients'] = this.ingredientList;
@@ -90,20 +92,24 @@ class CreateNewChocolateBatchPage extends React.Component {
     if (this.state.values.Details !== undefined) {
       this.chocolateToAdd = this.state.values.Details;
     }
-    this.chocolateToAdd['weightInGrams'] = this.weightInGrams;
+    this.chocolateToAdd['beanWeightInGrams'] = this.beanWeightInGrams;
+    this.chocolateToAdd['nibWeightInGrams'] = this.nibWeightInGrams;
     this.chocolateToAdd['ingredientTotalCost'] = this.ingredientTotalCost;
   }
 
-  formatStateFromChocolate() {
-
+  addBeansToBatchIngredients() {
+    let beans = this.state.values['Beans'];
+    for (var i = 0; i < beans.length; i++) {
+      this.chocolateToAdd.batchIngredients[beans[i]['beanId']] = Number(beans[i]['nibWeightInGrams']);
+    }
   }
 
   updateBatchDetails(values) {
     this.setState({values});
   }
 
-  updateWeight(weightInGrams) {
-    this.weightInGrams = weightInGrams;
+  updateWeight(batchWeightInGrams) {
+    this.weightInGrams = batchWeightInGrams;
   }
 
   updateIngredientTotalCost(ingredientTotalCost) {
