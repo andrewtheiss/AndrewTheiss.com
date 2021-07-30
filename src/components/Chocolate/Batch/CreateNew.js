@@ -37,12 +37,10 @@ class CreateNewChocolateBatch extends React.Component {
 
   componentDidUpdate(prevProps) {
     let isEdit = (this.props.batchToEdit === undefined) ? false : true;
-    if (isEdit && this.props.batchToEdit !== prevProps.batchToEdit) {
-      if (this.batchToEdit === undefined && this.props.batchToEdit !== undefined) {
-        this.batchToEdit = this.props.batchToEdit;
-        let values = this.props.batchToEdit;
-        this.updateBatchDetails(values.values);
-      }
+    if (isEdit && this.props.batchToEdit !== prevProps.batchToEdit && this.props.batchToEdit !== undefined) {
+      this.batchToEdit = this.props.batchToEdit;
+      let values = this.props.batchToEdit;
+      this.updateBatchDetails(values.values);
     }
   }
 

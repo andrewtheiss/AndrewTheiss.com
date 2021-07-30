@@ -4,15 +4,8 @@ import IngredientSelection from '../Ingredient/Selection.js'
 import BatchDetails from './Details.js'
 import BeanPreparationSummary from './BeanPreparation/BeanPreparationSummary.js'
 import  { FirebaseContext } from '../../Firebase';
+import * as CONSTS from './constants.js'
 
-const CHOCOLATE_DEFAULTS = {
-  Beans : [],
-  Sweetener : [],
-  Dairy : [],
-  Cocoa : [],
-  Other : [],
-  Details : []
-}
 
 class CombineBatchIngredients extends React.Component {
   constructor(props) {
@@ -22,7 +15,7 @@ class CombineBatchIngredients extends React.Component {
     this.onChangeDetails = this.onChangeDetails.bind(this);
     this.onRemoveBean = this.onRemoveBean.bind(this);
     this.componentDidUpdate = this.componentDidUpdate.bind(this);
-    this.state = CHOCOLATE_DEFAULTS;
+    this.state = CONSTS.CHOCOLATE_BATCH_DEFAULTS;
 
   }
 

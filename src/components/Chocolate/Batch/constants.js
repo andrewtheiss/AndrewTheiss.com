@@ -26,7 +26,15 @@ export const ROAST = {
   }
 }
 
-
+export const CHOCOLATE_BATCH_DEFAULTS = {
+  Beans : [],
+  Sweetener : [],
+  Dairy : [],
+  Cocoa : [],
+  Other : [],
+  Details : []
+}
+/*
 export const CHOCOLATE_DEFAULTS = {
 
   // Date should be autofilled after
@@ -40,25 +48,7 @@ export const CHOCOLATE_DEFAULTS = {
   },
 
   // Ingredient all of which are optional segments
-  Ingredient : {
-     // Beans
-     beans : {
-
-     },
-     // Sweeteners
-     sweeteners : {
-
-     },
-
-     // Dairy
-     dairy : {
-
-     },
-
-     // Extras
-     extras : {
-
-     }
+  Ingredient : CHOCOLATE_BATCH_DEFAULTS
   },
 
   //
@@ -69,6 +59,5 @@ export const CHOCOLATE_DEFAULTS = {
     myReview : '',
     toImprove : ''
   }
-
-  //
 }
+*/

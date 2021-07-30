@@ -65,7 +65,6 @@ class LookupChocolateBatch extends React.Component {
       let self = this;
       latestDocRef.get().then((doc) => {
           if (doc.exists) {
-              console.log("Document data:", doc.data());
               self.props.onSelectBatch(doc.data());
           } else {
               console.log("ERROR - Failed to find batch!");

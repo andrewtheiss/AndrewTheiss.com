@@ -2,6 +2,7 @@ import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
 import CreateNewChocolateBatch from '../CreateNew.js'
 import LookupChocolateBatch from '../Lookup.js'
+import * as CONSTS from '../constants.js'
 
 /*
  *  Routing routes all Components with Route 'props' this taket
@@ -17,6 +18,9 @@ class AddEditChocolateBatchPage extends React.Component {
 
   async onSelectBatch(selectionId) {
     let selectedBatch = selectionId;
+    if (selectionId === undefined || selectionId === '') {
+      selectedBatch = {values : CONSTS.CHOCOLATE_BATCH_DEFAULTS};
+    }
     await this.setState({selectedBatch});
   }
 
