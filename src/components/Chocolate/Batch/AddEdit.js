@@ -7,12 +7,12 @@ import "./Batch.css"
 import * as CONSTS from './constants.js'
 
 
-class CreateNewChocolateBatch extends React.Component {
+class AddEditChocolateBatch extends React.Component {
   constructor(props) {
     super(props);
     this.addChocolateBatch = this.addChocolateBatch.bind(this);
     this.updateBatchDetails = this.updateBatchDetails.bind(this);
-    this.formatChocolateForPublicAddition = this.formatChocolateForPublicAddition.bind(this);
+    this.formatChocolateForAddOrEdit = this.formatChocolateForAddOrEdit.bind(this);
     this.getAndFormatChocolateValuesFromSection = this.addAndFormatChocolateValuesFromSection.bind(this);
     this.addAndFormatChocolateValueDetails = this.addAndFormatChocolateValueDetails.bind(this);
     this.updateWeight = this.updateWeight.bind(this);
@@ -21,7 +21,9 @@ class CreateNewChocolateBatch extends React.Component {
     this.updateIngredientList = this.updateIngredientList.bind(this);
     this.addBeansToBatchIngredients = this.addBeansToBatchIngredients.bind(this);
     this.componentDidUpdate = this.componentDidUpdate.bind(this);
-
+    this.updateChocolateBatch = this.updateChocolateBatch.bind(this);
+    this.generateAddOrEditButton = this.generateAddOrEditButton.bind(this);
+    this.checkIfEditedLabelMatchCurrentLabel = this.checkIfEditedLabelMatchCurrentLabel.bind(this);
     this.state = {};
     this.formattedChocolate = {};
     this.batchIngredients = {};
@@ -35,27 +37,50 @@ class CreateNewChocolateBatch extends React.Component {
 
     // Variables to check Edit
     this.batchToEdit = undefined;
+    this.batchToEditLabel = undefined;
   }
-
+  // Somewhere save this.props.batchToEdit.Details.label as this.batchToEditLabel
   componentDidUpdate(prevProps) {
-    let isEdit = (this.props.batchToEdit === undefined) ? false : true;
-    let constString = JSON.stringify({'values' :CONSTS.CHOCOLATE_BATCH_DEFAULTS});
-    if (isEdit &&
-        this.props.batchToEdit !== prevProps.batchToEdit &&
-        this.props.batchToEdit !== undefined
-      ) {
-      if (JSON.stringify(this.props.batchToEdit) !== constString) {
-        this.batchToEdit = this.props.batchToEdit;
+    let isEdit = this.props.itemSelectedForEdit;
+
+      // Only do something if there's a change in the batchToEdit
+      if (this.props.batchToEdit !== prevProps.batchToEdit) {
+        let editingBatchLabelMatchesCurrentBatchLabel = this.checkIfEditedLabelMatchCurrentLabel();
+
+        // If there's something to edit or the props don't match the default
+        if (isEdit) {
+          // Set the batch to edit!
+          this.batchToEdit = this.props.batchToEdit;
+
+          // Save the selected label we selected for edit
+          if (this.props.batchToEdit.values.Details) {
+            this.batchToEditLabel = this.props.batchToEdit.values.Details.label;
+          }
+          let values = this.props.batchToEdit;
+          this.updateBatchDetails(values.values);
+        } else if (editingBatchLabelMatchesCurrentBatchLabel) {
+            // Continue editing and don't change anything
+        } else {
+          this.batchToEdit = undefined;
+          this.updateBatchDetails(CONSTS.CHOCOLATE_BATCH_DEFAULTS);
+        }
       }
-      let values = this.props.batchToEdit;
-      this.updateBatchDetails(values.values);
-    } else {
-      this.batchToEdit = undefined;
     }
-  }
+
+    checkIfEditedLabelMatchCurrentLabel() {
+      let matches = false;
+      if (this.props.batchToEdit &&
+        this.props.batchToEdit.values &&
+        this.props.batchToEdit.values.Details &&
+        this.props.batchToEdit.values.Details.label &&
+        (this.batchToEditLabel === this.props.batchToEdit.values.Details.label)) {
+          matches = true;
+        }
+      return matches;
+    }
 
   addChocolateBatch() {
-    this.formatChocolateForPublicAddition();
+    this.formatChocolateForAddOrEdit();
 
     console.log('try and add chocolate', this.chocolateToAdd.label, this.chocolateToAdd, this.state);
     const publicBatchesCollectionRef = this.props.firebase.db.collection("batchesPublic");
@@ -69,7 +94,24 @@ class CreateNewChocolateBatch extends React.Component {
   //  console.log('try and add chocolate', this.chocolateToAdd.label, this.state);
   }
 
-  formatChocolateForPublicAddition() {
+  updateChocolateBatch() {
+    this.formatChocolateForAddOrEdit();
+
+
+    console.log('try and UPDATE chocolate', this.chocolateToAdd.label, this.chocolateToAdd, this.state);
+    /*
+    const publicBatchesCollectionRef = this.props.firebase.db.collection("batchesPublic");
+    publicBatchesCollectionRef.doc(this.chocolateToAdd.label).set(this.chocolateToAdd).then(() => {
+      console.log('UPDATEed public batch');
+    });
+    const batchesCollectionRef = this.props.firebase.db.collection("batches");
+    batchesCollectionRef.doc(this.chocolateToAdd.label).set(this.state).then(() => {
+      console.log('UPDATEd batch');
+    });
+    */
+  }
+
+  formatChocolateForAddOrEdit() {
     this.chocolateToAdd = {};
     this.batchIngredients = {};
 
@@ -139,9 +181,17 @@ class CreateNewChocolateBatch extends React.Component {
     this.nutritionFacts = nutritionFacts;
   }
 
+  generateAddOrEditButton() {
+    if (this.batchToEdit === undefined) {
+      return (<button onClick={this.addChocolateBatch}>Add Chocolate</button>);
+    }
+    return <button onClick={this.updateChocolateBatch}>Update Chocolate</button>
+  }
+
   render() {
     let splitChocolateBatchIsActive = (this.batchToEdit === undefined) ? false : this.state;
-    console.log('SPLIT BATCH VAL', splitChocolateBatchIsActive);
+    let addEditChocolateButton = this.generateAddOrEditButton();
+
     return (
       <div className="batchCreationContainer">
         <div className="batchCreation leftSide">
@@ -149,7 +199,7 @@ class CreateNewChocolateBatch extends React.Component {
           <FirebaseContext.Consumer>
               {firebase => <CombineBatchIngredients selectedIngredients={this.state} onChange={this.updateBatchDetails} firebase={firebase}/>}
           </FirebaseContext.Consumer>
-          <button onClick={this.addChocolateBatch}>Add Chocolate</button>
+          {addEditChocolateButton}
         </div>
         <div className="batchCreation rightSide">
           <FirebaseContext.Consumer>
@@ -177,4 +227,4 @@ class CreateNewChocolateBatch extends React.Component {
   }
 }
 
-export default CreateNewChocolateBatch;
+export default AddEditChocolateBatch;
