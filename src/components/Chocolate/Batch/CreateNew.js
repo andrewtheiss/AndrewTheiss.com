@@ -1,8 +1,10 @@
 import React from 'react';
 import CombineBatchIngredients from './CombineIngredients.js'
 import NutritionCalculator from '../Ingredient/NutritionCalculator.js'
+import SplitChocolateBatch from './Split.js'
 import { FirebaseContext } from '../../Firebase';
 import "./Batch.css"
+import * as CONSTS from './constants.js'
 
 
 class CreateNewChocolateBatch extends React.Component {
@@ -37,13 +39,20 @@ class CreateNewChocolateBatch extends React.Component {
 
   componentDidUpdate(prevProps) {
     let isEdit = (this.props.batchToEdit === undefined) ? false : true;
-    if (isEdit && this.props.batchToEdit !== prevProps.batchToEdit && this.props.batchToEdit !== undefined) {
-      this.batchToEdit = this.props.batchToEdit;
+    let constString = JSON.stringify({'values' :CONSTS.CHOCOLATE_BATCH_DEFAULTS});
+    if (isEdit &&
+        this.props.batchToEdit !== prevProps.batchToEdit &&
+        this.props.batchToEdit !== undefined
+      ) {
+      if (JSON.stringify(this.props.batchToEdit) !== constString) {
+        this.batchToEdit = this.props.batchToEdit;
+      }
       let values = this.props.batchToEdit;
       this.updateBatchDetails(values.values);
+    } else {
+      this.batchToEdit = undefined;
     }
   }
-
 
   addChocolateBatch() {
     this.formatChocolateForPublicAddition();
@@ -131,6 +140,8 @@ class CreateNewChocolateBatch extends React.Component {
   }
 
   render() {
+    let splitChocolateBatchIsActive = (this.batchToEdit === undefined) ? false : this.state;
+    console.log('SPLIT BATCH VAL', splitChocolateBatchIsActive);
     return (
       <div className="batchCreationContainer">
         <div className="batchCreation leftSide">
@@ -149,6 +160,13 @@ class CreateNewChocolateBatch extends React.Component {
               onUpdateIngredientList={this.updateIngredientList}
               onUpdateWeight={this.updateWeight}
               onUpdateTotalCost={this.updateIngredientTotalCost}
+              />
+            }
+          </FirebaseContext.Consumer>
+          <FirebaseContext.Consumer>
+            {firebase => <SplitChocolateBatch
+              firebase={firebase}
+              batch={splitChocolateBatchIsActive}
               />
             }
           </FirebaseContext.Consumer>

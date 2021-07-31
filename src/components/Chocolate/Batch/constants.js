@@ -26,38 +26,20 @@ export const ROAST = {
   }
 }
 
+export const DEFUALT_BATCH_DETAILS = {
+  label : '000-2021-00A',
+  creation : '2021-02-07',
+  grindInHours : 48,
+  intention : [],
+  notes : '',
+  archive : false
+}
+
 export const CHOCOLATE_BATCH_DEFAULTS = {
   Beans : [],
   Sweetener : [],
   Dairy : [],
   Cocoa : [],
   Other : [],
-  Details : []
+  Details : DEFUALT_BATCH_DETAILS
 }
-/*
-export const CHOCOLATE_DEFAULTS = {
-
-  // Date should be autofilled after
-  time : {
-    grind : {
-      start : '',
-      finish : '',
-      totalHours : ''
-    },
-    packaged : ''
-  },
-
-  // Ingredient all of which are optional segments
-  Ingredient : CHOCOLATE_BATCH_DEFAULTS
-  },
-
-  //
-  notes : {
-    kgYield : '',
-    comments : '',
-    packaging : '',
-    myReview : '',
-    toImprove : ''
-  }
-}
-*/

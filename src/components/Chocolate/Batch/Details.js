@@ -1,6 +1,7 @@
 import React from 'react';
 import MultiSelect from "react-multi-select-component";
 import './Batch.css'
+import * as CONSTS from './constants.js'
 
 class BatchDetails extends React.Component {
   constructor(props) {
@@ -10,14 +11,7 @@ class BatchDetails extends React.Component {
     this.formatIntentionOptions = this.formatIntentionOptions.bind(this);
     this.setSelected = this.setSelected.bind(this);
 
-    this.state = {
-      label : '000-2021-00A',
-      creation : '2021-02-07',
-      grindInHours : 48,
-      intention : [],
-      comments : '',
-      archive : false
-    };
+    this.state = CONSTS.DEFUALT_BATCH_DETAILS;
     this.props.onChangeDetails(this.state);
     this.intentionOptions = [];
   }
