@@ -13,6 +13,12 @@ class SplitChocolateBatch extends React.Component {
     super(props);
     this.generateProposedSplitLabel = this.generateProposedSplitLabel.bind(this);
     this.splitBatch = this.splitBatch.bind(this);
+    this.updateInput = this.updateInput.bind(this);
+    this.validateSplitBatch = this.validateSplitBatch.bind(this);
+    this.adjustBatchByPct = this.adjustBatchByPct.bind(this);
+    this.adjustDetails = this.adjustDetails.bind(this);
+    this.adjustNonBeanIngredients = this.adjustNonBeanIngredients.bind(this);
+    this.adjustBeanIngredients = this.adjustBeanIngredients.bind(this);
 
     let state = DEFAULT_SPLIT_STATE;
     state.values = this.props.batch;
@@ -55,8 +61,8 @@ class SplitChocolateBatch extends React.Component {
     return label;
   }
 
-  updateSplitDetail(detail) {
-    //console.log(detail);
+  async updateInput(event) {
+    await this.setState({[event.target.name]:event.target.value});
   }
 
   async checkLabelIsValid(label) {
@@ -64,9 +70,51 @@ class SplitChocolateBatch extends React.Component {
     return true;
   }
 
+  validateSplitBatch() {
+    let valid = true;
+    let invalidText = "";
+    if (this.state.gramWeightOfNewBatch <= 0) {
+      invalidText += "Size of batch must be > 0";
+      valid = false;
+    }
+
+    // TODO make sure the gram weight is < batch Size
+
+    return valid;
+  }
+
+  adjustDetails(batch, pct) {
+
+  }
+
+  adjustNonBeanIngredients(batch, pct) {
+
+  }
+
+  adjustBeanIngredients(batch, pct) {
+
+  }
+
+  adjustBatchByPct(batch, pct) {
+    batch = this.adjustDetails(batch, pct);
+    batch = this.adjustNonBeanIngredients(batch, pct);
+    batch = this.adjustBeanIngredients(batch, pct);
+    return batch;
+  }
+
   splitBatch() {
-    // Modify everything by gram size offset
-    //let totalGrams = this.state.values.Details.
+    if (this.validateSplitBatch()) {
+      console.log(this.state.values.Details.label);
+      let oldBatch = JSON.parse(JSON.stringify(this.state.values));
+      let newBatch = JSON.parse(JSON.stringify(this.state.values));
+
+      let oldBatchPct = (oldBatch.Details.batchTotalWeightInGrams - this.state.gramWeightOfNewBatch) / oldBatch.Details.batchTotalWeightInGrams;
+      let newBatchPct = 1.0 - oldBatchPct;
+
+      this.adjustBatchByPct(oldBatch, oldBatchPct);
+      this.adjustBatchByPct(newBatch, newBatchPct);
+      console.log(this.state.gramWeightOfNewBatch, oldBatch, newBatch, newBatchPct, oldBatchPct);
+    }
   }
 
   render() {
@@ -86,9 +134,24 @@ class SplitChocolateBatch extends React.Component {
       Split Batch
         <div className="splitBatchLabel">Batch ID: <b>{batchId}</b></div>
         <div>Current Batch Size: {selectedBatchSizeGrams}</div>
-        Split Off Size (grams):<input size="10" className="splitBatchInGrams" type="text"></input>
+        Split Off Size (grams):
+        <input
+          size="10"
+          name="gramWeightOfNewBatch"
+          className="splitBatchWeightInGrams"
+          value={this.state.gramWeightOfNewBatch}
+          onChange={this.updateInput}
+          type="text">
+        </input>
         <div className="splitBatchNewLabel">New Label:
-          <input type="text" size="20" className="splitBatchNewLabel" onChange={this.updateSplitDetail} name="newLabel" value={this.state.newLabel}></input>
+          <input
+            type="text"
+            size="20"
+            className="splitBatchNewLabel"
+            onChange={this.updateInput}
+            name="newLabel"
+            value={this.state.newLabel}>
+          </input>
         </div>
         <button onClick={this.splitBatch}>Split Batch</button>
       </div>

@@ -24,6 +24,8 @@ class AddEditChocolateBatch extends React.Component {
     this.updateChocolateBatch = this.updateChocolateBatch.bind(this);
     this.generateAddOrEditButton = this.generateAddOrEditButton.bind(this);
     this.checkIfEditedLabelMatchCurrentLabel = this.checkIfEditedLabelMatchCurrentLabel.bind(this);
+    this.setChocolateBatch = this.setChocolateBatch.bind(this);
+
     this.state = {};
     this.formattedChocolate = {};
     this.batchIngredients = {};
@@ -79,36 +81,25 @@ class AddEditChocolateBatch extends React.Component {
       return matches;
     }
 
-  addChocolateBatch() {
+  setChocolateBatch(operation) {
     this.formatChocolateForAddOrEdit();
-
-    console.log('try and add chocolate', this.chocolateToAdd.label, this.chocolateToAdd, this.state);
+    let documentToEdit = this.state.values.Details.label;
     const publicBatchesCollectionRef = this.props.firebase.db.collection("batchesPublic");
-    publicBatchesCollectionRef.doc(this.chocolateToAdd.label).set(this.chocolateToAdd).then(() => {
-      console.log('added public batch');
+    publicBatchesCollectionRef.doc(documentToEdit).set(this.chocolateToAdd).then(() => {
+      console.log(operation+'d public batch');
     });
     const batchesCollectionRef = this.props.firebase.db.collection("batches");
-    batchesCollectionRef.doc(this.chocolateToAdd.label).set(this.state).then(() => {
-      console.log('added batch');
+    batchesCollectionRef.doc(documentToEdit).set(this.state).then(() => {
+      console.log(operation+'d batch');
     });
-  //  console.log('try and add chocolate', this.chocolateToAdd.label, this.state);
+  }
+
+  addChocolateBatch() {
+    this.setChocolateBatch('create');
   }
 
   updateChocolateBatch() {
-    this.formatChocolateForAddOrEdit();
-
-
-    console.log('try and UPDATE chocolate', this.chocolateToAdd.label, this.chocolateToAdd, this.state);
-    /*
-    const publicBatchesCollectionRef = this.props.firebase.db.collection("batchesPublic");
-    publicBatchesCollectionRef.doc(this.chocolateToAdd.label).set(this.chocolateToAdd).then(() => {
-      console.log('UPDATEed public batch');
-    });
-    const batchesCollectionRef = this.props.firebase.db.collection("batches");
-    batchesCollectionRef.doc(this.chocolateToAdd.label).set(this.state).then(() => {
-      console.log('UPDATEd batch');
-    });
-    */
+    this.setChocolateBatch('update');
   }
 
   formatChocolateForAddOrEdit() {
@@ -151,6 +142,7 @@ class AddEditChocolateBatch extends React.Component {
     }
     this.chocolateToAdd['beanWeightInGrams'] = Number(beanWeightInGrams);
     this.chocolateToAdd['nibWeightInGrams'] = Number(nibWeightInGrams);
+    this.chocolateToAdd['batchTotalWeightInGrams'] = this.chocolateToAdd.nutritionFacts.servingSizeInGrams;
     this.chocolateToAdd['ingredientTotalCost'] = this.ingredientTotalCost;
   }
 
