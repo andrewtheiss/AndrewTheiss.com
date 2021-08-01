@@ -1,14 +1,18 @@
 import React from 'react';
 import './Batch.css'
+import * as CONSTS from './constants.js'
 
 const DEFAULT_SPLIT_STATE = {
   values : undefined,
   newLabel : '',
-  additionalNotes : '',
-  gramWeightOfNewBatch : 0
+  additionalComments : '',
+  gramWeightOfNewBatch : 0,
+  key : ''
 };
+const DEFAULT_DOES_NOT_EXIST_LABEL = 'DNE-2021-00A';
 
 class SplitChocolateBatch extends React.Component {
+
   constructor(props) {
     super(props);
     this.generateProposedSplitLabel = this.generateProposedSplitLabel.bind(this);
@@ -19,11 +23,14 @@ class SplitChocolateBatch extends React.Component {
     this.adjustDetails = this.adjustDetails.bind(this);
     this.adjustNonBeanIngredients = this.adjustNonBeanIngredients.bind(this);
     this.adjustBeanIngredients = this.adjustBeanIngredients.bind(this);
+    this.timedCheckLabelIsValid = this.timedCheckLabelIsValid.bind(this);
 
     let state = DEFAULT_SPLIT_STATE;
     state.values = this.props.batch;
     this.state = state;
     this.nextLastLetter = undefined;
+    this.labelExists = false;
+    this.labelCheckTimeout = false;
   }
 
   // Edit is flagged only whe BatchLookup sends an ID, otherwise, upstream 'isEdit' variables remain false
@@ -38,8 +45,10 @@ class SplitChocolateBatch extends React.Component {
           values = this.props.batch.values;
           if (values.Details && values.Details.label) {
             state.newLabel = this.generateProposedSplitLabel(this.props.batch.values.Details.label);
+            state.additionalComments = this.generateProposedAdditionalComments(this.props.batch.values.Details.label);
           } else {
             state.newLabel = this.generateProposedSplitLabel();
+            state.additionalComments = this.generateProposedAdditionalComments(DEFAULT_DOES_NOT_EXIST_LABEL);
           }
         }
       }
@@ -48,51 +57,149 @@ class SplitChocolateBatch extends React.Component {
     }
   }
 
+  generateProposedAdditionalComments(currentBatchLabel) {
+    return " Split original batch ID " + currentBatchLabel + " on " + new Date().toDateString() + ';';
+  }
+
   generateProposedSplitLabel(currentBatchLabel) {
     if (!currentBatchLabel || currentBatchLabel.length === undefined) {
-      return 'DNE-2021-00A';  // Does Not Exist
+      return DEFAULT_DOES_NOT_EXIST_LABEL;  // Does Not Exist
     } else if (currentBatchLabel.length === 0) {
-      return 'DNE-2021-00A';
+      return DEFAULT_DOES_NOT_EXIST_LABEL;
     }
     let currentBatchExceptLast = currentBatchLabel.substring(0,currentBatchLabel.length-1);
     this.nextLastLetter = String.fromCharCode(currentBatchLabel.charCodeAt(currentBatchLabel.length - 1) + 1);
     let label = currentBatchExceptLast + this.nextLastLetter;
-    this.checkLabelIsValid(label);
+    this.checkLabelIsValid(label, false);
     return label;
   }
 
-  async updateInput(event) {
-    await this.setState({[event.target.name]:event.target.value});
+  checkLabelIsValid(label, timeout) {
+    let self = this;
+    let valid = false;
+    const latestDocRef = this.props.firebase.db.collection("batches").doc(label);
+    if (!timeout) {
+      latestDocRef.get().then((doc) => {
+        if (doc.exists) {
+          self.labelExists = true;
+          valid = false;
+        } else {
+          // We Don't want this document to exist, because we're going to add it!
+          self.labelExists = false;
+          valid = true;
+        }
+      }).catch((error) => {
+        // We Don't want this document to exist, because we're going to add it!
+        self.labelExists = false;
+        valid = true;
+      });
+    } else {
+      if (this.labelCheckTimeout !== false) {
+        clearTimeout(this.labelCheckTimeout);
+        this.labelCheckTimeout = false;
+      }
+      this.labelCheckTimeout = setTimeout(function() {
+        self.timedCheckLabelIsValid(label, false, self.props.firebase, self);
+      }, 1000);
+    }
+    return valid;
   }
 
-  async checkLabelIsValid(label) {
-    let self = this;
-    return true;
+  async timedCheckLabelIsValid(label, timeout, firebaseContext, thisContext) {
+    let self = thisContext;
+    let valid = false;
+    let test = '';
+
+    const latestDocRef = firebaseContext.db.collection("batches").doc(label);
+    await latestDocRef.get().then((doc) => {
+      if (doc.exists) {
+        self.labelExists = true;
+        valid = false;
+      } else {
+        // We Don't want this document to exist, because we're going to add it!
+        self.labelExists = false;
+        valid = true;
+      }
+    }).catch((error) => {
+      // We Don't want this document to exist, because we're going to add it!
+      self.labelExists = false;
+      valid = true;
+    });
+    self.setState({key : Math.random()});
   }
 
   validateSplitBatch() {
     let valid = true;
     let invalidText = "";
     if (this.state.gramWeightOfNewBatch <= 0) {
-      invalidText += "Size of batch must be > 0";
+      invalidText += "Size of batch must be > 0.  ";
       valid = false;
     }
 
-    // TODO make sure the gram weight is < batch Size
+    if (this.state.values && this.state.values && this.state.values.Details) {
+      if (this.state.gramWeightOfNewBatch > this.state.values.Details.batchTotalWeightInGrams) {
+          invalidText += "Split batch must be smaller than original size.  ";
+          valid = false;
+      }
+    }
+
+    if (this.labelExists) {
+        invalidText += "Split label already exists.  Choose a new letter";
+        valid = false;
+    }
+
+    if (!valid) {
+      alert(invalidText);
+    }
 
     return valid;
   }
 
   adjustDetails(batch, pct) {
 
+    // Details first
+    var detailsToAdjust = [
+      'batchTotalWeightInGrams',
+      'beanWeightInGrams',
+      'ingredientTotalCost',
+      'nibWeightInGrams'
+    ];
+    for (const val of detailsToAdjust) {
+      batch.Details[val] = Math.round(pct * batch.Details[val] * 100) / 100;
+    }
+
+    // Nutrition Facts Next!
+    Object.keys(batch.Details.nutritionFacts).forEach(key => {
+      batch.Details.nutritionFacts[key] = Math.round(batch.Details.nutritionFacts[key] * pct);
+    });
+    batch.Details.nutritionFacts.servingsPerContainer = 1;
+
+    Object.keys(batch.Details.batchIngredients).forEach(key => {
+      batch.Details.batchIngredients[key] = Math.round(batch.Details.batchIngredients[key] * pct);
+    });
+
+    // Comments!
+    batch.Details.comments += this.state.additionalComments + " This batch was " + Math.round(pct*1000)/10 + "% of original:" + this.state.values.Details.label + " (which has also been adjusted proprtionally); ";
+    return batch;
   }
 
   adjustNonBeanIngredients(batch, pct) {
-
+    let nonBeanCategories = CONSTS.NON_BEAN_INGREDIENT_CATEGORIES;
+    for (var i = 0; i < nonBeanCategories.length; i++) {
+      let keys = Object.keys(batch[nonBeanCategories[i]]);
+      for (const key in keys) {
+        batch[nonBeanCategories[i]][key].weight = Math.round(batch[nonBeanCategories[i]][key].weight * pct);
+      }
+    }
+    return batch;
   }
 
   adjustBeanIngredients(batch, pct) {
-
+    for (const bean in batch.Beans) {
+      batch.Beans[bean].beanWeightInGrams = Math.round(batch.Beans[bean].beanWeightInGrams * pct);
+      batch.Beans[bean].nibWeightInGrams = Math.round(batch.Beans[bean].nibWeightInGrams * pct);
+    }
+    return batch;
   }
 
   adjustBatchByPct(batch, pct) {
@@ -104,16 +211,23 @@ class SplitChocolateBatch extends React.Component {
 
   splitBatch() {
     if (this.validateSplitBatch()) {
-      console.log(this.state.values.Details.label);
       let oldBatch = JSON.parse(JSON.stringify(this.state.values));
       let newBatch = JSON.parse(JSON.stringify(this.state.values));
 
       let oldBatchPct = (oldBatch.Details.batchTotalWeightInGrams - this.state.gramWeightOfNewBatch) / oldBatch.Details.batchTotalWeightInGrams;
       let newBatchPct = 1.0 - oldBatchPct;
 
-      this.adjustBatchByPct(oldBatch, oldBatchPct);
-      this.adjustBatchByPct(newBatch, newBatchPct);
+      oldBatch = this.adjustBatchByPct(oldBatch, oldBatchPct);
+      newBatch = this.adjustBatchByPct(newBatch, newBatchPct);
       console.log(this.state.gramWeightOfNewBatch, oldBatch, newBatch, newBatchPct, oldBatchPct);
+    }
+  }
+
+  async updateInput(event) {
+    await this.setState({[event.target.name]:event.target.value});
+
+    if (event.target.name === 'newLabel') {
+      this.checkLabelIsValid(event.target.value, true);
     }
   }
 
@@ -129,6 +243,8 @@ class SplitChocolateBatch extends React.Component {
       batchId = this.state.values.Details.label;
     }
 
+    let validNewLabelClass = (this.labelExists === false) ? "splitBatchNewLabel valid" : "splitBatchNewLabel invalid";
+
     return (
       <div className="splitBatchContainer">
       Split Batch
@@ -143,16 +259,28 @@ class SplitChocolateBatch extends React.Component {
           onChange={this.updateInput}
           type="text">
         </input>
-        <div className="splitBatchNewLabel">New Label:
+        <div className="splitBatchNewLabelContainer">New Label:
           <input
             type="text"
             size="20"
-            className="splitBatchNewLabel"
+            className={validNewLabelClass}
             onChange={this.updateInput}
             name="newLabel"
             value={this.state.newLabel}>
           </input>
         </div>
+        <div className="splitBatchAdditionalCommentsContainer">Additional Comments:
+          <textarea
+            type="text"
+            rows="2"
+            cols="36"
+            className="splitBatchAdditionalComments"
+            onChange={this.updateInput}
+            name="additionalComments"
+            value={this.state.additionalComments}>
+          </textarea>
+        </div>
+
         <button onClick={this.splitBatch}>Split Batch</button>
       </div>
 

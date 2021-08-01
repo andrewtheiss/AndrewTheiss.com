@@ -43,3 +43,5 @@ export const CHOCOLATE_BATCH_DEFAULTS = {
   Other : [],
   Details : DEFUALT_BATCH_DETAILS
 }
+
+export const NON_BEAN_INGREDIENT_CATEGORIES = ['Cocoa','Dairy','Other','Sweetener'];

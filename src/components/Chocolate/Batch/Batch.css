@@ -35,3 +35,11 @@
 .splitBatchContainer {
   margin: 10px;
 }
+
+.splitBatchNewLabel.valid {
+  border: 1px solid #00cc00;
+}
+
+.splitBatchNewLabel.invalid {
+  border: 1px solid red;
+}

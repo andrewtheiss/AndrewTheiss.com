@@ -1,4 +1,5 @@
 import React from 'react';
+import * as BATCH_CONSTS from '../Batch/constants.js'
 /**
  *  CostCalculator
  *
@@ -25,7 +26,7 @@ class CostCalculator extends React.Component {
 
     if (this.props.selectedIngredients.values !== undefined) {
 
-      let objectKeysToCheck = ['Cocoa','Dairy','Other','Sweetener'];
+      let objectKeysToCheck = BATCH_CONSTS.NON_BEAN_INGREDIENT_CATEGORIES;
       for (var i = 0; i < objectKeysToCheck.length; i++) {
         let ingredientType = this.props.selectedIngredients.values[objectKeysToCheck[i]];
         if (ingredientType !== undefined) {

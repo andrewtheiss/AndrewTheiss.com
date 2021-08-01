@@ -5,6 +5,7 @@ import SplitChocolateBatch from './Split.js'
 import { FirebaseContext } from '../../Firebase';
 import "./Batch.css"
 import * as CONSTS from './constants.js'
+import * as INGREDIENT_CONSTS from '../Ingredient/constants.js'
 
 
 class AddEditChocolateBatch extends React.Component {
@@ -110,7 +111,7 @@ class AddEditChocolateBatch extends React.Component {
     this.addAndFormatChocolateValueDetails();
 
     // Add MultiSelect Sections to ChocolateToAdd
-    const selections = ['Dairy', 'Sweetener', 'Cocoa', 'Other'];
+    const selections = INGREDIENT_CONSTS.INGREDIENT_CATEGORIES;
     for (var i = 0; i < selections.length; i++) {
       var nextSelection = selections[i];
       this.addAndFormatChocolateValuesFromSection(this.state.values[nextSelection]);
@@ -121,6 +122,7 @@ class AddEditChocolateBatch extends React.Component {
     // Add Nutrition Facts, Ingredients View List,
     this.chocolateToAdd['ingredients'] = this.ingredientList;
     this.chocolateToAdd['nutritionFacts'] = this.nutritionFacts;
+    this.chocolateToAdd['batchTotalWeightInGrams'] = this.chocolateToAdd.nutritionFacts.servingSizeInGrams;
   }
 
   addAndFormatChocolateValuesFromSection(values) {
@@ -142,7 +144,6 @@ class AddEditChocolateBatch extends React.Component {
     }
     this.chocolateToAdd['beanWeightInGrams'] = Number(beanWeightInGrams);
     this.chocolateToAdd['nibWeightInGrams'] = Number(nibWeightInGrams);
-    this.chocolateToAdd['batchTotalWeightInGrams'] = this.chocolateToAdd.nutritionFacts.servingSizeInGrams;
     this.chocolateToAdd['ingredientTotalCost'] = this.ingredientTotalCost;
   }
 
