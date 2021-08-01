@@ -7,7 +7,8 @@ const DEFAULT_SPLIT_STATE = {
   newLabel : '',
   additionalComments : '',
   gramWeightOfNewBatch : 0,
-  key : ''
+  key : '',
+  splitAttemptError : ''
 };
 const DEFAULT_DOES_NOT_EXIST_LABEL = 'DNE-2021-00A';
 
@@ -24,6 +25,7 @@ class SplitChocolateBatch extends React.Component {
     this.adjustNonBeanIngredients = this.adjustNonBeanIngredients.bind(this);
     this.adjustBeanIngredients = this.adjustBeanIngredients.bind(this);
     this.timedCheckLabelIsValid = this.timedCheckLabelIsValid.bind(this);
+    this.generateSplitAttemptResult = this.generateSplitAttemptResult.bind(this);
 
     let state = DEFAULT_SPLIT_STATE;
     state.values = this.props.batch;
@@ -31,6 +33,11 @@ class SplitChocolateBatch extends React.Component {
     this.nextLastLetter = undefined;
     this.labelExists = false;
     this.labelCheckTimeout = false;
+
+    // Track the actual split
+    this.splitCountFailed = 4;
+    this.splitCountError = '';
+    this.splitLabels = '';
   }
 
   // Edit is flagged only whe BatchLookup sends an ID, otherwise, upstream 'isEdit' variables remain false
@@ -44,9 +51,11 @@ class SplitChocolateBatch extends React.Component {
         if (this.props.batch.values !== undefined) {
           values = this.props.batch.values;
           if (values.Details && values.Details.label) {
+            this.splitLabels = '';
             state.newLabel = this.generateProposedSplitLabel(this.props.batch.values.Details.label);
             state.additionalComments = this.generateProposedAdditionalComments(this.props.batch.values.Details.label);
           } else {
+            this.splitLabels = '';
             state.newLabel = this.generateProposedSplitLabel();
             state.additionalComments = this.generateProposedAdditionalComments(DEFAULT_DOES_NOT_EXIST_LABEL);
           }
@@ -108,7 +117,6 @@ class SplitChocolateBatch extends React.Component {
   async timedCheckLabelIsValid(label, timeout, firebaseContext, thisContext) {
     let self = thisContext;
     let valid = false;
-    let test = '';
 
     const latestDocRef = firebaseContext.db.collection("batches").doc(label);
     await latestDocRef.get().then((doc) => {
@@ -126,6 +134,7 @@ class SplitChocolateBatch extends React.Component {
       valid = true;
     });
     self.setState({key : Math.random()});
+    return valid;
   }
 
   validateSplitBatch() {
@@ -209,18 +218,54 @@ class SplitChocolateBatch extends React.Component {
     return batch;
   }
 
-  splitBatch() {
+  async splitBatch() {
     if (this.validateSplitBatch()) {
       let oldBatch = JSON.parse(JSON.stringify(this.state.values));
       let newBatch = JSON.parse(JSON.stringify(this.state.values));
 
       let oldBatchPct = (oldBatch.Details.batchTotalWeightInGrams - this.state.gramWeightOfNewBatch) / oldBatch.Details.batchTotalWeightInGrams;
       let newBatchPct = 1.0 - oldBatchPct;
+      newBatch.Details.label = this.state.newLabel;
 
       oldBatch = this.adjustBatchByPct(oldBatch, oldBatchPct);
       newBatch = this.adjustBatchByPct(newBatch, newBatchPct);
-      console.log(this.state.gramWeightOfNewBatch, oldBatch, newBatch, newBatchPct, oldBatchPct);
+
+      this.splitCountFailed = 4;
+      await this.setBatch({values : oldBatch});
+      await this.setBatch({values : newBatch});
+
+      // Show the new state
+      let state = this.state;
+      state.splitAttemptError = false;
+      if (this.splitCountFailed) {
+        state.splitAttemptError = this.splitCountError;
+        this.splitLabels = '';
+      } else {
+        state = DEFAULT_SPLIT_STATE;
+        this.splitLabels = oldBatch.Details.label + " " + newBatch.Details.label;
+      }
+      this.setState(state);
     }
+  }
+
+  setBatch = async (batch) => {
+    let documentToEdit = batch.values.Details.label;
+      console.log(documentToEdit);
+    var self = this;
+
+    const publicBatchesCollectionRef = this.props.firebase.db.collection("batchesPublic");
+    const result1 = await publicBatchesCollectionRef.doc(documentToEdit).set(batch.values.Details).then((val) => {
+      self.splitCountFailed--;
+    }).catch((error) => {
+        console.error("Error splitting public batch: ", error);
+    });
+    const batchesCollectionRef = this.props.firebase.db.collection("batches");
+    const result2 = await batchesCollectionRef.doc(documentToEdit).set(batch).then(() => {
+      self.splitCountFailed--;
+    }).catch((error) => {
+        console.error("Error splitting private batch: ", error);
+    });
+    return [result1, result2];
   }
 
   async updateInput(event) {
@@ -231,7 +276,20 @@ class SplitChocolateBatch extends React.Component {
     }
   }
 
+  generateSplitAttemptResult() {
+    if (this.state.splitAttemptError !== false) {
+      return <div className="splitError"><b>{this.state.splitAttemptError}</b></div>
+    }
+    return <div></div>
+  }
+
   render() {
+    // Success for splitting
+    if (this.splitLabels !== '') {
+      return <div>Split Success!  IDs:<b>{this.splitLabels}</b></div>;
+    }
+
+    // No selected item to split
     if (this.state == null || this.state.values === undefined || this.state.values === false) {
       return <div></div>;
     }
@@ -282,6 +340,7 @@ class SplitChocolateBatch extends React.Component {
         </div>
 
         <button onClick={this.splitBatch}>Split Batch</button>
+        {this.generateSplitAttemptResult()}
       </div>
 
     )
