@@ -86,22 +86,8 @@ class SplitChocolateBatch extends React.Component {
   checkLabelIsValid(label, timeout) {
     let self = this;
     let valid = false;
-    const latestDocRef = this.props.firebase.db.collection("batches").doc(label);
     if (!timeout) {
-      latestDocRef.get().then((doc) => {
-        if (doc.exists) {
-          self.labelExists = true;
-          valid = false;
-        } else {
-          // We Don't want this document to exist, because we're going to add it!
-          self.labelExists = false;
-          valid = true;
-        }
-      }).catch((error) => {
-        // We Don't want this document to exist, because we're going to add it!
-        self.labelExists = false;
-        valid = true;
-      });
+      this.timedCheckLabelIsValid(label, timeout, this.props.firebase, self);
     } else {
       if (this.labelCheckTimeout !== false) {
         clearTimeout(this.labelCheckTimeout);
