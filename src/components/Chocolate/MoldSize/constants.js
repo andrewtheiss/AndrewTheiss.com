@@ -1,12 +1,26 @@
 export const MOLD_SIZE_DEFAULT_PROPS = {
   label : '',
-  barsPerMold : 4,
-  gramWeightPerBar : 50,
-  moldCountOwned : 1,
-  usedOften : true,
-
+  barLabel : '',
+  moldLabel : '',
+  barsPerMold : '',
+  moldCountOwned : '',
+  usedOften : false,
+  barWeightInGrams : '',
+  barDimensionsInMm : {
+    x : '',
+    y : '',
+    z : ''
+  },
+  barPieceCount : '',
   purchaseFromUrl : '',
   imageBase64 : '',
   packagingCameoPrintFileLocation : '',
-  packagingCadFileLocation : ''
+  packagingCadFileLocation : '',
+  notes : ''
+}
+
+export const MOLD_SIZE_DEFAULT_PUBLIC_PROPS = {
+  label : '',
+  imageBase64 : '',
+  barWeightInGrams : ''
 }

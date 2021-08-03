@@ -39,7 +39,7 @@ class MoldSizeMainPage extends React.Component {
               <LookupSelection
                 firebase={firebase}
                 onUpdateSelection={this.onUpdateSelection}
-                collectionName="barMoldSizes"
+                collectionName="moldSize"
                 displayTitle="Bar Mold / Sizes"
               />
             }
