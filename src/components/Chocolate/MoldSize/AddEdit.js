@@ -1,6 +1,5 @@
 import React from 'react';
 import ImageUpload from '../../Utils/ImageUpload.js'
-import MultiSelect from "react-multi-select-component";
 import * as CONSTS from './constants.js'
 /**
  *  AddEditMoldSize
@@ -26,24 +25,16 @@ class AddEditMoldSize extends React.Component {
 
     // Only do something if there's a change in the batchToEdit
     if (this.props !== prevProps) {
-      let editingBatchLabelMatchesCurrentBatchLabel = true; //this.checkIfEditedLabelMatchCurrentLabel();
 
       // If there's something to edit or the props don't match the default
       if (isEdit) {
-        // Set the batch to edit!
-        this.batchToEdit = this.props.batchToEdit;
 
         // Save the selected label we selected for edit
-        if (this.props.batchToEdit.values.Details) {
-          this.batchToEditLabel = this.props.batchToEdit.values.Details.label;
+        if (this.props.itemSelectedForEdit) {
+          this.setState(this.props.itemSelectedForEdit);
         }
-        let values = this.props.batchToEdit;
-        this.updateBatchDetails(values.values);
-      } else if (editingBatchLabelMatchesCurrentBatchLabel) {
-          // Continue editing and don't change anything
       } else {
-        this.batchToEdit = undefined;
-        this.updateBatchDetails(CONSTS.MOLD_SIZE_DEFAULT_PROPS);
+        this.setState(CONSTS.MOLD_SIZE_DEFAULT_PROPS);
       }
     }
   }
@@ -73,7 +64,7 @@ class AddEditMoldSize extends React.Component {
 
   async formatMoldSizeForSet() {
     // Set label
-    let label =  this.state.barWeightInGrams + "g - " + this.state.barLabel;
+    let label =  this.state.barLabel + " - " + this.state.barWeightInGrams + "g";
     await   this.setState({label});
 
     return {
@@ -126,7 +117,7 @@ class AddEditMoldSize extends React.Component {
   render() {
     return (
       <div>
-      Bar Label:  <input name="barLabel"  onChange={this.onUpdateDetails} value={this.state.barLabel} size="30" placeholder="12-Piece Break Up Bar (4x3)" type="text"></input>*Weight is Prepended on Save<br />
+      Bar Label:  <input name="barLabel"  onChange={this.onUpdateDetails} value={this.state.barLabel} size="30" placeholder="12-Piece Break Up Bar (4x3)" type="text"></input>*Weight is appended on Save<br />
       Mold Label:  <input name="moldLabel"  onChange={this.onUpdateDetails} value={this.state.moldLabel} size="30" placeholder="Proline Break Up Bar Mold – 12 Breaks" type="text"></input><br />
       Bars Per Mold: <input name="barsPerMold"  onChange={this.onUpdateDetails} value={this.state.barsPerMold} size="3" type="text"></input><br />
       Bar Piece Count: <input name="barPieceCount"  onChange={this.onUpdateDetails} value={this.state.barPieceCount} size="3" type="text"></input><br />

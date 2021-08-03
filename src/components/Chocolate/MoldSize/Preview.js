@@ -7,7 +7,7 @@ class PreviewMoldSize extends React.Component {
   constructor(props) {
     super(props);
     this.selectMoldSize = this.selectMoldSize.bind(this);
-
+    console.log(this.props);
     this.state = {
       mold : this.props.mold
     };
@@ -20,9 +20,14 @@ class PreviewMoldSize extends React.Component {
   }
 
   render() {
+    if (!this.props.mold) {
+      return (<div></div>);
+    }
+
     return (
       <div>Preview Mold here: {JSON.stringify(this.props.mold)}
-        <button onClick={selectMoldSize} >Select</button>
+        <img src={this.props.mold.imageBase64} ></img>
+        <button onClick={this.selectMoldSize} >Select</button>
       </div>
     );
   }

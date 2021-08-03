@@ -9,7 +9,8 @@ import './Utils.css'
  *  onUpdateSelection     :  method to call on any selection change
  *  collectionName        : name of the collection to lookup/select
  *  customClass           : class name to be appended to 'defaultLookupSelectionContainer'
- *  allowMultiple         : (optional) allow selection of multiple ** NOT PROGRAMMED
+ *  allowMultiple         : (optional) returns Array of all selected instead of single
+ *  sendDataOnUpdate      : (optional) returns second parameter back which is the collectionData
  *  displayTitle          : (optional) display title
  *
  *  Usage:
@@ -18,6 +19,7 @@ import './Utils.css'
         onUpdateSelection={this.onUpdateSelection}
         collectionName={"Beans"}
         allowMultiple={true}
+        sendDataOnUpdate={true}
         customClass={barSelect}
     />
  *
@@ -76,7 +78,26 @@ class LookupSelection extends React.Component {
     await this.setState({ collectionSelected : allSelectedItems});
     if (this.props.onUpdateSelection) {
       if (allSelectedItems.length > 0) {
-        this.onSelectBatch(allSelectedItems[0].value);
+
+        // Multiple selection returns the whole array
+        if (this.props.allowMultiple) {
+
+            // See if we send data back with the call or not
+            if (this.props.sendDataOnUpdate) {
+              this.props.onUpdateSelection(allSelectedItems, this.state.collection);
+            } else {
+              this.props.onUpdateSelection(allSelectedItems);
+            }
+        } else {
+
+          // See if we send data back with the call or not
+          if (this.props.sendDataOnUpdate) {
+            this.props.onUpdateSelection(allSelectedItems[0].value, this.state.collection);
+          } else {
+            this.props.onUpdateSelection(allSelectedItems[0].value);
+          }
+
+        }
       } else {
         this.props.onUpdateSelection(undefined);
       }
@@ -98,7 +119,6 @@ class LookupSelection extends React.Component {
   }
 
   render() {
-    let previewSelected = this.generateSelectedPreview();
     return (
       <div className={this.containerClass} >
         <h3 className={this.h3Class}>Select {this.displayTitle}</h3>
