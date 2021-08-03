@@ -1,17 +1,9 @@
 import React from 'react';
-import  { FirebaseContext } from '../../Firebase';
-//import Bar from './Bar.js'
-import BarLookupSelection from './LookupSelection.js'
-import './Lookup.css';
+import AddNewIngredientPage from '../Ingredient/Pages/AddNew.js'
+import './Bar.css';
 
-/**
- *  Bar Lookup is a <select> multiple which grabs all bars from the database
- *   and allows you to select them
- *
- *  ** For now, we are just doing a single bar 6/30/21
- *
- */
-class BarLookup extends React.Component {
+
+class AddEditBar extends React.Component {
   constructor(props) {
     super(props);
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -21,10 +13,9 @@ class BarLookup extends React.Component {
       width: 500,
       height: 500
     };
-
     // When state changes, render is called
     this.state = {
-      bars : {},
+      beans : {},
       selectedBeanId : undefined,
       previewBeanId : undefined
     };
@@ -32,28 +23,25 @@ class BarLookup extends React.Component {
     this.previewBean = {};
   }
 
-  // Get all bars from the database
-  // TODO - Filter bars by creation date to only grab newer bars
+  // Get data from DB in this function
   componentDidMount = () => {
-    const barsCollectionRef = this.props.firebase.db.collection("bars");
+    const beanCollectionRef = this.props.firebase.db.collection("beans");
     let self = this;
-    barsCollectionRef.get().then(function(barCollectionDocs) {
-      var barsMap = {};
-      barCollectionDocs.forEach(function(doc) {
-        barsMap[doc.id] = doc.data();
+    beanCollectionRef.get().then(function(beanCollectionDocs) {
+      var beansMap = {};
+      beanCollectionDocs.forEach(function(doc) {
+        beansMap[doc.id] = doc.data();
       });
 
       self.setState({
-        bars : barsMap
+        beans : beansMap
       });
-      console.log(barsMap);
     });
-
   }
 
   handleMouseOver(e) {
     var dataID = e.target.getAttribute('data-id');
-    let beanData = this.state.bars[dataID];
+    let beanData = this.state.beans[dataID];
 
     // Only if there is a selected bean
     if (beanData) {
@@ -93,16 +81,16 @@ class BarLookup extends React.Component {
 
   render() {
     return (
-      [
-     <FirebaseContext.Consumer key="0">
-        {firebase =>  <BarLookupSelection firebase={firebase} /> }
-      </FirebaseContext.Consumer>,
-      <div key="1">
-        <pre>{JSON.stringify(this.state.bars)}</pre>
-      </div>
-      ]
+      [<div key="0" >
+      {Object.keys(this.state.beans).map((key) => (
+        <div data-id={key} onMouseOver={this.handleMouseOver} onClick={this.handleClick}>
+          <b>{key} - </b>{this.state.beans[key].name}
+        </div>
+      ))}
+      </div>,
+      <AddNewIngredientPage bean={this.selectedBean} dimensions={this.dimensions} key="1" />]
     );
   }
 }
 
-export default BarLookup;
+export default AddEditBar;

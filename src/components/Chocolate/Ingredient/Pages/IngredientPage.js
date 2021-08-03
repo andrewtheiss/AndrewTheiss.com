@@ -1,6 +1,6 @@
 import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
-import AddNewIngredientPage from './AddNew.js'
+import AddNewIngredientPage from '../AddNew.js'
 
 class IngredientPage extends React.Component {
   constructor(props) {

@@ -1,17 +1,30 @@
 import React from 'react';
 /**
- *  IngredientImage
+ *  ImageUpload
  *
- *  Input:
+ *  Input Props:
  *  onUpdateImage :  function  to update parent state
+ *  allowedSize   :   (optional) size to constrain upload
+ *
+ *  Usage:
+ *  <ImageUpload onUpdate={this.updateImage} image={this.state.image} />
+ *
+ *  Notes:
+ *  Default Allowed Size: 500000
  */
-class IngredientImage extends React.Component {
+
+class ImageUpload extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       image : '',
       error : ''
     };
+
+    this.allowedSize = 500000;
+    if (this.props.allowedSize && !isNaN(Number(this.props.allowedSize))) {
+      this.allowedSize = this.props.allowedSize;
+    }
   }
 
   handleFileRead = async (event) => {
@@ -58,7 +71,7 @@ class IngredientImage extends React.Component {
   render() {
     let errorHidden = this.renderError(this.state.error);
     return (
-      <div key="ingredientImageUpload">
+      <div key="imageUpload">
         <div>Upload Image:   {errorHidden}</div>
         <input id="inp" type="file"  onChange={e => this.handleFileRead(e)} ></input>
         <p id="b64"></p>
@@ -67,4 +80,4 @@ class IngredientImage extends React.Component {
     );
   }
 }
- export default IngredientImage;
+ export default ImageUpload;

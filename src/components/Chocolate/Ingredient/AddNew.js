@@ -1,10 +1,10 @@
 import React from 'react';
 import MultiSelect from "react-multi-select-component";
-import IngredientNurtitionFacts from '../NutritionFacts.js'
-import IngredientImage from '../Image.js'
-import IngredientPreview from '../Preview.js'
-import * as CONSTS from '../constants.js'
-import '../Ingredient.css'
+import IngredientNurtitionFacts from './NutritionFacts.js'
+import ImageUpload from '../../Utils/ImageUpload.js'
+import IngredientPreview from './Preview.js'
+import * as CONSTS from './constants.js'
+import './Ingredient.css'
 
 class AddNewIngredientPage extends React.Component {
   constructor(props) {
@@ -179,7 +179,7 @@ class AddNewIngredientPage extends React.Component {
           </div>
           <br />
           <IngredientNurtitionFacts onUpdate={this.updateNutritionFacts} facts={this.state.nutritionFacts}/>
-          <IngredientImage onUpdate={this.updateImage} image={this.state.image} />
+          <ImageUpload onUpdate={this.updateImage} image={this.state.image} />
           <button onClick={this.addIngredient}>Add Ingredient</button>
         </div>
         <div className="ib fl">
