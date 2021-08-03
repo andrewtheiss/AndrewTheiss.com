@@ -11,6 +11,15 @@ import React from 'react';
  *
  *  Notes:
  *  Default Allowed Size: 500000
+ *
+ *  Recommended Method:
+
+   updateImage(imageUpload) {
+     let imageBase64 = imageUpload.image;
+     this.setState({imageBase64});
+   }
+
+ *
  */
 
 class ImageUpload extends React.Component {

@@ -27,14 +27,20 @@ class MoldSizeMainPage extends React.Component {
       <div className="moldSizeMainPageContainer">
 
         <FirebaseContext.Consumer>
-          {firebase => <AddEditMoldSize firebase={firebase} selectedMoldSize={this.state.selectedMoldSize} />}
+          {firebase =>
+            <AddEditMoldSize
+              firebase={firebase}
+              itemSelectedForEdit={this.state.selectedMoldSize}
+            />
+          }
         </FirebaseContext.Consumer>
         <FirebaseContext.Consumer>
           {firebase =>
               <LookupSelection
                 firebase={firebase}
                 onUpdateSelection={this.onUpdateSelection}
-                collectionName={"barMoldSizes"}
+                collectionName="barMoldSizes"
+                displayTitle="Bar Mold / Sizes"
               />
             }
         </FirebaseContext.Consumer>

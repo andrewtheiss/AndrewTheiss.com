@@ -1,6 +1,6 @@
 import React from 'react';
 import MultiSelect from "react-multi-select-component";
-
+import './Utils.css'
 /**
  *  LookupSelection
  *
@@ -8,8 +8,9 @@ import MultiSelect from "react-multi-select-component";
  *  firebase              :  firebase consumer context object
  *  onUpdateSelection     :  method to call on any selection change
  *  collectionName        : name of the collection to lookup/select
+ *  customClass           : class name to be appended to 'defaultLookupSelectionContainer'
  *  allowMultiple         : (optional) allow selection of multiple ** NOT PROGRAMMED
- *
+ *  displayTitle          : (optional) display title
  *
  *  Usage:
  *  <LookupSelection
@@ -17,7 +18,7 @@ import MultiSelect from "react-multi-select-component";
         onUpdateSelection={this.onUpdateSelection}
         collectionName={"Beans"}
         allowMultiple={true}
-
+        customClass={barSelect}
     />
  *
  *  Notes:
@@ -28,6 +29,18 @@ class LookupSelection extends React.Component {
     super(props);
     this.generateSelectedPreview = this.generateSelectedPreview.bind(this);
     this.setSelected = this.setSelected.bind(this);
+
+    this.containerClass = "defaultLookupSelectionContainer";
+    this.h3Class = "defaultLookupSelectionHeader"
+    if (this.props.customClass) {
+      this.containerClass += " " + this.props.customClass;
+      this.h3Class += " " + this.props.customClass;
+    }
+
+    this.displayTitle = "";
+    if (this.props.displayTitle) {
+      this.displayTitle = this.props.displayTitle;
+    }
 
     this.state = {
       collection : {},
@@ -59,12 +72,14 @@ class LookupSelection extends React.Component {
       return '';
   }
 
-  setSelected(allSelectedItems) {
-    this.setState({ collectionSelected : allSelectedItems});
-    if (this.props.onSelectBatch && allSelectedItems.length > 0) {
-      this.onSelectBatch(allSelectedItems[0].label);
-    } else {
-      this.props.onUpdateSelection(undefined);
+  async setSelected(allSelectedItems) {
+    await this.setState({ collectionSelected : allSelectedItems});
+    if (this.props.onUpdateSelection) {
+      if (allSelectedItems.length > 0) {
+        this.onSelectBatch(allSelectedItems[0].value);
+      } else {
+        this.props.onUpdateSelection(undefined);
+      }
     }
   }
 
@@ -85,15 +100,15 @@ class LookupSelection extends React.Component {
   render() {
     let previewSelected = this.generateSelectedPreview();
     return (
-      <div>
-      Select
-      <MultiSelect
-        options={this.state.collectionOptions}
-        value={this.state.collectionSelected}
-        onChange={this.setSelected}
-        labelledBy="Select"
-        hasSelectAll={false}
-      />
+      <div className={this.containerClass} >
+        <h3 className={this.h3Class}>Select {this.displayTitle}</h3>
+        <MultiSelect
+          options={this.state.collectionOptions}
+          value={this.state.collectionSelected}
+          onChange={this.setSelected}
+          labelledBy="Select"
+          hasSelectAll={false}
+        />
       </div>
     );
   }
