@@ -57,6 +57,11 @@ class PackagingMainPage extends React.Component {
     let previewMolds = this.generatePreviewForSelections();
     let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "packagingMainPageContainer" : "packagingMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";
+
+    const collectionRefSearchWrap = this.props.firebase.db.collection("packaging").where("category", "==", "Wrap");
+    const collectionRefSearchOverwrap = this.props.firebase.db.collection("packaging").where("category", "==", "Overwrap");
+    const collectionRefSearchLabel = this.props.firebase.db.collection("packaging").where("category", "==", "Label");
+
     return (
       <div className="packagingPageOutterContainer">
         <span><span className={showHideCarat}></span><h2 className="packagingToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Toggle Packaging Panel</h2></span>
@@ -80,6 +85,33 @@ class PackagingMainPage extends React.Component {
                   displayTitle="Packaging Wrap"
                   allowMultiple={true}
                   sendDataOnUpdate={true}
+                  customSearch={collectionRefSearchWrap}
+                />
+              }
+          </FirebaseContext.Consumer>
+          <FirebaseContext.Consumer>
+            {firebase =>
+                <LookupSelection
+                  firebase={firebase}
+                  onUpdateSelection={this.onUpdateSelection}
+                  collectionName="packaging"
+                  displayTitle="Packaging Overwrap"
+                  allowMultiple={true}
+                  sendDataOnUpdate={true}
+                  customSearch={collectionRefSearchOverwrap}
+                />
+              }
+          </FirebaseContext.Consumer>
+          <FirebaseContext.Consumer>
+            {firebase =>
+                <LookupSelection
+                  firebase={firebase}
+                  onUpdateSelection={this.onUpdateSelection}
+                  collectionName="packaging"
+                  displayTitle="Packaging Label"
+                  allowMultiple={true}
+                  sendDataOnUpdate={true}
+                  customSearch={collectionRefSearchLabel}
                 />
               }
           </FirebaseContext.Consumer>
@@ -91,33 +123,3 @@ class PackagingMainPage extends React.Component {
 }
 
 export default PackagingMainPage;
-
-/*
-
-ADD BACK IN
-
-<FirebaseContext.Consumer>
-  {firebase =>
-      <LookupSelection
-        firebase={firebase}
-        onUpdateSelection={this.onUpdateSelection}
-        collectionName="moldSize"
-        displayTitle="Packaging Overwrap"
-        allowMultiple={true}
-        sendDataOnUpdate={true}
-      />
-    }
-</FirebaseContext.Consumer>
-<FirebaseContext.Consumer>
-  {firebase =>
-      <LookupSelection
-        firebase={firebase}
-        onUpdateSelection={this.onUpdateSelection}
-        collectionName="moldSize"
-        displayTitle="Packaging Label"
-        allowMultiple={true}
-        sendDataOnUpdate={true}
-      />
-    }
-</FirebaseContext.Consumer>
-*/

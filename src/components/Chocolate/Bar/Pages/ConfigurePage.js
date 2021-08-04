@@ -2,9 +2,10 @@ import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
 import MoldSizeMainPage from '../../MoldSize/Pages/MainPage.js'
 import PackagingMainPage from '../../Packaging/Pages/MainPage.js'
+import AddEditBar from '../AddEdit.js'
 
 
-class BarLookupPage extends React.Component {
+class BarConfigurePage extends React.Component {
   render() {
     console.log('bar lookup page');
     return (
@@ -12,7 +13,7 @@ class BarLookupPage extends React.Component {
 
 
           <FirebaseContext.Consumer>
-            {firebase => <PackagingMainPage firebase={firebase} />}
+            {firebase => <AddEditBar firebase={firebase} />}
           </FirebaseContext.Consumer>
 
         </div>
@@ -20,7 +21,7 @@ class BarLookupPage extends React.Component {
   }
 }
 
-export default BarLookupPage;
+export default BarConfigurePage;
 
 
 /*

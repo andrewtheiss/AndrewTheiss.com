@@ -53,7 +53,11 @@ class LookupSelection extends React.Component {
   }
 
   componentDidMount = async () => {
-    const collectionRef = this.props.firebase.db.collection(this.props.collectionName);
+    let collectionRef = this.props.firebase.db.collection(this.props.collectionName);
+    if (this.props.customSearch) {
+      collectionRef = this.props.customSearch;
+    }
+
     let self = this;
     await collectionRef.get().then(function(collectionDocs) {
       var collectionMap = {};
