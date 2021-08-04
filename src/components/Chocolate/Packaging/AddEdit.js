@@ -1,6 +1,8 @@
 import React from 'react';
 import MultiSelect from "react-multi-select-component";
 import ImageUpload from '../../Utils/ImageUpload.js'
+import { FirebaseContext } from '../../Firebase';
+import UnitsPerItemDetailsByMoldSize from './UnitsPerItemDetailsByMoldSize.js'
 import * as CONSTS from './constants.js'
 /**
  *  AddEditPackaging
@@ -16,6 +18,8 @@ class AddEditPackaging extends React.Component {
     this.setPackaging = this.setPackaging.bind(this);
     this.formatPackagingForSet = this.formatPackagingForSet.bind(this);
     this.setSelected = this.setSelected.bind(this);
+    this.generateUnitsPerItemBasedOnBarMoldSize = this.generateUnitsPerItemBasedOnBarMoldSize.bind(this);
+    this.onUpdateUnitsPerItemBasedOnBarMold = this.onUpdateUnitsPerItemBasedOnBarMold.bind(this);
 
     this.state = CONSTS.PACKAGING_DEFAULT_DETAILS;
   }
@@ -93,7 +97,7 @@ class AddEditPackaging extends React.Component {
       valid = false;
       alertStr = 'You must enter how much it was.';
     }
-    if (!this.state.unitsPerItem) {
+    if (!this.state.unitsPerItem && !this.state.unitsPerItemAreBasedOnBarMold) {
       valid = false;
       alertStr = 'You must enter how many units we can package per item bought.';
     }
@@ -142,8 +146,33 @@ class AddEditPackaging extends React.Component {
     }
   }
 
+  async onUpdateUnitsPerItemBasedOnBarMold(unitsPerItemBasedOnBarMold) {
+    await this.setState({unitsPerItemBasedOnBarMold});
+  }
+
+  generateUnitsPerItemBasedOnBarMoldSize() {
+    let detailedUnitsPerItemByBarSizeRender = '';
+
+    if (this.state.unitsPerItemAreBasedOnBarMold) {
+        // state = unitsPerItemBasedOnBarMold
+        detailedUnitsPerItemByBarSizeRender =
+        <FirebaseContext.Consumer>
+          {firebase =>
+            <UnitsPerItemDetailsByMoldSize
+              state={this.state.unitsPerItemBasedOnBarMold}
+              onUpdate={this.onUpdateUnitsPerItemBasedOnBarMold}
+            />
+            }
+        </FirebaseContext.Consumer>
+
+    }
+    return detailedUnitsPerItemByBarSizeRender;
+  }
+
+
   render() {
-    console.log(this.state.imageBase64);
+    let itemUnitsBasedOnBarMold = this.generateUnitsPerItemBasedOnBarMoldSize();
+    let disableBasedOnSelection = (this.state.unitsPerItemAreBasedOnBarMold) ? "disabled" : "";
     return (
       <div>
       <div className="packagingCategoryContainer">
@@ -159,7 +188,9 @@ class AddEditPackaging extends React.Component {
       Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" placeholder="" type="text"></input><br />
       Purcahsed Price: $<input name="purchasedPrice"  onChange={this.onUpdateDetails} value={this.state.purchasedPrice} size="10" type="text"></input><br />
       Count Purchased:  <input name="purchasedCount"  onChange={this.onUpdateDetails} value={this.state.purchasedCount} size="3" placeholder="1" type="text"></input><br />
-      Units Per Item: <input name="unitsPerItem"  onChange={this.onUpdateDetails} value={this.state.unitsPerItem} size="3" placeholder="500"  type="text"></input><br />
+      Units Per Item: <input name="unitsPerItem" disabled={disableBasedOnSelection} onChange={this.onUpdateDetails} value={this.state.unitsPerItem} size="3" placeholder="500"  type="text"></input><br />
+      Units Per Item Are Based On Bar/Mold: <input name="unitsPerItemAreBasedOnBarMold"  onChange={this.toggleCheckbox} value={this.state.unitsPerItemAreBasedOnBarMold} type="checkbox"></input><br />
+      {itemUnitsBasedOnBarMold}
       Units Per Item Comments: <textarea name="unitsPerItemComments"  onChange={this.onUpdateDetails} value={this.state.unitsPerItemComments} type="text"></textarea><br />
       Percent Waste (for cost calc): <input name="percentWaste"  onChange={this.onUpdateDetails} value={this.state.percentWaste} type="text"></input><br />
       Purchase From Company: <input name="purchaseFromCompany"  onChange={this.onUpdateDetails} value={this.state.purchaseFromCompany} type="text"></input><br />

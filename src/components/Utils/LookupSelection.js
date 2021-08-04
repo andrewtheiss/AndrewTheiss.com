@@ -123,9 +123,13 @@ class LookupSelection extends React.Component {
   }
 
   render() {
+    let title = <h3 className={this.h3Class}>Select {this.displayTitle}</h3>;
+    if (!this.displayTitle) {
+      title = "";
+    }
     return (
       <div className={this.containerClass} >
-        <h3 className={this.h3Class}>Select {this.displayTitle}</h3>
+        {title}
         <MultiSelect
           options={this.state.collectionOptions}
           value={this.state.collectionSelected}

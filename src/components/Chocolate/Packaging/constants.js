@@ -25,6 +25,12 @@ export const PACKAGING_DEFAULT_DETAILS = {
   unitsPerItemComments : '',
   percentWaste : '',
 
+  // Sometimes we may have different quantity of units per item based on bar size
+  unitsPerItemAreBasedOnBarMold : false,
+  unitsPerItemBasedOnBarMold : {
+
+  },
+
   purchaseFromCompany : '',
   purchaseFromUrl : '',
   imageBase64 : '',
