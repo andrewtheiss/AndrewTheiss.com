@@ -3,10 +3,6 @@
   border: 2px solid black;
 }
 
-.moldSizeMainPageContainer.hidden {
-  display: none;
-}
-
 .moldSizeAdvancedSearch {}
 
 .moldSizeAdvancedSearch.hidden {

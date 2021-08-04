@@ -12,11 +12,13 @@ class MoldSizeMainPage extends React.Component {
     super(props);
     this.onUpdateSelection = this.onUpdateSelection.bind(this);
     this.generatePreviewForSelections = this.generatePreviewForSelections.bind(this);
+    this.togglePageContentVisibilityDropdown = this.togglePageContentVisibilityDropdown.bind(this);
 
     this.state = {
       selectedMoldSingle : null,
       selectedMolds : null,
-      allMoldData : null
+      allMoldData : null,
+      pageContentVisibilityDropdownToggled : false
     }
   }
 
@@ -29,7 +31,8 @@ class MoldSizeMainPage extends React.Component {
     let state = {
       selectedMoldSingle : selectedMold,
       selectedMolds : selectedMoldArray,
-      allMoldData : moldsData
+      allMoldData : moldsData,
+      pageContentVisibilityDropdownToggled : this.state.pageContentVisibilityDropdownToggled
     };
     this.setState(state);
   }
@@ -45,32 +48,42 @@ class MoldSizeMainPage extends React.Component {
     return preview;
   }
 
+  togglePageContentVisibilityDropdown() {
+    var pageContentVisibilityDropdownToggled = !this.state.pageContentVisibilityDropdownToggled;
+    this.setState({pageContentVisibilityDropdownToggled});
+  }
+
   render() {
     let previewMolds = this.generatePreviewForSelections();
+    let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "moldSizeMainPageContainer" : "moldSizeMainPageContainer hidden";
+    let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";
     return (
-      <div className="moldSizeMainPageContainer">
+      <div className="moldSizePageOutterContainer">
+        <span><span className={showHideCarat}></span><h2 className="moldSizeToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Toggle Mold Size Addition Selection</h2></span>
+        <div className={showHideContent}>
 
-        <FirebaseContext.Consumer>
-          {firebase =>
-            <AddEditMoldSize
-              firebase={firebase}
-              itemSelectedForEdit={this.state.selectedMoldSingle}
-            />
-          }
-        </FirebaseContext.Consumer>
-        <FirebaseContext.Consumer>
-          {firebase =>
-              <LookupSelection
+          <FirebaseContext.Consumer>
+            {firebase =>
+              <AddEditMoldSize
                 firebase={firebase}
-                onUpdateSelection={this.onUpdateSelection}
-                collectionName="moldSize"
-                displayTitle="Bar Mold / Sizes"
-                allowMultiple={true}
-                sendDataOnUpdate={true}
+                itemSelectedForEdit={this.state.selectedMoldSingle}
               />
             }
-        </FirebaseContext.Consumer>
-        {previewMolds}
+          </FirebaseContext.Consumer>
+          <FirebaseContext.Consumer>
+            {firebase =>
+                <LookupSelection
+                  firebase={firebase}
+                  onUpdateSelection={this.onUpdateSelection}
+                  collectionName="moldSize"
+                  displayTitle="Bar Mold / Sizes"
+                  allowMultiple={true}
+                  sendDataOnUpdate={true}
+                />
+              }
+          </FirebaseContext.Consumer>
+          {previewMolds}
+        </div>
       </div>
     );
   }
