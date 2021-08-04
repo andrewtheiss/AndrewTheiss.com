@@ -26,7 +26,7 @@ class PreviewMoldSize extends React.Component {
 
     return (
       <div>Preview Mold here: {JSON.stringify(this.props.mold)}
-        <img src={this.props.mold.imageBase64} ></img>
+        <img src={this.props.mold.imageBase64} alt=""></img>
         <button onClick={this.selectMoldSize} >Select</button>
       </div>
     );

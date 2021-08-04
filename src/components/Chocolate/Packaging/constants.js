@@ -1,26 +1,31 @@
-export const MOLD_SIZE_DEFAULT_PROPS = {
+export const PACKAGING_DEFAULT_DETAILS = {
   label : '',
-  barLabel : '',
-  moldLabel : '',
-  barsPerMold : '',
-  moldCountOwned : '',
-  usedOften : false,
-  barWeightInGrams : '',
-  barDimensionsInMm : {
-    x : '',
-    y : '',
-    z : ''
-  },
-  barPieceCount : '',
+  category : 'Wrap',
+  quantity : '',
+
+  // Price is standardized with Ingredients and other areas so we can add more
+  costPerItem: '',
+  countPurchased : '',
+  latestPurchasePrice : '',
+  latestAverageCostPerUnit : '',
+
+  unitsPerItem : '',        // Roll of cardstock takes up lots of room
+  unitsPerItemComments : '',
+  percentWaste : '',
+
   purchaseFromUrl : '',
   imageBase64 : '',
-  packagingCameoPrintFileLocation : '',
-  packagingCadFileLocation : '',
   notes : ''
 }
 
-export const MOLD_SIZE_DEFAULT_PUBLIC_PROPS = {
+export const PACKAGING_DEFAULT_DETAILS_PUBLIC = {
   label : '',
   imageBase64 : '',
-  barWeightInGrams : ''
+  latestAverageCostPerUnit : ''
 }
+
+export const PACKAGING_CATEGORIES = [
+  'Wrap',
+  'Overwrap',
+  'Label'
+]

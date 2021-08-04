@@ -2,10 +2,10 @@ import React from 'react';
 import ImageUpload from '../../Utils/ImageUpload.js'
 import * as CONSTS from './constants.js'
 /**
- *  AddEditMoldSize
+ *  AddEditPackaging
  *
  */
-class AddEditMoldSize extends React.Component {
+class AddEditPackaging extends React.Component {
   constructor(props) {
     super(props);
     this.validateMoldSizes = this.validateMoldSizes.bind(this);
@@ -16,10 +16,9 @@ class AddEditMoldSize extends React.Component {
     this.setMoldSize = this.setMoldSize.bind(this);
     this.formatMoldSizeForSet = this.formatMoldSizeForSet.bind(this);
 
-    this.state = CONSTS.MOLD_SIZE_DEFAULT_PROPS;
+    this.state = CONSTS.PACKAGING_DEFAULT_DETAILS;
   }
 
-  // Somewhere save this.props.batchToEdit.Details.label as this.batchToEditLabel
   componentDidUpdate(prevProps) {
     let isEdit = this.props.itemSelectedForEdit;
 
@@ -34,7 +33,7 @@ class AddEditMoldSize extends React.Component {
           this.setState(this.props.itemSelectedForEdit);
         }
       } else {
-        this.setState(CONSTS.MOLD_SIZE_DEFAULT_PROPS);
+        this.setState(CONSTS.PACKAGING_DEFAULT_DETAILS);
       }
     }
   }
@@ -70,7 +69,8 @@ class AddEditMoldSize extends React.Component {
     return {
       label : this.state.label,
       imageBase64 : this.state.imageBase64,
-      barWeightInGrams : this.state.barWeightInGrams
+      barWeightInGrams : this.state.barWeightInGrams,
+      category : this.state.category
     };
   }
 
@@ -109,7 +109,7 @@ class AddEditMoldSize extends React.Component {
         console.log('set mold size');
       });
 
-      let state = CONSTS.MOLD_SIZE_DEFAULT_PROPS;
+      let state = CONSTS.PACKAGING_DEFAULT_DETAILS;
       this.setState(state);
     }
   }
@@ -122,10 +122,6 @@ class AddEditMoldSize extends React.Component {
       Bars Per Mold: <input name="barsPerMold"  onChange={this.onUpdateDetails} value={this.state.barsPerMold} size="3" type="text"></input><br />
       Bar Piece Count: <input name="barPieceCount"  onChange={this.onUpdateDetails} value={this.state.barPieceCount} size="3" type="text"></input><br />
       Gram Weight Per Bar: <input name="barWeightInGrams"  onChange={this.onUpdateDetails} value={this.state.barWeightInGrams} size="5" type="text"></input><br />
-      Dimensions (mm):
-      X:<input name="x"  onChange={this.onUpdateDimensions} value={this.state.barDimensionsInMm.x} size="2" type="text"></input>
-      Y:<input name="y"  onChange={this.onUpdateDimensions} value={this.state.barDimensionsInMm.y} size="2" type="text"></input>
-      Z:<input name="z"  onChange={this.onUpdateDimensions} value={this.state.barDimensionsInMm.z} size="2" type="text"></input> <br />
       Mold Count Owned: <input name="moldCountOwned"  onChange={this.onUpdateDetails} value={this.state.moldCountOwned} size="3" type="text"></input><br />
       Used Often: <input name="usedOften"  onChange={this.toggleCheckbox} value={this.state.usedOften} type="checkbox"></input><br />
       Purchased From URL: <input name="purchaseFromUrl"  onChange={this.onUpdateDetails} value={this.state.purchaseFromUrl} type="text"></input><br />
@@ -143,4 +139,4 @@ class AddEditMoldSize extends React.Component {
   }
 }
 
-export default AddEditMoldSize;
+export default AddEditPackaging;
