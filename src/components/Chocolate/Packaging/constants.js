@@ -1,18 +1,31 @@
+
+export const PACKAGING_CATEGORIES = [
+  'Wrap',
+  'Overwrap',
+  'Label'
+]
+
+
 export const PACKAGING_DEFAULT_DETAILS = {
   label : '',
-  category : 'Wrap',
-  quantity : '',
+  category : '',
+  categorySelection : [],
+  categoryCategories : [
+    {value : PACKAGING_CATEGORIES[0], label : PACKAGING_CATEGORIES[0]},
+    {value : PACKAGING_CATEGORIES[1], label : PACKAGING_CATEGORIES[1]},
+    {value : PACKAGING_CATEGORIES[2], label : PACKAGING_CATEGORIES[2]}
+  ],
 
   // Price is standardized with Ingredients and other areas so we can add more
-  costPerItem: '',
-  countPurchased : '',
-  latestPurchasePrice : '',
+  purchasedPrice: '',
+  purchasedCount : '',
   latestAverageCostPerUnit : '',
 
   unitsPerItem : '',        // Roll of cardstock takes up lots of room
   unitsPerItemComments : '',
   percentWaste : '',
 
+  purchaseFromCompany : '',
   purchaseFromUrl : '',
   imageBase64 : '',
   notes : ''
@@ -23,9 +36,3 @@ export const PACKAGING_DEFAULT_DETAILS_PUBLIC = {
   imageBase64 : '',
   latestAverageCostPerUnit : ''
 }
-
-export const PACKAGING_CATEGORIES = [
-  'Wrap',
-  'Overwrap',
-  'Label'
-]

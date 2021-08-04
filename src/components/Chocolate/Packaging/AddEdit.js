@@ -1,4 +1,5 @@
 import React from 'react';
+import MultiSelect from "react-multi-select-component";
 import ImageUpload from '../../Utils/ImageUpload.js'
 import * as CONSTS from './constants.js'
 /**
@@ -8,13 +9,13 @@ import * as CONSTS from './constants.js'
 class AddEditPackaging extends React.Component {
   constructor(props) {
     super(props);
-    this.validateMoldSizes = this.validateMoldSizes.bind(this);
+    this.validatePackaging = this.validatePackaging.bind(this);
     this.updateImage = this.updateImage.bind(this);
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
-    this.onUpdateDimensions = this.onUpdateDimensions.bind(this);
     this.toggleCheckbox = this.toggleCheckbox.bind(this);
-    this.setMoldSize = this.setMoldSize.bind(this);
-    this.formatMoldSizeForSet = this.formatMoldSizeForSet.bind(this);
+    this.setPackaging = this.setPackaging.bind(this);
+    this.formatPackagingForSet = this.formatPackagingForSet.bind(this);
+    this.setSelected = this.setSelected.bind(this);
 
     this.state = CONSTS.PACKAGING_DEFAULT_DETAILS;
   }
@@ -30,7 +31,8 @@ class AddEditPackaging extends React.Component {
 
         // Save the selected label we selected for edit
         if (this.props.itemSelectedForEdit) {
-          this.setState(this.props.itemSelectedForEdit);
+          let itemSelected = this.formatSelectedCategory(this.props.itemSelectedForEdit);
+          this.setState(itemSelected);
         }
       } else {
         this.setState(CONSTS.PACKAGING_DEFAULT_DETAILS);
@@ -38,15 +40,15 @@ class AddEditPackaging extends React.Component {
     }
   }
 
+  formatSelectedCategory(itemSelectedForEdit) {
+    let itemSelected = itemSelectedForEdit;
+    itemSelected.categorySelection = [({label : itemSelectedForEdit.category, value : itemSelectedForEdit.category})];
+    return itemSelected;
+  }
+
   async onUpdateDetails(event) {
     var state = this.state;
     state[event.target.name] = event.target.value;
-    await this.setState(state);
-  }
-
-  async onUpdateDimensions(event) {
-    var state = this.state;
-    state['barDimensionsInMm'][event.target.name] = event.target.value;
     await this.setState(state);
   }
 
@@ -61,31 +63,44 @@ class AddEditPackaging extends React.Component {
     this.setState({imageBase64});
   }
 
-  async formatMoldSizeForSet() {
-    // Set label
-    let label =  this.state.barLabel + " - " + this.state.barWeightInGrams + "g";
-    await   this.setState({label});
+  async formatPackagingForSet() {
+    let latestAverageCostPerUnit = Math.round(Number(this.state.purchasedPrice / this.state.unitsPerItem)*100)/100 * Number((this.state.percentWaste / 100) + 1);
+    await   this.setState({latestAverageCostPerUnit});
+
 
     return {
+      category : this.state.category,
       label : this.state.label,
       imageBase64 : this.state.imageBase64,
-      barWeightInGrams : this.state.barWeightInGrams,
-      category : this.state.category
+      latestAverageCostPerUnit : this.state.latestAverageCostPerUnit
     };
   }
 
-  validateMoldSizes() {
+  validatePackaging() {
     let valid = true;
     let alertStr = "";
 
-    if (!this.state.barLabel) {
+    if (!this.state.label) {
       valid = false;
       alertStr = 'You must enter a valid label.';
     }
 
-    if (!this.state.barWeightInGrams) {
+    if (!this.state.purchasedCount) {
       valid = false;
-      alertStr = 'You must enter a bar weight.';
+      alertStr = 'You must enter how many you bought.';
+    }
+    if (!this.state.purchasedPrice) {
+      valid = false;
+      alertStr = 'You must enter how much it was.';
+    }
+    if (!this.state.unitsPerItem) {
+      valid = false;
+      alertStr = 'You must enter how many units we can package per item bought.';
+    }
+
+    if (!this.state.category) {
+      valid = false;
+      alertStr = 'You must select a category.';
     }
 
     if (!valid) {
@@ -95,18 +110,22 @@ class AddEditPackaging extends React.Component {
     return valid;
   }
 
-  async setMoldSize() {
-    if (this.validateMoldSizes()) {
-      let publicMoldSize = await this.formatMoldSizeForSet();
+  async setPackaging() {
+    if (this.validatePackaging()) {
+
+      let publicPackaging = await this.formatPackagingForSet();
+      let categoryToWrite = JSON.parse(JSON.stringify(this.state));
+      delete categoryToWrite['categoryCategories'];
+      delete categoryToWrite['categorySelection'];
 
       let documentToEdit = this.state.label;
-      const publicCollectionRef = this.props.firebase.db.collection("moldSizePublic");
-      await publicCollectionRef.doc(documentToEdit).set(publicMoldSize).then(() => {
-        console.log('set public mold size');
+      const publicCollectionRef = this.props.firebase.db.collection("packagingPublic");
+      await publicCollectionRef.doc(documentToEdit).set(publicPackaging).then(() => {
+        console.log('set public packaging');
       });
-      const collectionRef = this.props.firebase.db.collection("moldSize");
-      await collectionRef.doc(documentToEdit).set(this.state).then(() => {
-        console.log('set mold size');
+      const collectionRef = this.props.firebase.db.collection("packaging");
+      await collectionRef.doc(documentToEdit).set(categoryToWrite).then(() => {
+        console.log('set packaging');
       });
 
       let state = CONSTS.PACKAGING_DEFAULT_DETAILS;
@@ -114,26 +133,44 @@ class AddEditPackaging extends React.Component {
     }
   }
 
+  async setSelected(categorySelection) {
+    await this.setState({categorySelection});
+    let category = '';
+    if (categorySelection.length > 0) {
+      category = categorySelection[0].value;
+      await this.setState({category});
+    }
+  }
+
   render() {
+    console.log(this.state.imageBase64);
     return (
       <div>
-      Bar Label:  <input name="barLabel"  onChange={this.onUpdateDetails} value={this.state.barLabel} size="30" placeholder="12-Piece Break Up Bar (4x3)" type="text"></input>*Weight is appended on Save<br />
-      Mold Label:  <input name="moldLabel"  onChange={this.onUpdateDetails} value={this.state.moldLabel} size="30" placeholder="Proline Break Up Bar Mold – 12 Breaks" type="text"></input><br />
-      Bars Per Mold: <input name="barsPerMold"  onChange={this.onUpdateDetails} value={this.state.barsPerMold} size="3" type="text"></input><br />
-      Bar Piece Count: <input name="barPieceCount"  onChange={this.onUpdateDetails} value={this.state.barPieceCount} size="3" type="text"></input><br />
-      Gram Weight Per Bar: <input name="barWeightInGrams"  onChange={this.onUpdateDetails} value={this.state.barWeightInGrams} size="5" type="text"></input><br />
-      Mold Count Owned: <input name="moldCountOwned"  onChange={this.onUpdateDetails} value={this.state.moldCountOwned} size="3" type="text"></input><br />
-      Used Often: <input name="usedOften"  onChange={this.toggleCheckbox} value={this.state.usedOften} type="checkbox"></input><br />
-      Purchased From URL: <input name="purchaseFromUrl"  onChange={this.onUpdateDetails} value={this.state.purchaseFromUrl} type="text"></input><br />
-      Cameo Print File Location: <input name="packagingCameoPrintFileLocation"  onChange={this.onUpdateDetails} value={this.state.packagingCameoPrintFileLocation} type="text"></input><br />
-      CAD File Location: <input name="packagingCadFileLocation"  onChange={this.onUpdateDetails} value={this.state.packagingCadFileLocation} type="text"></input><br />
+      <div className="packagingCategoryContainer">
+      <b>Category: </b><MultiSelect
+        options={this.state.categoryCategories}
+        value={this.state.categorySelection}
+        onChange={this.setSelected}
+        labelledBy="Packaging Category"
+        hasSelectAll={false}
+        disableSearch={true}
+      />
+      </div>
+      Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" placeholder="" type="text"></input><br />
+      Purcahsed Price: $<input name="purchasedPrice"  onChange={this.onUpdateDetails} value={this.state.purchasedPrice} size="10" type="text"></input><br />
+      Count Purchased:  <input name="purchasedCount"  onChange={this.onUpdateDetails} value={this.state.purchasedCount} size="3" placeholder="1" type="text"></input><br />
+      Units Per Item: <input name="unitsPerItem"  onChange={this.onUpdateDetails} value={this.state.unitsPerItem} size="3" placeholder="500"  type="text"></input><br />
+      Units Per Item Comments: <textarea name="unitsPerItemComments"  onChange={this.onUpdateDetails} value={this.state.unitsPerItemComments} type="text"></textarea><br />
+      Percent Waste (for cost calc): <input name="percentWaste"  onChange={this.onUpdateDetails} value={this.state.percentWaste} type="text"></input><br />
+      Purchase From Company: <input name="purchaseFromCompany"  onChange={this.onUpdateDetails} value={this.state.purchaseFromCompany} type="text"></input><br />
+      Purchase From Url: <input name="purchaseFromUrl"  onChange={this.onUpdateDetails} value={this.state.purchaseFromUrl} type="text"></input><br />
       Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
       <ImageUpload
         onUpdate={this.updateImage}
-        image={this.state.image}
+        image={this.state.imageBase64}
         allowedSize={50000}
       />
-      <button onClick={this.setMoldSize}>Add Mold</button>
+      <button onClick={this.setPackaging}>Add Packaging</button>
       </div>
     );
   }

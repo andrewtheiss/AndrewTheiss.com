@@ -70,6 +70,19 @@ class PackagingMainPage extends React.Component {
               />
             }
           </FirebaseContext.Consumer>
+
+          <FirebaseContext.Consumer>
+            {firebase =>
+                <LookupSelection
+                  firebase={firebase}
+                  onUpdateSelection={this.onUpdateSelection}
+                  collectionName="packaging"
+                  displayTitle="Packaging Wrap"
+                  allowMultiple={true}
+                  sendDataOnUpdate={true}
+                />
+              }
+          </FirebaseContext.Consumer>
           {previewMolds}
         </div>
       </div>
@@ -83,18 +96,6 @@ export default PackagingMainPage;
 
 ADD BACK IN
 
-<FirebaseContext.Consumer>
-  {firebase =>
-      <LookupSelection
-        firebase={firebase}
-        onUpdateSelection={this.onUpdateSelection}
-        collectionName="moldSize"
-        displayTitle="Packaging Wrap"
-        allowMultiple={true}
-        sendDataOnUpdate={true}
-      />
-    }
-</FirebaseContext.Consumer>
 <FirebaseContext.Consumer>
   {firebase =>
       <LookupSelection

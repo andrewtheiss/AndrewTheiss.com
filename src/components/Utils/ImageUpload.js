@@ -57,6 +57,7 @@ class ImageUpload extends React.Component {
       await this.setState({error});
     }
   }
+
   convertBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -84,7 +85,7 @@ class ImageUpload extends React.Component {
         <div>Upload Image:   {errorHidden}</div>
         <input id="inp" type="file"  onChange={e => this.handleFileRead(e)} ></input>
         <p id="b64"></p>
-        <img id="img" height="150" alt="" src={this.state.image}/>
+        <img id="img" height="150" alt="" src={this.props.image}/>
       </div>
     );
   }

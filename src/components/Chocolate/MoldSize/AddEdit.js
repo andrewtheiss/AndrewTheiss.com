@@ -134,7 +134,7 @@ class AddEditMoldSize extends React.Component {
       Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
       <ImageUpload
         onUpdate={this.updateImage}
-        image={this.state.image}
+        image={this.state.imageBase64}
         allowedSize={50000}
       />
       <button onClick={this.setMoldSize}>Add Mold</button>

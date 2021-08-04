@@ -179,7 +179,7 @@ class AddNewIngredientPage extends React.Component {
           </div>
           <br />
           <IngredientNurtitionFacts onUpdate={this.updateNutritionFacts} facts={this.state.nutritionFacts}/>
-          <ImageUpload onUpdate={this.updateImage} image={this.state.image} />
+          <ImageUpload onUpdate={this.updateImage} image={this.state.imageBase64} />
           <button onClick={this.addIngredient}>Add Ingredient</button>
         </div>
         <div className="ib fl">
