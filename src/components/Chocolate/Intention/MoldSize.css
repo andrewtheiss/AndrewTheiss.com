@@ -1,0 +1,14 @@
+.moldSizeMainPageContainer {
+  max-width: 800px;
+  border: 2px solid black;
+}
+
+.moldSizeMainPageContainer.hidden {
+  display: none;
+}
+
+.moldSizeAdvancedSearch {}
+
+.moldSizeAdvancedSearch.hidden {
+  display: none;
+}

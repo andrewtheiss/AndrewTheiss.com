@@ -6,7 +6,7 @@ import PreviewMoldSize from '../Preview.js'
 import '../MoldSize.css'
 
 
-class MoldSizeMainPage extends React.Component {
+class IntentionMainPage extends React.Component {
 
   constructor(props) {
     super(props);
@@ -59,7 +59,7 @@ class MoldSizeMainPage extends React.Component {
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";
     return (
       <div className="moldSizePageOutterContainer">
-        <span><span className={showHideCarat}></span><h2 className="moldSizeToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Bar Mold/Size</h2></span>
+        <span><span className={showHideCarat}></span><h2 className="moldSizeToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Intention</h2></span>
         <div className={showHideContent}>
 
           <FirebaseContext.Consumer>
@@ -89,4 +89,4 @@ class MoldSizeMainPage extends React.Component {
   }
 }
 
-export default MoldSizeMainPage;
+export default IntentionMainPage;

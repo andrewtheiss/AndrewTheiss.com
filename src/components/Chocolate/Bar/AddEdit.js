@@ -2,13 +2,19 @@ import React from 'react';
 import MultiSelect from "react-multi-select-component";
 import ImageUpload from '../../Utils/ImageUpload.js'
 import * as CONSTS from './constants.js'
+import { FirebaseContext } from '../../Firebase';
+import LookupSelection from '../../Utils/LookupSelection.js'
 /**
- *  AddEditPackaging
+ *  AddEditBar
  *
  */
 class AddEditBar extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -26,7 +32,7 @@ class AddEditBar extends React.Component {
           this.setState(itemSelected);
         }
       } else {
-        this.setState(CONSTS.PACKAGING_DEFAULT_DETAILS);
+        this.setState(CONSTS.DEFAULT_BAR);
       }
     }
   }
@@ -65,20 +71,18 @@ class AddEditBar extends React.Component {
 
       let publicBar = await this.formatBarForSet();
       let barToWrite = JSON.parse(JSON.stringify(this.state));
-      delete categoryToWrite['categoryCategories'];
-      delete categoryToWrite['categorySelection'];
 
       let documentToEdit = this.state.label;
       const publicCollectionRef = this.props.firebase.db.collection("packagingPublic");
-      await publicCollectionRef.doc(documentToEdit).set(publicPackaging).then(() => {
+      await publicCollectionRef.doc(documentToEdit).set('barPublic').then(() => {
         console.log('set public packaging');
       });
       const collectionRef = this.props.firebase.db.collection("packaging");
-      await collectionRef.doc(documentToEdit).set(categoryToWrite).then(() => {
+      await collectionRef.doc(documentToEdit).set('bar').then(() => {
         console.log('set packaging');
       });
 
-      let state = CONSTS.PACKAGING_DEFAULT_DETAILS;
+      let state = CONSTS.DEFAULT_BAR;
       this.setState(state);
     }
   }
@@ -92,46 +96,50 @@ class AddEditBar extends React.Component {
     }
   }
 
+  /**
+   *  onUpdateBatchSelection
+   *
+   *  Usage:
+   *  - Default is a single selection auto set to 100% of the batch used
+   *  - Unrelated to which bar molds are used (can use one mixed batch into a bunch of molds)
+   *
+   *  Note:
+   *  We may want to support 25% of one batch and 75% of another mixed in the same
+   */
+  onUpdateBatchSelection(batchSelection) {
+    console.log('select batch');
+  }
+
   render() {
-    console.log(this.state.imageBase64);
     return (
-      <div>
-      <div className="packagingCategoryContainer">
-      <b>Category: </b><MultiSelect
-        options={this.state.categoryCategories}
-        value={this.state.categorySelection}
-        onChange={this.setSelected}
-        labelledBy="Packaging Category"
-        hasSelectAll={false}
-        disableSearch={true}
-      />
-      </div>
-      Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" placeholder="" type="text"></input><br />
-      Purcahsed Price: $<input name="purchasedPrice"  onChange={this.onUpdateDetails} value={this.state.purchasedPrice} size="10" type="text"></input><br />
-      Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
-      <button onClick={this.setPackaging}>Add Bar</button>
+      <div className="barAddEditOutterContainer">
+        <div className="barBatchSelection">
+        <FirebaseContext.Consumer>
+          {firebase =>
+              <LookupSelection
+                firebase={firebase}
+                onUpdateSelection={this.onUpdateBatchSelection}
+                collectionName="batchesPublic"
+                displayTitle="Batches Public"
+                allowMultiple={true}
+                sendDataOnUpdate={true}
+              />
+            }
+        </FirebaseContext.Consumer>
+        </div>
+        Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" placeholder="" type="text"></input><br />
+        Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
+        <button onClick={this.setBar}>Add Bar</button>
       </div>
     );
   }
 }
 
-export default AddEditPackaging;
+export default AddEditBar;
 
 /*
 
-          <FirebaseContext.Consumer>
-            {firebase =>
-                <LookupSelection
-                  firebase={firebase}
-                  onUpdateSelection={this.onUpdateSelection}
-                  collectionName="packaging"
-                  displayTitle="Packaging Wrap"
-                  allowMultiple={true}
-                  sendDataOnUpdate={true}
-                  customSearch={collectionRefSearchWrap}
-                />
-              }
-          </FirebaseContext.Consumer>
+
           <FirebaseContext.Consumer>
             {firebase =>
                 <LookupSelection

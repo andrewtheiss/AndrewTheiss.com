@@ -84,6 +84,10 @@ const NavigationAdminAuth = () => (
         <li>
           <Link to={ROUTES.CHOCOLATE.BAR}>Bars</Link>
         </li>
+        <li>
+          <Link to={ROUTES.CHOCOLATE.BAR_DEPENDENCIES}>Bar Dependencies</Link>
+        </li>
+
     </ul>
   </ul>
 );

@@ -18,7 +18,7 @@ class PackagingMainPage extends React.Component {
       selectedPackaging : null,
       selectedPackagings : null,
       allPackagingData : null,
-      pageContentVisibilityDropdownToggled : true
+      pageContentVisibilityDropdownToggled : false
     }
   }
 
@@ -64,7 +64,7 @@ class PackagingMainPage extends React.Component {
 
     return (
       <div className="packagingPageOutterContainer">
-        <span><span className={showHideCarat}></span><h2 className="packagingToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Toggle Packaging Panel</h2></span>
+        <span><span className={showHideCarat}></span><h2 className="packagingToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Packaging</h2></span>
         <div className={showHideContent}>
 
           <FirebaseContext.Consumer>

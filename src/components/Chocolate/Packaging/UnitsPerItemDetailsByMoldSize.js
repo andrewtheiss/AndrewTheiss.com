@@ -1,5 +1,4 @@
 import React from 'react';
-import MultiSelect from "react-multi-select-component";
 import LookupSelection from '../../Utils/LookupSelection.js'
 import { FirebaseContext } from '../../Firebase';
 import './Packaging.css'
@@ -76,7 +75,6 @@ class UnitsPerItemDetailsByMoldSize extends React.Component {
 
     generateForInputsBasedOnSelection() {
       if (this.state.selection && this.state.selection.length > 0) {
-        let self = this;
         let selectionInputs = Object.keys(this.state.selectionValues).map((key) => (
             <SingleUnitsPerItemDetail value={this.state.selectionValues[key]} onUpdate={this.onUpdateUnitsPerItemForMoldSize} label={key} key={key} />
         ));
