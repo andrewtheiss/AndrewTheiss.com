@@ -27,7 +27,7 @@ export const ROAST = {
 }
 
 export const DEFUALT_BATCH_DETAILS = {
-  label : '000-2021-00A',
+  label : '000-2021-00Z',
   creation : '2021-02-07',
   grindInHours : 48,
   intention : [],

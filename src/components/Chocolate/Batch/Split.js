@@ -10,7 +10,7 @@ const DEFAULT_SPLIT_STATE = {
   key : '',
   splitAttemptError : ''
 };
-const DEFAULT_DOES_NOT_EXIST_LABEL = 'DNE-2021-00A';
+const DEFAULT_DOES_NOT_EXIST_LABEL = 'DNE-2021-00Z';
 
 class SplitChocolateBatch extends React.Component {
 
