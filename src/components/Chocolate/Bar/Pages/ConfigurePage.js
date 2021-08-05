@@ -7,7 +7,6 @@ import AddEditBar from '../AddEdit.js'
 
 class BarConfigurePage extends React.Component {
   render() {
-    console.log('bar lookup page');
     return (
       <div>
 

@@ -6,7 +6,6 @@ import PackagingMainPage from '../../Packaging/Pages/MainPage.js'
 
 class BarLookupPage extends React.Component {
   render() {
-    console.log('bar lookup page');
     return (
       <div>
 

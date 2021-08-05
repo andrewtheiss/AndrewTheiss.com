@@ -58,3 +58,17 @@
   max-width: 300px;
   margin: 5px;
 }
+
+.unitsPerItemHeader {
+  margin-bottom: 0px;
+  margin-left: 10px;
+}
+
+.unitsPerItemFormListItem {
+  margin-left: 15px;
+  line-height: 1.9em;
+}
+
+.unitsPerItemDetailedInput {
+  margin-left: 10px;
+}

@@ -68,15 +68,38 @@ class AddEditPackaging extends React.Component {
   }
 
   async formatPackagingForSet() {
-    let latestAverageCostPerUnit = Math.round(Number(this.state.purchasedPrice / this.state.unitsPerItem)*100)/100 * Number((this.state.percentWaste / 100) + 1);
-    await   this.setState({latestAverageCostPerUnit});
+    let latestAverageCostPerUnitBasedOnBarMold = false;
+    let latestAverageCostPerUnit = 0;
+    if (!this.state.unitsPerItemAreBasedOnBarMold) {
+      latestAverageCostPerUnit = Math.round(Number(this.state.purchasedPrice / this.state.unitsPerItem)*10000)/10000 * Number((this.state.percentWaste / 100) + 1);
+      await this.setState({latestAverageCostPerUnit});
 
+    } else {
+      // Store each average value as well as
+      let runningTotalForAverage = 0;
+      let count = 0;
+      latestAverageCostPerUnitBasedOnBarMold = {};
+      for (var i in this.state.unitsPerItemBasedOnBarMold) {
+        latestAverageCostPerUnitBasedOnBarMold[i] = Math.round(Number(this.state.purchasedPrice / this.state.unitsPerItemBasedOnBarMold[i])*10000)/10000 * Number((this.state.percentWaste / 100) + 1);
+        runningTotalForAverage += latestAverageCostPerUnitBasedOnBarMold[i];
+        count++;
+      }
+
+      // Still create a average cost per unit based on all current entries!  (will be useful if lazy in the future)
+      runningTotalForAverage = Math.round((runningTotalForAverage / count) * 10000) / 10000;
+
+      await this.setState({
+        latestAverageCostPerUnit : runningTotalForAverage,
+        latestAverageCostPerUnitBasedOnBarMold : latestAverageCostPerUnitBasedOnBarMold
+      });
+    }
 
     return {
       category : this.state.category,
       label : this.state.label,
       imageBase64 : this.state.imageBase64,
-      latestAverageCostPerUnit : this.state.latestAverageCostPerUnit
+      latestAverageCostPerUnit : this.state.latestAverageCostPerUnit,
+      latestAverageCostPerUnitBasedOnBarMold : this.state.latestAverageCostPerUnitBasedOnBarMold
     };
   }
 
@@ -189,7 +212,7 @@ class AddEditPackaging extends React.Component {
       Purcahsed Price: $<input name="purchasedPrice"  onChange={this.onUpdateDetails} value={this.state.purchasedPrice} size="10" type="text"></input><br />
       Count Purchased:  <input name="purchasedCount"  onChange={this.onUpdateDetails} value={this.state.purchasedCount} size="3" placeholder="1" type="text"></input><br />
       Units Per Item: <input name="unitsPerItem" disabled={disableBasedOnSelection} onChange={this.onUpdateDetails} value={this.state.unitsPerItem} size="3" placeholder="500"  type="text"></input><br />
-      Units Per Item Are Based On Bar/Mold: <input name="unitsPerItemAreBasedOnBarMold"  onChange={this.toggleCheckbox} value={this.state.unitsPerItemAreBasedOnBarMold} type="checkbox"></input><br />
+      Units Per Item Are Based On Bar/Mold: <input name="unitsPerItemAreBasedOnBarMold"  checked={this.state.unitsPerItemAreBasedOnBarMold}  onChange={this.toggleCheckbox} type="checkbox"></input><br />
       {itemUnitsBasedOnBarMold}
       Units Per Item Comments: <textarea name="unitsPerItemComments"  onChange={this.onUpdateDetails} value={this.state.unitsPerItemComments} type="text"></textarea><br />
       Percent Waste (for cost calc): <input name="percentWaste"  onChange={this.onUpdateDetails} value={this.state.percentWaste} type="text"></input><br />

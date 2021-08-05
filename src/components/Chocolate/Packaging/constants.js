@@ -20,6 +20,7 @@ export const PACKAGING_DEFAULT_DETAILS = {
   purchasedPrice: '',
   purchasedCount : '',
   latestAverageCostPerUnit : '',
+  latestAverageCostPerUnitBasedOnBarMold : {},
 
   unitsPerItem : '',        // Roll of cardstock takes up lots of room
   unitsPerItemComments : '',
@@ -27,9 +28,7 @@ export const PACKAGING_DEFAULT_DETAILS = {
 
   // Sometimes we may have different quantity of units per item based on bar size
   unitsPerItemAreBasedOnBarMold : false,
-  unitsPerItemBasedOnBarMold : {
-
-  },
+  unitsPerItemBasedOnBarMold : {},
 
   purchaseFromCompany : '',
   purchaseFromUrl : '',

@@ -2,6 +2,7 @@ import React from 'react';
 import MultiSelect from "react-multi-select-component";
 import LookupSelection from '../../Utils/LookupSelection.js'
 import { FirebaseContext } from '../../Firebase';
+import './Packaging.css'
 /**
  *  UnitsPerItemDetailsByMoldSize
  *
@@ -11,9 +12,9 @@ class SingleUnitsPerItemDetail extends React.Component {
     super(props);
     this.onChange = this.onChange.bind(this);
     this.state = {
-      propLabel : this.props.state.label,
-      propValue : this.props.amount
-    }
+      propLabel : this.props.label,
+      propValue : this.props.value
+    };
   }
 
   async onChange(event) {
@@ -26,8 +27,8 @@ class SingleUnitsPerItemDetail extends React.Component {
 
   render() {
     return (
-      <div>
-          {this.props.state.label} <input name={this.props.state.label} onChange={this.onChange} type="text" value={this.state.propValue}></input>
+      <div className="unitsPerItemFormListItem">
+          {this.state.propLabel}<input className="unitsPerItemDetailedInput" size="5" name={this.state.propLabel} onChange={this.onChange} type="text" value={this.state.propValue}></input>
       </div>
     )
   }
@@ -38,12 +39,21 @@ class UnitsPerItemDetailsByMoldSize extends React.Component {
     constructor(props) {
       super(props);
       this.generateForInputsBasedOnSelection = this.generateForInputsBasedOnSelection.bind(this);
+      this.onUpdateUnitsPerItemForMoldSize = this.onUpdateUnitsPerItemForMoldSize.bind(this);
       this.onUpdateSelection = this.onUpdateSelection.bind(this);
-
-      console.log('props for units per det item' , this.props);
+      this.generateSelectionFromProps = this.generateSelectionFromProps.bind(this);
       this.state = {
-        selection : []
+        selectionValues : this.props.state,
+        selection : this.generateSelectionFromProps()
       };
+    }
+
+    generateSelectionFromProps() {
+      let selection = [];
+      for (var i in this.props.state) {
+        selection.push({label  : i, value : i});
+      }
+      return selection;
     }
 
     onUpdateSelection(selection) {
@@ -51,15 +61,24 @@ class UnitsPerItemDetailsByMoldSize extends React.Component {
     }
 
     onUpdateUnitsPerItemForMoldSize(key, value) {
-      console.log('updating' , key, value);
+      let selectionValues = this.state.selectionValues;
+      selectionValues[key] = value;
+      if (!value) {
+        delete selectionValues[key];
+      }
+      this.setState({selectionValues});
+
+      // Update parent
+      if (this.props.onUpdate) {
+        this.props.onUpdate(selectionValues);
+      }
     }
 
     generateForInputsBasedOnSelection() {
-
       if (this.state.selection && this.state.selection.length > 0) {
         let self = this;
-        let selectionInputs = Object.keys(this.state.selection).map((key) => (
-            <SingleUnitsPerItemDetail amount={0} onUpdate={this.onUpdateUnitsPerItemForMoldSize} state={this.state.selection[key]} key={key} />
+        let selectionInputs = Object.keys(this.state.selectionValues).map((key) => (
+            <SingleUnitsPerItemDetail value={this.state.selectionValues[key]} onUpdate={this.onUpdateUnitsPerItemForMoldSize} label={key} key={key} />
         ));
         return selectionInputs;
       }
@@ -70,7 +89,7 @@ class UnitsPerItemDetailsByMoldSize extends React.Component {
       let inputSelectionAndDetails = this.generateForInputsBasedOnSelection();
       return (
           <div>
-            <h4>Units Per Item By Mold/Size</h4>
+            <h4 className="unitsPerItemHeader">Units Per Item By Mold/Size</h4>
             <div>
             {inputSelectionAndDetails}
             </div>
