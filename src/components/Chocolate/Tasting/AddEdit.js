@@ -1,19 +1,21 @@
 import React from 'react';
 import ImageUpload from '../../Utils/ImageUpload.js'
 import * as CONSTS from './constants.js'
+
 /**
- *  AddEditMoldSize
+ *  AddEditTasting
  *
  */
-class AddEditIntention extends React.Component {
+class AddEditTasting extends React.Component {
   constructor(props) {
     super(props);
-    this.setIntention = this.setIntention.bind(this);
+    this.setTasting = this.setTasting.bind(this);
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
 
-    this.state = CONSTS.INTENTION_DEFAULT_PROPS;
+    this.state = CONSTS.TASTING_DEFAULT_PROPS;
   }
 
+  // Somewhere save this.props.batchToEdit.Details.label as this.batchToEditLabel
   componentDidUpdate(prevProps) {
     let isEdit = this.props.itemSelectedForEdit;
 
@@ -28,7 +30,7 @@ class AddEditIntention extends React.Component {
           this.setState(this.props.itemSelectedForEdit);
         }
       } else {
-        this.setState(CONSTS.INTENTION_DEFAULT_PROPS);
+        this.setState(CONSTS.TASTING_DEFAULT_PROPS);
       }
     }
   }
@@ -39,31 +41,31 @@ class AddEditIntention extends React.Component {
     await this.setState(state);
   }
 
-  async setIntention() {
+  async setTasting() {
 
     let documentToEdit = this.state.label;
-    const publicCollectionRef = this.props.firebase.db.collection("intentionPublic");
+    const publicCollectionRef = this.props.firebase.db.collection("tastingPublic");
     await publicCollectionRef.doc(documentToEdit).set(this.state).then(() => {
-      console.log('set public intention');
+      console.log('set public tasting');
     });
-    const collectionRef = this.props.firebase.db.collection("intention");
+    const collectionRef = this.props.firebase.db.collection("tasting");
     await collectionRef.doc(documentToEdit).set(this.state).then(() => {
-      console.log('set intention');
+      console.log('set tasting');
     });
 
-    let state = CONSTS.INTENTION_DEFAULT_PROPS;
+    let state = CONSTS.TASTING_DEFAULT_PROPS;
     this.setState(state);
   }
 
   render() {
     return (
       <div>
-      Intention Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" type="text"></input><br />
+      Tasting Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" type="text"></input><br />
       Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
-      <button onClick={this.setIntention}>Update Intention</button>
+      <button onClick={this.setTasting}>Update Tasting</button>
       </div>
     );
   }
 }
 
-export default AddEditIntention;
+export default AddEditTasting;

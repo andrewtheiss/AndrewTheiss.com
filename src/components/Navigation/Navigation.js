@@ -79,9 +79,6 @@ const NavigationAdminAuth = () => (
           <Link to={ROUTES.CHOCOLATE.BATCH}>Batches</Link>
         </li>
         <li>
-          <Link to={ROUTES.CHOCOLATE.INTENTION}>Intention</Link>
-        </li>
-        <li>
           <Link to={ROUTES.CHOCOLATE.BAR}>Bars</Link>
         </li>
         <li>

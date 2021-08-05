@@ -3,6 +3,7 @@ import { FirebaseContext } from '../../../Firebase';
 import MoldSizeMainPage from '../../MoldSize/Pages/MainPage.js'
 import PackagingMainPage from '../../Packaging/Pages/MainPage.js'
 import IntentionMainPage from '../../Intention/Pages/MainPage.js'
+import TastingMainPage from '../../Tasting/Pages/MainPage.js'
 
 
 class BarConfigurePage extends React.Component {
@@ -10,8 +11,11 @@ class BarConfigurePage extends React.Component {
     return (
       <div>
         <FirebaseContext.Consumer>
-          {firebase => <IntentionMainPage firebase={firebase} />}
+          {firebase => <TastingMainPage firebase={firebase} />}
         </FirebaseContext.Consumer>
+          <FirebaseContext.Consumer>
+            {firebase => <IntentionMainPage firebase={firebase} />}
+          </FirebaseContext.Consumer>
         <FirebaseContext.Consumer>
           {firebase => <PackagingMainPage firebase={firebase} />}
         </FirebaseContext.Consumer>

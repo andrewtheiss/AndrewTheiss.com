@@ -1,12 +1,12 @@
 import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
-import AddEditIntention from '../AddEdit.js'
+import AddEditTasting from '../AddEdit.js'
 import LookupSelection from '../../../Utils/LookupSelection.js'
-import PreviewIntentions from '../Preview.js'
-import '../Intention.css'
+import PreviewTasting from '../Preview.js'
+import '../Tasting.css'
 
 
-class IntentionMainPage extends React.Component {
+class TastingMainPage extends React.Component {
 
   constructor(props) {
     super(props);
@@ -14,23 +14,23 @@ class IntentionMainPage extends React.Component {
     this.togglePageContentVisibilityDropdown = this.togglePageContentVisibilityDropdown.bind(this);
 
     this.state = {
-      selectedIntentionSingle : null,
-      selectedIntentions : null,
-      allIntentionData : null,
+      selectedTastingSingle : null,
+      selectedTastings : null,
+      allTastingData : null,
       pageContentVisibilityDropdownToggled : false
     };
   }
 
-  onUpdateSelection(selectedIntentionArray, selectedIntentionsData) {
-    let selectedIntention = undefined;
+  onUpdateSelection(selectedTastingArray, selectedTastingsData) {
+    let selectedTasting = undefined;
 
-    if (selectedIntentionArray && selectedIntentionArray.length > 0) {
-      selectedIntention = selectedIntentionsData[selectedIntentionArray[0].value];
+    if (selectedTastingArray && selectedTastingArray.length > 0) {
+      selectedTasting = selectedTastingsData[selectedTastingArray[0].value];
     }
     let state = {
-      selectedIntentionSingle : selectedIntention,
-      selectedIntentions : selectedIntentionArray,
-      allIntentionData : selectedIntentionsData,
+      selectedTastingSingle : selectedTasting,
+      selectedTastings : selectedTastingArray,
+      allTastingData : selectedTastingsData,
       pageContentVisibilityDropdownToggled : this.state.pageContentVisibilityDropdownToggled
     };
     this.setState(state);
@@ -43,19 +43,19 @@ class IntentionMainPage extends React.Component {
   }
 
   render() {
-    let previewIntentions = <PreviewIntentions intentions={this.state.selectedIntentions} />
-    let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "moldSizeMainPageContainer" : "moldSizeMainPageContainer hidden";
+    let previewTasting = <PreviewTasting state={this.state.selectedTastingSingle} />
+    let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "tastingMainPageContainer" : "tastingMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";
     return (
-      <div className="moldSizePageOutterContainer">
-        <span><span className={showHideCarat}></span><h2 className="commonToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Intention</h2></span>
+      <div className="tastingPageOutterContainer">
+        <span><span className={showHideCarat}></span><h2 className="commonToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Tasting</h2></span>
         <div className={showHideContent}>
 
           <FirebaseContext.Consumer>
             {firebase =>
-              <AddEditIntention
+              <AddEditTasting
                 firebase={firebase}
-                itemSelectedForEdit={this.state.selectedIntentionSingle}
+                itemSelectedForEdit={this.state.selectedTastingSingle}
               />
             }
           </FirebaseContext.Consumer>
@@ -64,18 +64,18 @@ class IntentionMainPage extends React.Component {
                 <LookupSelection
                   firebase={firebase}
                   onUpdateSelection={this.onUpdateSelection}
-                  collectionName="intention"
-                  displayTitle="Intention"
+                  collectionName="tasting"
+                  displayTitle="Tasting"
                   allowMultiple={true}
                   sendDataOnUpdate={true}
                 />
               }
           </FirebaseContext.Consumer>
-          {previewIntentions}
+          {previewTasting}
         </div>
       </div>
     );
   }
 }
 
-export default IntentionMainPage;
+export default TastingMainPage;

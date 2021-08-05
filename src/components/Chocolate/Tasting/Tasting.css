@@ -1,0 +1,21 @@
+.tastingMainPageContainer {
+  max-width: 800px;
+  border: 2px solid black;
+}
+
+.tastingMainPageContainer.hidden {
+  display: none;
+}
+
+.tastingAdvancedSearch {}
+
+.tastingAdvancedSearch.hidden {
+  display: none;
+}
+
+.tastingPageOutterContainer {
+  border: 1px solid #ccc;
+  margin: 5px;
+  max-width: 900px;
+  padding: 5px;
+}
