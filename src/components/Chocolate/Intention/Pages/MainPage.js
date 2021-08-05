@@ -2,8 +2,8 @@ import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
 import AddEditMoldSize from '../AddEdit.js'
 import LookupSelection from '../../../Utils/LookupSelection.js'
-import PreviewMoldSize from '../Preview.js'
-import '../MoldSize.css'
+import PreviewIntentions from '../Preview.js'
+import '../Intention.css'
 
 
 class IntentionMainPage extends React.Component {
@@ -11,42 +11,28 @@ class IntentionMainPage extends React.Component {
   constructor(props) {
     super(props);
     this.onUpdateSelection = this.onUpdateSelection.bind(this);
-    this.generatePreviewForSelections = this.generatePreviewForSelections.bind(this);
     this.togglePageContentVisibilityDropdown = this.togglePageContentVisibilityDropdown.bind(this);
 
     this.state = {
-      selectedMoldSingle : null,
-      selectedMolds : null,
-      allMoldData : null,
       pageContentVisibilityDropdownToggled : false
-    }
+    };
   }
 
-  onUpdateSelection(selectedMoldArray, moldsData) {
-    let selectedMold = undefined;
+  onUpdateSelection(seletedIntentionArray, seletedIntentionsData) {
+    let seletedIntention = undefined;
 
-    if (selectedMoldArray && selectedMoldArray.length > 0) {
-      selectedMold = moldsData[selectedMoldArray[0].value];
+    if (seletedIntentionArray && seletedIntentionArray.length > 0) {
+      seletedIntention = seletedIntentionsData[seletedIntentionArray[0].value];
     }
     let state = {
-      selectedMoldSingle : selectedMold,
-      selectedMolds : selectedMoldArray,
-      allMoldData : moldsData,
+      seletedIntentionSingle : seletedIntention,
+      selectedIntentions : seletedIntentionArray,
+      allIntentionData : seletedIntentionsData,
       pageContentVisibilityDropdownToggled : this.state.pageContentVisibilityDropdownToggled
     };
     this.setState(state);
   }
 
-  generatePreviewForSelections() {
-    let preview = '';
-
-    if (this.state.allMoldData && this.state.selectedMolds && this.state.selectedMolds.length) {
-      preview = Object.keys(this.state.selectedMolds).map((key) => (
-        <PreviewMoldSize mold={this.state.allMoldData[this.state.selectedMolds[key].value]} key={key} data-id={key} onMouseEnter={this.handleMouseOver} onClick={this.handleClick} />
-      ));
-    }
-    return preview;
-  }
 
   togglePageContentVisibilityDropdown() {
     var pageContentVisibilityDropdownToggled = !this.state.pageContentVisibilityDropdownToggled;
@@ -54,7 +40,7 @@ class IntentionMainPage extends React.Component {
   }
 
   render() {
-    let previewMolds = this.generatePreviewForSelections();
+    let previewIntentions = <PreviewIntentions intentions={this.state.selectedIntentions} />
     let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "moldSizeMainPageContainer" : "moldSizeMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";
     return (
@@ -75,14 +61,14 @@ class IntentionMainPage extends React.Component {
                 <LookupSelection
                   firebase={firebase}
                   onUpdateSelection={this.onUpdateSelection}
-                  collectionName="moldSize"
-                  displayTitle="Bar Mold / Sizes"
+                  collectionName="intention"
+                  displayTitle="Intention"
                   allowMultiple={true}
                   sendDataOnUpdate={true}
                 />
               }
           </FirebaseContext.Consumer>
-          {previewMolds}
+          {previewIntentions}
         </div>
       </div>
     );
