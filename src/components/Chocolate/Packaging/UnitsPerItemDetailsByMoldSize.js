@@ -9,10 +9,12 @@ import './Packaging.css'
 class SingleUnitsPerItemDetail extends React.Component {
   constructor(props) {
     super(props);
+    console.log(props);
     this.onChange = this.onChange.bind(this);
+    let value = (this.props.value) ? this.props.value : "";
     this.state = {
       propLabel : this.props.label,
-      propValue : this.props.value
+      propValue : value
     };
   }
 
@@ -74,13 +76,13 @@ class UnitsPerItemDetailsByMoldSize extends React.Component {
     }
 
     generateForInputsBasedOnSelection() {
+      let selectionInputs = '';
       if (this.state.selection && this.state.selection.length > 0) {
-        let selectionInputs = Object.keys(this.state.selectionValues).map((key) => (
-            <SingleUnitsPerItemDetail value={this.state.selectionValues[key]} onUpdate={this.onUpdateUnitsPerItemForMoldSize} label={key} key={key} />
+        selectionInputs = Object.keys(this.state.selection).map((key) => (
+            <SingleUnitsPerItemDetail value={this.state.selectionValues[key]} onUpdate={this.onUpdateUnitsPerItemForMoldSize} label={this.state.selection[0].label} key={key} />
         ));
-        return selectionInputs;
       }
-      return '';
+      return selectionInputs;
     }
 
     render() {
