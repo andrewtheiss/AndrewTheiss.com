@@ -43,6 +43,18 @@ class TastingMainPage extends React.Component {
   }
 
   render() {
+
+    // Render without loading all data if we don't ever toggle visibility
+    if (!this.state.pageContentVisibilityDropdownToggled)  {
+      return (
+        <div className="tastingPageOutterContainer">
+          <span><span className="carat"></span><h2 className="commonToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Tasting</h2></span>
+          <div className="tastingMainPageContainer hidden">
+          </div>
+        </div>
+      );
+    }
+
     let previewTasting = <PreviewTasting state={this.state.selectedTastingSingle} />
     let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "tastingMainPageContainer" : "tastingMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";

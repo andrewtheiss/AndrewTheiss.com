@@ -79,7 +79,7 @@ class UnitsPerItemDetailsByMoldSize extends React.Component {
       let selectionInputs = '';
       if (this.state.selection && this.state.selection.length > 0) {
         selectionInputs = Object.keys(this.state.selection).map((key) => (
-            <SingleUnitsPerItemDetail value={this.state.selectionValues[key]} onUpdate={this.onUpdateUnitsPerItemForMoldSize} label={this.state.selection[0].label} key={key} />
+            <SingleUnitsPerItemDetail value={this.state.selectionValues[this.state.selection[key].label]} onUpdate={this.onUpdateUnitsPerItemForMoldSize} label={this.state.selection[key].label} key={key} />
         ));
       }
       return selectionInputs;
@@ -102,6 +102,7 @@ class UnitsPerItemDetailsByMoldSize extends React.Component {
                     displayTitle=""
                     allowMultiple={true}
                     sendDataOnUpdate={true}
+                    selectedData={this.state.selection}
                   />
                 }
             </FirebaseContext.Consumer>

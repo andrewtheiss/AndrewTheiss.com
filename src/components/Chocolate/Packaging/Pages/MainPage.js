@@ -54,6 +54,19 @@ class PackagingMainPage extends React.Component {
   }
 
   render() {
+
+    // Render without loading all data if we don't ever toggle visibility
+    if (!this.state.pageContentVisibilityDropdownToggled)  {
+      return (
+        <div className="packagingPageOutterContainer">
+          <span><span className="carat"></span><h2 className="commonToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Packaging</h2></span>
+          <div className="packagingMainPageContainer hidden">
+          </div>
+        </div>
+      );
+    }
+
+
     let previewMolds = this.generatePreviewForSelections();
     let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "packagingMainPageContainer" : "packagingMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";

@@ -43,6 +43,18 @@ class IntentionMainPage extends React.Component {
   }
 
   render() {
+
+        // Render without loading all data if we don't ever toggle visibility
+    if (!this.state.pageContentVisibilityDropdownToggled)  {
+      return (
+        <div className="moldSizePageOutterContainer">
+          <span><span className="carat"></span><h2 className="commonToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Intention</h2></span>
+          <div className="moldSizeMainPageContainer hidden">
+          </div>
+        </div>
+      );
+    }
+
     let previewIntentions = <PreviewIntentions intentions={this.state.selectedIntentions} />
     let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "moldSizeMainPageContainer" : "moldSizeMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";

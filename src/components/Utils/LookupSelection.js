@@ -12,6 +12,7 @@ import './Utils.css'
  *  allowMultiple         : (optional) returns Array of all selected instead of single
  *  sendDataOnUpdate      : (optional) returns second parameter back which is the collectionData
  *  displayTitle          : (optional) display title
+ *  selectedData          : (optional) data already selected
  *
  *  Usage:
  *  <LookupSelection
@@ -39,6 +40,11 @@ class LookupSelection extends React.Component {
       this.h3Class += " " + this.props.customClass;
     }
 
+    let selectedData = [];
+    if (this.props.selectedData) {
+      selectedData = this.props.selectedData;
+    }
+
     this.displayTitle = "";
     if (this.props.displayTitle) {
       this.displayTitle = this.props.displayTitle;
@@ -46,7 +52,7 @@ class LookupSelection extends React.Component {
 
     this.state = {
       collection : {},
-      collectionSelected : [],
+      collectionSelected : selectedData,
       collectionOptions : [],
       newcollectionDetails : {}
     };
