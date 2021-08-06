@@ -1,5 +1,4 @@
 import React from 'react';
-import ImageUpload from '../../Utils/ImageUpload.js'
 import * as CONSTS from './constants.js'
 
 /**

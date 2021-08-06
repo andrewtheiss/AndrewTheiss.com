@@ -1,6 +1,4 @@
 import React from 'react';
-import MultiSelect from "react-multi-select-component";
-import ImageUpload from '../../../Utils/ImageUpload.js'
 import * as CONSTS from '../constants.js'
 import { FirebaseContext } from '../../../Firebase';
 import LookupSelection from '../../../Utils/LookupSelection.js'
@@ -49,20 +47,17 @@ class BatchesIncluded extends React.Component {
 
         // Save the selected label we selected for edit
         if (this.props.itemSelectedForEdit) {
-          let itemSelected = this.formatSelectedCategory(this.props.itemSelectedForEdit);
-          this.setState(itemSelected);
+          this.setState({
+            batchesPctIncluded : this.props.batchesPctIncluded,
+            batchesSelected : this.formatBatchesSelectionFromProps()
+          });
         }
       } else {
-        this.setState(CONSTS.BATCHES_PCT_INCLUDED);
+        this.setState(CONSTS.BATCHES_DEFAULT_PCT_INCLUDED);
       }
     }
   }
 
-  async onUpdateDetails(event) {
-    var state = this.state;
-    state[event.target.name] = event.target.value;
-    await this.setState(state);
-  }
 
   updateParent() {
     this.props.onUpdate(this.state.batchesPctIncluded);

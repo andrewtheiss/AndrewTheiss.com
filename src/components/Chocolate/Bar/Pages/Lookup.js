@@ -13,7 +13,7 @@ class BarLookupPage extends React.Component {
         <FirebaseContext.Consumer>
           {firebase => <AddEditBar firebase={firebase} />}
         </FirebaseContext.Consumer>
-
+        
         </div>
     );
   }
