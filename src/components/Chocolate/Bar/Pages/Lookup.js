@@ -1,6 +1,6 @@
 import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
-import AddEditBar from '../AddEdit.js'
+import AddEditBar from '../AddEdit/Main.js'
 
 
 class BarLookupPage extends React.Component {

@@ -1,9 +1,10 @@
 import React from 'react';
 import MultiSelect from "react-multi-select-component";
-import ImageUpload from '../../Utils/ImageUpload.js'
-import * as CONSTS from './constants.js'
-import { FirebaseContext } from '../../Firebase';
-import LookupSelection from '../../Utils/LookupSelection.js'
+import ImageUpload from '../../../Utils/ImageUpload.js'
+import * as CONSTS from '../constants.js'
+import { FirebaseContext } from '../../../Firebase';
+import LookupSelection from '../../../Utils/LookupSelection.js'
+import BatchesIncluded from './BatchesIncluded.js'
 /**
  *  AddEditBar
  *
@@ -11,10 +12,9 @@ import LookupSelection from '../../Utils/LookupSelection.js'
 class AddEditBar extends React.Component {
   constructor(props) {
     super(props);
+    this.onUpdateBatchesSelection = this.onUpdateBatchesSelection.bind(this);
 
-    this.state = {
-
-    }
+    this.state = CONSTS.DEFAULT_BAR;
   }
 
   componentDidUpdate(prevProps) {
@@ -96,37 +96,16 @@ class AddEditBar extends React.Component {
     }
   }
 
-  /**
-   *  onUpdateBatchSelection
-   *
-   *  Usage:
-   *  - Default is a single selection auto set to 100% of the batch used
-   *  - Unrelated to which bar molds are used (can use one mixed batch into a bunch of molds)
-   *
-   *  Note:
-   *  We may want to support 25% of one batch and 75% of another mixed in the same
-   */
-  onUpdateBatchSelection(batchSelection) {
-    console.log('select batch');
+  onUpdateBatchesSelection(batchSelection) {
+    let batchesPctIncluded = batchSelection;
+    this.setState({batchesPctIncluded});
   }
 
   render() {
     return (
       <div className="barAddEditOutterContainer">
-        <div className="barBatchSelection">
-        <FirebaseContext.Consumer>
-          {firebase =>
-              <LookupSelection
-                firebase={firebase}
-                onUpdateSelection={this.onUpdateBatchSelection}
-                collectionName="batchesPublic"
-                displayTitle="Batches Public"
-                allowMultiple={true}
-                sendDataOnUpdate={true}
-              />
-            }
-        </FirebaseContext.Consumer>
-        </div>
+        <BatchesIncluded batchesPctIncluded={this.state.batchesPctIncluded} onUpdate={this.onUpdateBatchesSelection} />
+        <br />
         Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" placeholder="" type="text"></input><br />
         Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
         <button onClick={this.setBar}>Add Bar</button>

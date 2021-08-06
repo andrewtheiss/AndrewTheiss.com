@@ -22,6 +22,7 @@ import './Utils.css'
         allowMultiple={true}
         sendDataOnUpdate={true}
         customClass={barSelect}
+        selectedData={alreadySelected}
     />
  *
  *  Notes:

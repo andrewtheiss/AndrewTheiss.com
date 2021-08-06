@@ -44,7 +44,7 @@ class IntentionMainPage extends React.Component {
 
   render() {
 
-        // Render without loading all data if we don't ever toggle visibility
+    // Render without loading all data if we don't ever toggle visibility
     if (!this.state.pageContentVisibilityDropdownToggled)  {
       return (
         <div className="moldSizePageOutterContainer">
