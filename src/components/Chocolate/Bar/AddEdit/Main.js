@@ -3,6 +3,8 @@ import * as CONSTS from '../constants.js'
 import { FirebaseContext } from '../../../Firebase';
 import LookupSelection from '../../../Utils/LookupSelection.js'
 import BatchesIncluded from './BatchesIncluded.js'
+import MoldSelection from './MoldSelection.js'
+import '../Bar.css'
 /**
  *  AddEditBar
  *
@@ -119,29 +121,41 @@ class AddEditBar extends React.Component {
     }
   }
 
-  onUpdateBatchesSelection(batchSelection) {
+  async onUpdateBatchesSelection(batchSelection) {
     let batchesPctIncluded = batchSelection;
-    this.setState({batchesPctIncluded});
+    await this.setState({batchesPctIncluded});
   }
 
   render() {
     return (
       <div>
+        <div className="barAddEditExistingOutterContainer">
         <FirebaseContext.Consumer>
           {firebase =>
               <LookupSelection
                 firebase={firebase}
                 onUpdateSelection={this.updateBarSelection}
                 collectionName="bars"
-                displayTitle="Bars"
+                displayTitle="Existing Bar"
                 allowMultiple={false}
                 sendDataOnUpdate={true}
               />
             }
         </FirebaseContext.Consumer>
+        </div>
         <div className="barAddEditOutterContainer">
-          <BatchesIncluded itemSelectedForEdit={this.itemSelectedForEdit} batchesPctIncluded={this.state.batchesPctIncluded} onUpdate={this.onUpdateBatchesSelection} />
+          <BatchesIncluded
+            itemSelectedForEdit={this.itemSelectedForEdit}
+            batchesPctIncluded={this.state.batchesPctIncluded}
+            onUpdate={this.onUpdateBatchesSelection}
+          />
           <br />
+          <MoldSelection
+            batchesPctIncluded={this.state.batchesPctIncluded}
+            barMoldDetails={this.state.barsFromMolds}
+            onUpdate={this.onUpdateBarsForMolds}
+          />
+
           Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" placeholder="" type="text"></input><br />
           Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
           <button onClick={this.setBar}>Add Bar</button>

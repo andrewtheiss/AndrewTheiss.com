@@ -56,14 +56,10 @@ class BatchesIncluded extends React.Component {
 
         // Save the selected label we selected for edit
         this.batchesSelectedInUse = true;
-        if (this.props.itemSelectedForEdit) {
-          this.setState({
-            batchesPctIncluded : this.props.batchesPctIncluded,
-            batchesSelected : this.formatBatchesSelected()
-          });
-        }
-      } else {
-        this.setState(CONSTS.BATCHES_DEFAULT_PCT_INCLUDED);
+        this.setState({
+          batchesPctIncluded : this.props.batchesPctIncluded,
+          batchesSelected : this.formatBatchesSelected()
+        });
       }
     }
   }
@@ -121,7 +117,6 @@ class BatchesIncluded extends React.Component {
   render() {
     let pctInputByBatchSelection = this.generateRenderPctInputByBatchSelection();
 
-    console.log(this.state.batchesSelected, this.batchesSelectedInUse);
     return (
       <div className="barBatchSelection">
         <div>
@@ -136,7 +131,7 @@ class BatchesIncluded extends React.Component {
                 firebase={firebase}
                 onUpdateSelection={this.onUpdateBatchSelection}
                 collectionName="batchesPublic"
-                displayTitle="Batches Public"
+                displayTitle="Batch"
                 allowMultiple={true}
                 sendDataOnUpdate={true}
                 selectedData={this.state.batchesSelected}
