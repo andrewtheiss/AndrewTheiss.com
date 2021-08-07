@@ -81,6 +81,22 @@ class LookupSelection extends React.Component {
     });
   }
 
+  componentDidUpdate(prevProps) {
+    let overrideCurrentSelectedData = this.props.selectedDataInUse;
+
+    // Only do something if there's a change in the batchToEdit
+    if (this.props !== prevProps) {
+
+      // If there's something to edit or the props don't match the default
+      if (overrideCurrentSelectedData) {
+
+        this.setState({
+          collectionSelected : this.props.selectedData
+        });
+      }
+    }
+  }
+
   generateSelectedPreview() {
       return '';
   }
@@ -110,7 +126,7 @@ class LookupSelection extends React.Component {
 
         }
       } else {
-        this.props.onUpdateSelection(undefined);
+        this.props.onUpdateSelection([]);
       }
     }
   }

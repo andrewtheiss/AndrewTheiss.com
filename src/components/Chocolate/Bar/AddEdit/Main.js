@@ -25,6 +25,7 @@ class AddEditBar extends React.Component {
 
     // Only do something if there's a change in the batchToEdit
     if (this.props !== prevProps) {
+      this.itemSelectedForEdit = false;
 
       // If there's something to edit or the props don't match the default
       if (isEdit) {
@@ -100,14 +101,11 @@ class AddEditBar extends React.Component {
   }
 
   async updateBarSelection(barIdSelected, barData) {
-    this.itemSelectedForEdit = false;
+    this.itemSelectedForEdit = true;
     let state = CONSTS.DEFAULT_BAR;
 
     if (barData && barIdSelected) {
       state = barData[barIdSelected];
-      if (state && barIdSelected) {
-        this.itemSelectedForEdit = true;
-      }
     }
     await this.setState(state);
   }

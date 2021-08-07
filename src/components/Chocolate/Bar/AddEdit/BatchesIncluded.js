@@ -17,20 +17,28 @@ class BatchesIncluded extends React.Component {
   constructor(props) {
     super(props);
     this.generateRenderPctInputByBatchSelection = this.generateRenderPctInputByBatchSelection.bind(this);
-    this.formatBatchesSelectionFromProps = this.formatBatchesSelectionFromProps.bind(this);
+    this.formatBatchesSelected = this.formatBatchesSelected.bind(this);
     this.onUpdateBatchSelection = this.onUpdateBatchSelection.bind(this);
     this.onUpdateBatchPct = this.onUpdateBatchPct.bind(this);
     this.updateParent = this.updateParent.bind(this);
 
+    // Used to override LookupSelection selected details
+    this.batchesSelectedInUse = false;
+
+
     this.state = {
       batchesPctIncluded : this.props.batchesPctIncluded,
-      batchesSelected : this.formatBatchesSelectionFromProps()
+      batchesSelected : this.formatBatchesSelected()
     }
   }
 
-  formatBatchesSelectionFromProps() {
+  formatBatchesSelected(batchesPctIncluded) {
+    let batchesToConvert = this.props.batchesPctIncluded;
+    if (batchesPctIncluded) {
+      batchesToConvert = batchesPctIncluded;
+    }
     let formattedBatchSelection = [];
-    Object.keys(this.props.batchesPctIncluded).forEach(function(key) {
+    Object.keys(batchesToConvert).forEach(function(key) {
       formattedBatchSelection.push({label : key, value : key});
     })
     return formattedBatchSelection;
@@ -41,15 +49,17 @@ class BatchesIncluded extends React.Component {
 
     // Only do something if there's a change in the batchToEdit
     if (this.props !== prevProps) {
+      this.batchesSelectedInUse = false;
 
       // If there's something to edit or the props don't match the default
       if (isEdit) {
 
         // Save the selected label we selected for edit
+        this.batchesSelectedInUse = true;
         if (this.props.itemSelectedForEdit) {
           this.setState({
             batchesPctIncluded : this.props.batchesPctIncluded,
-            batchesSelected : this.formatBatchesSelectionFromProps()
+            batchesSelected : this.formatBatchesSelected()
           });
         }
       } else {
@@ -110,6 +120,8 @@ class BatchesIncluded extends React.Component {
 
   render() {
     let pctInputByBatchSelection = this.generateRenderPctInputByBatchSelection();
+
+    console.log(this.state.batchesSelected, this.batchesSelectedInUse);
     return (
       <div className="barBatchSelection">
         <div>
@@ -128,6 +140,7 @@ class BatchesIncluded extends React.Component {
                 allowMultiple={true}
                 sendDataOnUpdate={true}
                 selectedData={this.state.batchesSelected}
+                selectedDataInUse={this.batchesSelectedInUse}
               />
             }
         </FirebaseContext.Consumer>
