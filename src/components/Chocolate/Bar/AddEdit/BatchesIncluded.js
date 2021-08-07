@@ -1,5 +1,4 @@
 import React from 'react';
-import * as CONSTS from '../constants.js'
 import { FirebaseContext } from '../../../Firebase';
 import LookupSelection from '../../../Utils/LookupSelection.js'
 import BatchIncludedForm from './BatchIncludedForm.js'
@@ -53,20 +52,21 @@ class BatchesIncluded extends React.Component {
 
       // If there's something to edit or the props don't match the default
       if (isEdit) {
-
+/*
         // Save the selected label we selected for edit
         this.batchesSelectedInUse = true;
         this.setState({
           batchesPctIncluded : this.props.batchesPctIncluded,
           batchesSelected : this.formatBatchesSelected()
         });
+        */
       }
     }
   }
 
 
-  updateParent() {
-    this.props.onUpdate(this.state.batchesPctIncluded);
+  updateParent(recalculateDownstream) {
+    this.props.onUpdate(this.state.batchesPctIncluded, recalculateDownstream);
   }
 
   /**
@@ -92,8 +92,8 @@ class BatchesIncluded extends React.Component {
     }
 
     await this.setState({
-      'batchesPctIncluded' : batchesPctIncluded,
-      'batchesSelected' : batchesSelection
+      batchesPctIncluded : batchesPctIncluded,
+      batchesSelected : batchesSelection
     });
 
     this.updateParent();
@@ -103,7 +103,7 @@ class BatchesIncluded extends React.Component {
     let batchesPctIncluded = this.state.batchesPctIncluded;
     batchesPctIncluded[id] = newPct;
     await this.setState({batchesPctIncluded});
-    this.updateParent();
+    this.updateParent(true);
   }
 
   generateRenderPctInputByBatchSelection() {

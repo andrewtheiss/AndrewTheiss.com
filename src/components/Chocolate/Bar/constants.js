@@ -36,7 +36,7 @@ export const DEFAULT_BAR = {
 
     },
     cost : ''
-  }
+  },
 
   // How many bars are poured for this batch and from what molds
   barsFromMolds : {

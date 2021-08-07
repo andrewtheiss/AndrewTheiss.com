@@ -2,7 +2,7 @@ import React from 'react';
 import * as CONSTS from '../constants.js'
 import { FirebaseContext } from '../../../Firebase';
 import MoldSelectionItemDetails from './MoldSelectionItemDetails.js'
-
+import LookupSelection from '../../../Utils/LookupSelection.js'
 
 /**
  *  MoldSelection
@@ -18,13 +18,14 @@ class MoldSelection extends React.Component {
     this.formatMoldsSelected = this.formatMoldsSelected.bind(this);
     this.updateParent = this.updateParent.bind(this);
     this.generateRenderPerBarMoldSelection = this.generateRenderPerBarMoldSelection.bind(this);
+    this.updateBarMoldSelection = this.updateBarMoldSelection.bind(this);
 
     // If something is selected for edit, override views
     this.editSelectionInUse = false;
 
     this.state = {
       barMoldDetails : this.props.barMoldDetails,
-      moldsSelection : this.formatMoldsSelected()
+      barMoldsSelected : this.formatMoldsSelected()
     }
   }
 
@@ -59,8 +60,10 @@ class MoldSelection extends React.Component {
         */
 
       }
-      else if (this.props.batchesPctIncluded !== prevProps.batchesPctIncluded)
-      {
+      else if (
+        this.props.batchesPctIncluded !== prevProps.batchesPctIncluded ||
+        this.props.recalculateMolds
+      ) {
 
         // Recalculate individual bar/mold selection
         console.log('recalculate bar mold selection');
@@ -91,6 +94,20 @@ class MoldSelection extends React.Component {
     return barMoldDetails;
   }
 
+  updateBarMoldSelection(moldSelection, moldData) {
+    console.log(moldSelection);
+    let prevBarMoldDetails = this.state.barMoldDetails;
+    let barMoldDetails = {};
+    let self = this;
+    for (var i in moldSelection) {
+      if (prevBarMoldDetails[moldSelection[i].label]) {
+        barMoldDetails[moldSelection[i].label] = prevBarMoldDetails[moldSelection[i].label];
+      } else {
+        barMoldDetails[moldSelection[i].label] = CONSTS.BAR_FROM_MOLD_DETAILS;
+      }
+    }
+    this.setState({barMoldDetails});
+  }
 
   render() {
     let barMoldDetails = this.generateRenderPerBarMoldSelection();
@@ -99,6 +116,18 @@ class MoldSelection extends React.Component {
       <div className="barBatchSelection">
         <div>
          <b>Bar Selection and Details</b>
+         <FirebaseContext.Consumer>
+           {firebase =>
+             <LookupSelection
+               firebase={firebase}
+               onUpdateSelection={this.updateBarMoldSelection}
+               collectionName="moldSize"
+               displayTitle="Bar Molds"
+               allowMultiple={true}
+               sendDataOnUpdate={true}
+               />
+             }
+         </FirebaseContext.Consumer>
           <div className="barBatchSelectionPctInputs">
             {barMoldDetails}
           </div>

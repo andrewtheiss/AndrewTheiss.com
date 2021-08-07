@@ -18,12 +18,14 @@ class AddEditBar extends React.Component {
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
     this.updateBarSelection = this.updateBarSelection.bind(this);
 
+    this.recalculateMolds = false;
     this.state = CONSTS.DEFAULT_BAR;
     this.itemSelectedForEdit = false;
   }
 
   componentDidUpdate(prevProps) {
     let isEdit = this.props.itemSelectedForEdit;
+    this.recalculateMolds = false;
 
     // Only do something if there's a change in the batchToEdit
     if (this.props !== prevProps) {
@@ -121,9 +123,11 @@ class AddEditBar extends React.Component {
     }
   }
 
-  async onUpdateBatchesSelection(batchSelection) {
+  onUpdateBatchesSelection(batchSelection) {
+    this.recalculateMolds = true;
     let batchesPctIncluded = batchSelection;
-    await this.setState({batchesPctIncluded});
+    let value = Math.random();
+    this.setState({batchesPctIncluded : batchesPctIncluded, value : value});
   }
 
   render() {
@@ -150,11 +154,17 @@ class AddEditBar extends React.Component {
             onUpdate={this.onUpdateBatchesSelection}
           />
           <br />
-          <MoldSelection
-            batchesPctIncluded={this.state.batchesPctIncluded}
-            barMoldDetails={this.state.barsFromMolds}
-            onUpdate={this.onUpdateBarsForMolds}
-          />
+          <FirebaseContext.Consumer>
+            {firebase =>
+              <MoldSelection
+                  firebase={firebase}
+                  batchesPctIncluded={this.state.batchesPctIncluded}
+                  barMoldDetails={this.state.barsFromMolds}
+                  onUpdate={this.onUpdateBarsForMolds}
+                  recalculateMolds={this.recalculateMolds}
+                />
+              }
+          </FirebaseContext.Consumer>
 
           Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" placeholder="" type="text"></input><br />
           Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
