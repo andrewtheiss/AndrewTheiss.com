@@ -76,6 +76,7 @@ class BatchDetails extends React.Component {
         Label: <input name="label" value={this.state.label} onChange={this.onUpdateDetails}  type="text"></input><br />
         Creation: <input name="creation" onChange={this.onUpdateDetails} value={this.state.creation} type="date"></input><br />
         Grind In Hours: <input name="grindInHours"  onChange={this.onUpdateDetails} value={this.state.grindInHours} type="text"></input><br />
+        Grind Particle Size (microns): <input name="particleSizeInMicrons"  onChange={this.onUpdateDetails} value={this.state.particleSizeInMicrons} type="text"></input><br />
         Archive: <input name="archive"  onChange={this.toggleCheckbox} value={this.state.grindInHours} type="checkbox"></input><br />
         <div className="fl">Comments: </div><textarea rows="2" cols="40" name="notes"  onChange={this.onUpdateDetails}  value={this.state.notes} type="textarea"></textarea><br />
         <div className="batchCreationDetailsIntentionSelection">

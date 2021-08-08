@@ -33,7 +33,6 @@ class MoldSelectionItemDetails extends React.Component {
       <div>
       <div>Individual Mold Selection:</div>
       Bar Count:  <input name="barCount"  onChange={this.onUpdateDetails} value={this.state.barCount} size="5" placeholder="" type="text"></input><br />
-      Bar Count:  <input name="barWeight"  onChange={this.onUpdateDetails} value={this.state.barWeight} size="5" placeholder="" type="text"></input><br />
       Packaging Selection:
 
       </div>

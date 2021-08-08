@@ -32,7 +32,8 @@ export const DEFUALT_BATCH_DETAILS = {
   grindInHours : 48,
   intention : [],
   notes : '',
-  archive : false
+  archive : false,
+  particleSizeInMicrons : 45
 }
 
 export const CHOCOLATE_BATCH_DEFAULTS = {
