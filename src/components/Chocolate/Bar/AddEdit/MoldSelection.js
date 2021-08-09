@@ -3,6 +3,7 @@ import * as CONSTS from '../constants.js'
 import { FirebaseContext } from '../../../Firebase';
 import MoldSelectionItemDetails from './MoldSelectionItemDetails.js'
 import LookupSelection from '../../../Utils/LookupSelection.js'
+import '../Bar.css'
 
 /**
  *  MoldSelection
@@ -49,15 +50,13 @@ class MoldSelection extends React.Component {
       if (isEdit) {
 
         // Save the selected label we selected for edit
-        /*
         this.editSelectionInUse = true;
         if (this.props.itemSelectedForEdit) {
           this.setState({
-            batchesPctIncluded : this.props.batchesPctIncluded,
-            batchesSelected : this.formatBatchesSelected()
+            barMoldDetails : this.props.barMoldDetails,
+            barMoldsSelected : this.formatMoldsSelected()
           });
         }
-        */
 
       }
       else if (
@@ -84,12 +83,17 @@ class MoldSelection extends React.Component {
   generateRenderPerBarMoldSelection() {
     let self = this;
     let barMoldDetails = Object.keys(this.state.barMoldDetails).map((key) => (
-          <MoldSelectionItemDetails
-           label={key}
-           value={self.state.barMoldDetails[key]}
-           onUpdateBarMoldDetails={self.onUpdateBarMoldDetails}
-           key={key}
-         />
+      <FirebaseContext.Consumer>
+        {firebase =>
+            <MoldSelectionItemDetails
+             label={key}
+             value={self.state.barMoldDetails[key]}
+             onUpdateBarMoldDetails={self.onUpdateBarMoldDetails}
+             key={key}
+             firebase={firebase}
+             />
+           }
+       </FirebaseContext.Consumer>
        ));
     return barMoldDetails;
   }

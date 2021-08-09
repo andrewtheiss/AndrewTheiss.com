@@ -157,6 +157,7 @@ class AddEditBar extends React.Component {
           <FirebaseContext.Consumer>
             {firebase =>
               <MoldSelection
+                  itemSelectedForEdit={this.itemSelectedForEdit}
                   firebase={firebase}
                   batchesPctIncluded={this.state.batchesPctIncluded}
                   barMoldDetails={this.state.barsFromMolds}

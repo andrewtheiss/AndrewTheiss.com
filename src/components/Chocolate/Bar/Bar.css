@@ -8,3 +8,11 @@
 .barBatchSelection {
   max-width: 300px;
 }
+
+.barMoldDetailsContainerForBarCreation {
+  display: inline-block;
+}
+
+.barBatchSelectionPctInputs {
+  min-width: 600px;
+}

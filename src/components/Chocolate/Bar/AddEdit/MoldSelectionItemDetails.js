@@ -1,4 +1,7 @@
 import React from 'react';
+import "../Bar.css"
+import { FirebaseContext } from '../../../Firebase';
+import LookupSelection from '../../../Utils/LookupSelection.js'
 
 /**
 
@@ -29,13 +32,57 @@ class MoldSelectionItemDetails extends React.Component {
   }
 
   render() {
+    const collectionRefSearchWrap = this.props.firebase.db.collection("packaging").where("category", "==", "Wrap");
+    const collectionRefSearchOverwrap = this.props.firebase.db.collection("packaging").where("category", "==", "Overwrap");
+    const collectionRefSearchLabel = this.props.firebase.db.collection("packaging").where("category", "==", "Label");
+
     return (
-      <div>
+      <span className="barMoldDetailsContainerForBarCreation">
       <div>Individual Mold Selection:</div>
       Bar Count:  <input name="barCount"  onChange={this.onUpdateDetails} value={this.state.barCount} size="5" placeholder="" type="text"></input><br />
       Packaging Selection:
 
-      </div>
+      <FirebaseContext.Consumer>
+        {firebase =>
+            <LookupSelection
+              firebase={firebase}
+              onUpdateSelection={this.onUpdateSelection}
+              collectionName="packaging"
+              displayTitle="Packaging Wrap"
+              allowMultiple={true}
+              sendDataOnUpdate={true}
+              customSearch={collectionRefSearchWrap}
+            />
+          }
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+        {firebase =>
+            <LookupSelection
+
+              firebase={firebase}
+              onUpdateSelection={this.onUpdateSelection}
+              collectionName="packaging"
+              displayTitle="Packaging Overwrap"
+              allowMultiple={true}
+              sendDataOnUpdate={true}
+              customSearch={collectionRefSearchOverwrap}
+            />
+          }
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+        {firebase =>
+            <LookupSelection
+              firebase={firebase}
+              onUpdateSelection={this.onUpdateSelection}
+              collectionName="packaging"
+              displayTitle="Packaging Label"
+              allowMultiple={true}
+              sendDataOnUpdate={true}
+              customSearch={collectionRefSearchLabel}
+            />
+          }
+      </FirebaseContext.Consumer>
+      </span>
     );
   }
 }

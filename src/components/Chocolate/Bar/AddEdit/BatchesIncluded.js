@@ -52,14 +52,12 @@ class BatchesIncluded extends React.Component {
 
       // If there's something to edit or the props don't match the default
       if (isEdit) {
-/*
         // Save the selected label we selected for edit
         this.batchesSelectedInUse = true;
         this.setState({
           batchesPctIncluded : this.props.batchesPctIncluded,
           batchesSelected : this.formatBatchesSelected()
         });
-        */
       }
     }
   }
