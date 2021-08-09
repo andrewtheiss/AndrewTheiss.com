@@ -10,9 +10,21 @@
 }
 
 .barMoldDetailsContainerForBarCreation {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: 266px;
   display: inline-block;
+  padding: 0px 10px 10px 10px;
+  border-right: 1px solid #ccc;
 }
 
 .barBatchSelectionPctInputs {
-  min-width: 600px;
+  min-width: 900px;
+}
+
+.moldSelectionLabel {
+  margin-top: 3px;
+  text-align: center;
+  font-size: 1.4em;
+  border-bottom: 1px solid #ccc;
 }

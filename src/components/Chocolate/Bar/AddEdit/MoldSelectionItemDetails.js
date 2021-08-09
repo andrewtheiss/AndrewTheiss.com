@@ -20,7 +20,9 @@ class MoldSelectionItemDetails extends React.Component {
     super(props);
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
 
-    this.state = this.props;
+    this.state = {};
+    this.setState(this.props);
+    console.log(this.props);
   }
 
   async onUpdateDetails(event) {
@@ -31,34 +33,37 @@ class MoldSelectionItemDetails extends React.Component {
 
   }
 
+  generatePreviewForSelectedWrapItems() {
+    
+  }
+
   render() {
+    console.log(this.props, this.state);
     const collectionRefSearchWrap = this.props.firebase.db.collection("packaging").where("category", "==", "Wrap");
     const collectionRefSearchOverwrap = this.props.firebase.db.collection("packaging").where("category", "==", "Overwrap");
     const collectionRefSearchLabel = this.props.firebase.db.collection("packaging").where("category", "==", "Label");
-
     return (
-      <span className="barMoldDetailsContainerForBarCreation">
-      <div>Individual Mold Selection:</div>
-      Bar Count:  <input name="barCount"  onChange={this.onUpdateDetails} value={this.state.barCount} size="5" placeholder="" type="text"></input><br />
-      Packaging Selection:
-
+      <div>
+      <div>
+        <p className="moldSelectionLabel"><b>{this.props.label}</b></p>
+        Bar Count:  <input name="barCount"  onChange={this.onUpdateDetails} value={this.state.barCount} size="5" placeholder="" type="text"></input><br />
+      </div>
+        <FirebaseContext.Consumer>
+          {firebase =>
+              <LookupSelection
+                firebase={firebase}
+                onUpdateSelection={this.onUpdateSelection}
+                collectionName="packaging"
+                displayTitle="Packaging Wrap"
+                allowMultiple={true}
+                sendDataOnUpdate={true}
+                customSearch={collectionRefSearchWrap}
+              />
+            }
+        </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
         {firebase =>
             <LookupSelection
-              firebase={firebase}
-              onUpdateSelection={this.onUpdateSelection}
-              collectionName="packaging"
-              displayTitle="Packaging Wrap"
-              allowMultiple={true}
-              sendDataOnUpdate={true}
-              customSearch={collectionRefSearchWrap}
-            />
-          }
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-        {firebase =>
-            <LookupSelection
-
               firebase={firebase}
               onUpdateSelection={this.onUpdateSelection}
               collectionName="packaging"
@@ -82,7 +87,9 @@ class MoldSelectionItemDetails extends React.Component {
             />
           }
       </FirebaseContext.Consumer>
-      </span>
+      <div className="barMoldDetailSelectionPreview">
+      </div>
+    </div>
     );
   }
 }
