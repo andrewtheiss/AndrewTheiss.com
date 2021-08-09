@@ -89,11 +89,11 @@ class MoldSelection extends React.Component {
           {firebase =>
               <MoldSelectionItemDetails
                label={key}
-               value={self.state.barMoldDetails[key]}
+               barMoldSelectionItemDetail={self.state.barMoldDetails[key]}
                onUpdateBarMoldDetails={self.onUpdateBarMoldDetails}
                firebase={firebase}
                key={key}
-               moldData={self.moldData}
+               moldData={self.moldData[key]}
                />
              }
          </FirebaseContext.Consumer>
