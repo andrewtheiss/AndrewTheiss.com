@@ -40,6 +40,9 @@ class MoldSelectionItemDetails extends React.Component {
     if (!state.label) {
       state.label = this.itemMoldData.label;
     }
+    if (!state.moldId) {
+      state.moldId = this.itemMoldData.id;
+    }
     this.state = state;
 
 
@@ -100,7 +103,7 @@ class MoldSelectionItemDetails extends React.Component {
     let totalPackagingPricePerUnit = 0;
     for (var i in CONSTS.BAR_MOLD_CATEGORIES_ARRAY) {
       let type = CONSTS.BAR_MOLD_CATEGORIES_ARRAY[i];
-      totalPackagingPricePerUnit += this.state.pricesPerBar[type];
+      totalPackagingPricePerUnit += this.state.packagingPricesPerBar[type];
     }
     totalPackagingPricePerUnit = Math.round(totalPackagingPricePerUnit * 1000)/1000;
     this.setState({totalPackagingPricePerUnit});
@@ -109,14 +112,14 @@ class MoldSelectionItemDetails extends React.Component {
   }
 
   recalculatePricePerBar(packagingSubcategory) {
-    let pricesPerBar = this.state.pricesPerBar;
-    pricesPerBar[packagingSubcategory] = 0;
+    let packagingPricesPerBar = this.state.packagingPricesPerBar;
+    packagingPricesPerBar[packagingSubcategory] = 0;
     let type = this.state.packagingSelection[packagingSubcategory];
     let keys = Object.keys(type);
     for (var i in keys) {
-      pricesPerBar[packagingSubcategory] += type[keys[i]].latestAverageCostPerUnit;
+      packagingPricesPerBar[packagingSubcategory] += type[keys[i]].latestAverageCostPerUnit;
     }
-    this.setState({pricesPerBar});
+    this.setState({packagingPricesPerBar});
     this.recalculateTotalPrice();
   }
 
@@ -131,7 +134,7 @@ class MoldSelectionItemDetails extends React.Component {
   render() {
     let imagesForPreview = this.generatePreviewForSelectedWrapItems();
     let totalPackagingPricePerUnit = this.state.totalPackagingPricePerUnit;
-    
+
     const collectionRefSearchWrap = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.wrap);
     const collectionRefSearchOverwrap = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.overwrap);
     const collectionRefSearchLabel = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.label);
@@ -140,6 +143,7 @@ class MoldSelectionItemDetails extends React.Component {
       <div>
         <img src={this.itemMoldData['imageBase64']} alt="bar mold for this batch" className="moldSelectionBarMoldImagePreview"></img>
         <p className="moldSelectionLabel"><b>{this.props.label}</b></p>
+        <p className="moldSelectionLabel"><b>Price Per Bar: ${this.state.pricePerBar}</b></p>
         <div><b>Packaging Price Per Unit: ${totalPackagingPricePerUnit}</b></div>
         <div><b>Weight of All Bars: {this.state.totals.weight} grams</b></div>
         <div><b>Total Packaging Cost: ${this.state.totals.packagingPrice}</b></div>
@@ -197,7 +201,7 @@ export default MoldSelectionItemDetails;
 /*
 barCount : '',
 barWeight : '',
-pricesPerBar : {
+packagingPricesPerBar : {
   wrap : 0,
   overwrap : 0,
   label : 0

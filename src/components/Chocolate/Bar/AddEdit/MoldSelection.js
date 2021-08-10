@@ -21,13 +21,14 @@ class MoldSelection extends React.Component {
     this.generateRenderPerBarMoldSelection = this.generateRenderPerBarMoldSelection.bind(this);
     this.updateBarMoldSelection = this.updateBarMoldSelection.bind(this);
     this.onUpdateBarMoldDetails = this.onUpdateBarMoldDetails.bind(this);
+    this.recalculateBarCosts = this.recalculateBarCosts.bind(this);
 
     // If something is selected for edit, override views
     this.editSelectionInUse = false;
     this.moldData = undefined;
 
     this.state = {
-      barMoldDetails : this.props.barMoldDetails,
+      barMoldDetails : this.props.barsFromMolds.barMoldDetails,
       barMoldsSelected : this.formatMoldsSelected(),
       totalWeightAllBars : 0,
       totalPackagingCostAllBars : 0
@@ -36,7 +37,7 @@ class MoldSelection extends React.Component {
 
   formatMoldsSelected() {
     let formattedMoldSelection = [];
-    Object.keys(this.props.barMoldDetails).forEach(function(key) {
+    Object.keys(this.props.barsFromMolds.barMoldDetails).forEach(function(key) {
       formattedMoldSelection.push({label : key, value : key});
     })
     return formattedMoldSelection;
@@ -64,12 +65,13 @@ class MoldSelection extends React.Component {
 
       }
       else if (
-        this.props.batchesIncludedPct !== prevProps.batchesIncludedPct ||
+        this.props.batchesIncluded.totalCost !== prevProps.batchesIncluded.totalCost ||
         this.props.recalculateMolds
       ) {
 
         // Recalculate individual bar/mold selection
-        console.log('recalculate bar mold selection');
+        console.log('recalculate bar mold costs and nutrition');
+        this.recalculateBarCosts();
       }
 
     } // End check if props are same
@@ -77,7 +79,37 @@ class MoldSelection extends React.Component {
 
 
   updateParent() {
-    this.props.onUpdate(this.state.barMoldDetails);
+    let state = JSON.parse(JSON.stringify(this.state));
+    delete state['barMoldsSelected'];
+    this.props.onUpdateMoldSelection(state);
+  }
+
+  async recalculateBarCosts() {
+    // Need to find cost based on total batch selection divided by total weight of bars poured
+    let totalBatchSelectionCost = this.props.batchesIncluded.totalCost;
+    let totalBatchSelectionWeight = this.props.batchesIncluded.totalWeightInGrams;
+
+    // Grab the bar selection data
+    let totalWeightOfPouredBars = this.state.totalWeightAllBars;
+
+    // Cost of bars poured is more expensive than raw ingredients
+    let costPerGramPoured = totalBatchSelectionCost / totalWeightOfPouredBars;
+
+    // Go through each mold and calculate individual ingredient cost
+    let barMoldDetails = this.state.barMoldDetails;
+    let keys = Object.keys(barMoldDetails);
+    for (var i = 0; i < keys.length; i++) {
+      let barMold = barMoldDetails[keys[i]];
+      if (barMold.barCount) {
+      barMold.totalIngredientPricePerUnit = Math.ceil(costPerGramPoured * barMold.barWeight * 1000) / 1000;
+    } else {
+      barMold.totalIngredientPricePerUnit = 0;
+    }
+      barMold.pricePerBar = Math.ceil((barMold.totalIngredientPricePerUnit + barMold.totalPackagingPricePerUnit)*1000)/1000;
+    }
+
+    await this.setState({barMoldDetails});
+        console.log(this.state.barMoldDetails);
   }
 
   async onUpdateBarMoldDetails(moldState) {
@@ -104,10 +136,12 @@ class MoldSelection extends React.Component {
 
     let state = this.state;
     state.totalWeightAllBars = totalWeightAllBars;
-    state.totalPackagingCost = totalPackagingCostAllBars;
+    state.totalPackagingCostAllBars = totalPackagingCostAllBars;
 
     await this.setState(state);
     console.log(moldState, this.state);
+    this.recalculateBarCosts();
+    this.updateParent();
   }
 
   generateRenderPerBarMoldSelection() {

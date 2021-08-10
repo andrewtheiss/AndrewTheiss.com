@@ -17,6 +17,7 @@ class AddEditBar extends React.Component {
     this.validateBar = this.validateBar.bind(this);
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
     this.updateBarSelection = this.updateBarSelection.bind(this);
+    this.onUpdateBarsForMolds = this.onUpdateBarsForMolds.bind(this);
 
     this.recalculateMolds = false;
     this.state = CONSTS.DEFAULT_BAR;
@@ -140,6 +141,10 @@ class AddEditBar extends React.Component {
       value : value
     });
   }
+  
+  onUpdateBarsForMolds(barsFromMolds) {
+    this.setState({barsFromMolds});
+  }
 
   render() {
     return (
@@ -171,8 +176,8 @@ class AddEditBar extends React.Component {
                   itemSelectedForEdit={this.itemSelectedForEdit}
                   firebase={firebase}
                   batchesIncluded={this.state.batchesIncluded}
-                  barMoldDetails={this.state.barsFromMolds}
-                  onUpdate={this.onUpdateBarsForMolds}
+                  barsFromMolds={this.state.barsFromMolds}
+                  onUpdateMoldSelection={this.onUpdateBarsForMolds}
                   recalculateMolds={this.recalculateMolds}
                 />
               }

@@ -10,12 +10,14 @@ export const BAR_FROM_MOLD_DETAILS = {
   barCount : '',
   barWeight : '',
   moldId : '',
-  pricesPerBar : {
+  pricePerBar : 0,
+  packagingPricesPerBar : {  // Should be packagingPricesPerBar
     wrap : 0,
     overwrap : 0,
     label : 0
   },
   totalPackagingPricePerUnit : 0,
+  totalIngredientPricePerUnit : 0,
   packagingSelection : {
     wrap : {},
     overwrap : {},
@@ -53,13 +55,14 @@ export const DEFAULT_BAR = {
   totals : {
     nutritionFacts : {
 
-    },
-    cost : ''
+    }
   },
 
   // How many bars are poured for this batch and from what molds
   barsFromMolds : {
-
+    barMoldDetails : {},
+    totalWeightAllBars : 0,
+    totalPackagingCostAllBars : 0
   },
 
   // Why are we making this bar?
