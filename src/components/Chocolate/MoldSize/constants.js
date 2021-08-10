@@ -6,6 +6,7 @@ export const MOLD_SIZE_DEFAULT_PROPS = {
   moldCountOwned : '',
   usedOften : false,
   barWeightInGrams : '',
+  id : '',
   barDimensionsInMm : {
     x : '',
     y : '',

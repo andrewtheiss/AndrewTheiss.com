@@ -122,6 +122,8 @@ class AddEditMoldSize extends React.Component {
       Bars Per Mold: <input name="barsPerMold"  onChange={this.onUpdateDetails} value={this.state.barsPerMold} size="3" type="text"></input><br />
       Bar Piece Count: <input name="barPieceCount"  onChange={this.onUpdateDetails} value={this.state.barPieceCount} size="3" type="text"></input><br />
       Gram Weight Per Bar: <input name="barWeightInGrams"  onChange={this.onUpdateDetails} value={this.state.barWeightInGrams} size="5" type="text"></input><br />
+      ID: <input name="id"  onChange={this.onUpdateDetails} value={this.state.id} size="5" type="text"></input><br />
+      <div className="barMoldIdNotes">Uniquie ID is currently all numbers in the label and weight squished together</div>
       Dimensions (mm):
       X:<input name="x"  onChange={this.onUpdateDimensions} value={this.state.barDimensionsInMm.x} size="2" type="text"></input>
       Y:<input name="y"  onChange={this.onUpdateDimensions} value={this.state.barDimensionsInMm.y} size="2" type="text"></input>
