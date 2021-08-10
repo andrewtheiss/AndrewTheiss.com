@@ -12,7 +12,7 @@ import '../Bar.css'
 class AddEditBar extends React.Component {
   constructor(props) {
     super(props);
-    this.onUpdateBatchesSelection = this.onUpdateBatchesSelection.bind(this);
+    this.onUpdateBatchesIncluded = this.onUpdateBatchesIncluded.bind(this);
     this.setBar = this.setBar.bind(this);
     this.validateBar = this.validateBar.bind(this);
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
@@ -87,6 +87,9 @@ class AddEditBar extends React.Component {
       //let publicBar = await this.formatBarForSet();
       let barToWrite = JSON.parse(JSON.stringify(this.state));
 
+      // Used for rerendering
+      delete barToWrite['value'];
+
       let documentToEdit = this.state.label;
       /*
       const publicCollectionRef = this.props.firebase.db.collection("packagingPublic");
@@ -123,11 +126,19 @@ class AddEditBar extends React.Component {
     }
   }
 
-  onUpdateBatchesSelection(batchSelection) {
+  onUpdateBatchesIncluded(batchesIncludedToFormat) {
     this.recalculateMolds = true;
-    let batchesPctIncluded = batchSelection;
+    let batchesIncluded = {
+      pct : batchesIncludedToFormat.batchesIncludedPct,
+      cost : batchesIncludedToFormat.batchesIncludedCost,
+      totalWeightInGrams :batchesIncludedToFormat.batchesIncludedTotalWeightInGrams,
+      totalCost : batchesIncludedToFormat.batchesIncludedTotalCost
+    };
     let value = Math.random();
-    this.setState({batchesPctIncluded : batchesPctIncluded, value : value});
+    this.setState({
+      batchesIncluded : batchesIncluded,
+      value : value
+    });
   }
 
   render() {
@@ -150,8 +161,8 @@ class AddEditBar extends React.Component {
         <div className="barAddEditOutterContainer">
           <BatchesIncluded
             itemSelectedForEdit={this.itemSelectedForEdit}
-            batchesPctIncluded={this.state.batchesPctIncluded}
-            onUpdate={this.onUpdateBatchesSelection}
+            batchesIncluded={this.state.batchesIncluded}
+            onUpdate={this.onUpdateBatchesIncluded}
           />
           <br />
           <FirebaseContext.Consumer>
@@ -159,7 +170,7 @@ class AddEditBar extends React.Component {
               <MoldSelection
                   itemSelectedForEdit={this.itemSelectedForEdit}
                   firebase={firebase}
-                  batchesPctIncluded={this.state.batchesPctIncluded}
+                  batchesIncluded={this.state.batchesIncluded}
                   barMoldDetails={this.state.barsFromMolds}
                   onUpdate={this.onUpdateBarsForMolds}
                   recalculateMolds={this.recalculateMolds}

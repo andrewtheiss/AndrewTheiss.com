@@ -27,6 +27,7 @@ class MoldSelectionItemDetails extends React.Component {
     this.generatePreviewForSelectedWrapItems = this.generatePreviewForSelectedWrapItems.bind(this);
     this.recalculatePricePerBar = this.recalculatePricePerBar.bind(this);
     this.recalculateTotalPrice = this.recalculateTotalPrice.bind(this);
+    this.recalculateUpstreamBarCosts = this.recalculateUpstreamBarCosts.bind(this);
 
     this.state = this.props.barMoldSelectionItemDetail;
 
@@ -38,6 +39,11 @@ class MoldSelectionItemDetails extends React.Component {
 
   async onUpdateDetails(event) {
     await this.setState({[event.target.name] : event.target.value});
+
+    // Recaulaulte upstream bar costs
+    if (event.target.name === "barCount") {
+      this.recalculateUpstreamBarCosts();
+    }
   }
 
   onUpdatePackagingWrap(selection, selectionData) {
@@ -47,7 +53,7 @@ class MoldSelectionItemDetails extends React.Component {
     this.onUpdatePackaging(selection,selectionData, CONSTS.BAR_MOLD_CATEGORIES_STRINGS.overwrap);
   }
   onUpdatePackagingLabel(selection, selectionData) {
-    this.onUpdatePackaging(selection,selectionData, );
+    this.onUpdatePackaging(selection,selectionData, CONSTS.BAR_MOLD_CATEGORIES_STRINGS.label);
   }
 
   onUpdatePackaging(selection, selectionData, packagingSubcategory) {
@@ -77,6 +83,7 @@ class MoldSelectionItemDetails extends React.Component {
     }
     totalPackagingPricePerUnit = Math.round(totalPackagingPricePerUnit * 1000)/1000;
     this.setState({totalPackagingPricePerUnit});
+    this.recalculateUpstreamBarCosts();
   }
 
   recalculatePricePerBar(packagingSubcategory) {
@@ -89,6 +96,10 @@ class MoldSelectionItemDetails extends React.Component {
     }
     this.setState({pricesPerBar});
     this.recalculateTotalPrice();
+  }
+
+  recalculateUpstreamBarCosts() {
+    this.props.onUpdateBarMoldDetails(this.state);
   }
 
   generatePreviewForSelectedWrapItems() {

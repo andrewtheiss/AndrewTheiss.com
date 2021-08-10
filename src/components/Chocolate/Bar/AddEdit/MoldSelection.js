@@ -39,7 +39,7 @@ class MoldSelection extends React.Component {
     return formattedMoldSelection;
   }
 
-  // If batchesPctIncluded prop changes, we need to recalculate everything
+  // If batchesIncludedPct prop changes, we need to recalculate everything
   componentDidUpdate(prevProps) {
 
     // Only do something if there's a change in the batchToEdit
@@ -61,7 +61,7 @@ class MoldSelection extends React.Component {
 
       }
       else if (
-        this.props.batchesPctIncluded !== prevProps.batchesPctIncluded ||
+        this.props.batchesIncludedPct !== prevProps.batchesIncludedPct ||
         this.props.recalculateMolds
       ) {
 
@@ -77,8 +77,13 @@ class MoldSelection extends React.Component {
     this.props.onUpdate(this.state.barMoldDetails);
   }
 
-  onUpdateBarMoldDetails() {
+  onUpdateBarMoldDetails(moldState) {
 
+    // Recalculate weight of all molds and bars being used
+    // Store individual wrapping cost per mold (and total wrapping from all molds)
+    // Divide the total cost of all selected batches (**Need to calculate this first upstream),
+        // by the weight of all molds and bars
+    console.log(moldState, this.state);
   }
 
   generateRenderPerBarMoldSelection() {

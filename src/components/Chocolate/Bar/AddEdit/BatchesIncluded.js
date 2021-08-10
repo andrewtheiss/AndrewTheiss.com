@@ -8,8 +8,8 @@ import BatchIncludedForm from './BatchIncludedForm.js'
  *  BatchesIncluded
  *
  *  Props:
- *  batchesPctIncluded      : Bar state batchesPctIncluded
- *  onUpdate                : Method to parent updating batchesPctIncluded
+ *  batchesIncludedPct      : Bar state batchesIncludedPct
+ *  onUpdate                : Method to parent updating batchesIncludedPct
  *
  */
 class BatchesIncluded extends React.Component {
@@ -20,21 +20,26 @@ class BatchesIncluded extends React.Component {
     this.onUpdateBatchSelection = this.onUpdateBatchSelection.bind(this);
     this.onUpdateBatchPct = this.onUpdateBatchPct.bind(this);
     this.updateParent = this.updateParent.bind(this);
+    this.updateBatchData = this.updateBatchData.bind(this);
 
     // Used to override LookupSelection selected details
     this.batchesSelectedInUse = false;
+    this.batchData = false;
 
 
     this.state = {
-      batchesPctIncluded : this.props.batchesPctIncluded,
+      batchesIncludedPct : this.props.batchesIncluded.pct,
+      batchesIncludedCost : this.props.batchesIncluded.cost,
+      batchesIncludedTotalWeightInGrams : this.props.batchesIncluded.totalWeightInGrams,
+      batchesIncludedTotalCost : this.props.batchesIncluded.totalCost,
       batchesSelected : this.formatBatchesSelected()
     }
   }
 
-  formatBatchesSelected(batchesPctIncluded) {
-    let batchesToConvert = this.props.batchesPctIncluded;
-    if (batchesPctIncluded) {
-      batchesToConvert = batchesPctIncluded;
+  formatBatchesSelected(batchesIncluded) {
+    let batchesToConvert = this.props.batchesIncluded.pct;
+    if (batchesIncluded) {
+      batchesToConvert = batchesIncluded;
     }
     let formattedBatchSelection = [];
     Object.keys(batchesToConvert).forEach(function(key) {
@@ -55,7 +60,10 @@ class BatchesIncluded extends React.Component {
         // Save the selected label we selected for edit
         this.batchesSelectedInUse = true;
         this.setState({
-          batchesPctIncluded : this.props.batchesPctIncluded,
+          batchesIncludedPct : this.props.batchesIncluded.pct,
+          batchesIncludedCost : this.props.batchesIncluded.cost,
+          batchesIncludedTotalWeightInGrams : this.props.batchesIncluded.totalWeightInGrams,
+          batchesIncludedTotalCost : this.props.batchesIncluded.totalCost,
           batchesSelected : this.formatBatchesSelected()
         });
       }
@@ -64,7 +72,7 @@ class BatchesIncluded extends React.Component {
 
 
   updateParent(recalculateDownstream) {
-    this.props.onUpdate(this.state.batchesPctIncluded, recalculateDownstream);
+    this.props.onUpdate(this.state, recalculateDownstream);
   }
 
   /**
@@ -78,19 +86,30 @@ class BatchesIncluded extends React.Component {
    *  Note:
    *  We may want to support 25% of one batch and 75% of another mixed in the same
    */
-  async onUpdateBatchSelection(batchesSelection) {
-    let batchesPctIncluded = {};
+  async onUpdateBatchSelection(batchesSelection, batchData) {
+    let batchesIncludedPct = {};
+    let batchesIncludedCost = {};
+    let costTotal = 0;
+    let weightTotal = 0;
     for (var i in batchesSelection) {
       let key = batchesSelection[i].label;
       let value = 100;
-      if (this.state.batchesPctIncluded[key]) {
-        value = this.state.batchesPctIncluded[key];
+      if (this.state.batchesIncludedPct[key]) {
+        value = this.state.batchesIncludedPct[key];
       }
-      batchesPctIncluded[key] = value;
+      batchesIncludedPct[key] = value;
+      batchesIncludedCost[key] = Math.round((value/100) * batchData[key].ingredientTotalCost * 1000)/1000;
+      costTotal += batchesIncludedCost[key];
+      weightTotal += (value/100) * batchData[key].batchTotalWeightInGrams;
     }
+    costTotal = Math.round(costTotal * 100) /100;
+    weightTotal = Math.round(weightTotal);
 
     await this.setState({
-      batchesPctIncluded : batchesPctIncluded,
+      batchesIncludedPct : batchesIncludedPct,
+      batchesIncludedCost : batchesIncludedCost,
+      batchesIncludedTotalWeightInGrams : weightTotal,
+      batchesIncludedTotalCost : costTotal,
       batchesSelected : batchesSelection
     });
 
@@ -98,16 +117,41 @@ class BatchesIncluded extends React.Component {
   }
 
   async onUpdateBatchPct(id, newPct) {
-    let batchesPctIncluded = this.state.batchesPctIncluded;
-    batchesPctIncluded[id] = newPct;
-    await this.setState({batchesPctIncluded});
+    let batchesIncludedPct = this.state.batchesIncludedPct;
+    let batchesIncludedCost = this.state.batchesIncludedCost;
+
+    batchesIncludedPct[id] = newPct;
+    batchesIncludedCost[id] = Math.round((newPct/100) * this.batchData[id].ingredientTotalCost * 1000)/1000;
+
+    // Calculate weight and cost totals
+    let batchesIncludedTotalCost = 0;
+    let batchesIncludedTotalWeightInGrams = 0;
+    let keys = Object.keys(this.state.batchesIncludedPct);
+    for (const individualKeyIndex in keys) {
+      let individualKey = keys[individualKeyIndex];
+      batchesIncludedTotalCost += this.state.batchesIncludedCost[individualKey];
+      batchesIncludedTotalWeightInGrams += (this.state.batchesIncludedPct[individualKey]/100) * this.batchData[individualKey].batchTotalWeightInGrams;
+    }
+    batchesIncludedTotalCost = Math.round(batchesIncludedTotalCost * 100) /100;
+    batchesIncludedTotalWeightInGrams = Math.round(batchesIncludedTotalWeightInGrams);
+
+    await this.setState({
+      batchesIncludedPct,
+      batchesIncludedCost,
+      batchesIncludedTotalCost,
+      batchesIncludedTotalWeightInGrams
+    });
     this.updateParent(true);
+  }
+
+  updateBatchData(data) {
+    this.batchData = data;
   }
 
   generateRenderPctInputByBatchSelection() {
     let self = this;
-    let pctInputByBatchSelection = Object.keys(this.state.batchesPctIncluded).map((key) => (
-           <BatchIncludedForm label={key} value={self.state.batchesPctIncluded[key]} onUpdateBatchPct={self.onUpdateBatchPct} key={key} />
+    let pctInputByBatchSelection = Object.keys(this.state.batchesIncludedPct).map((key) => (
+           <BatchIncludedForm label={key} value={self.state.batchesIncludedPct[key]} onUpdateBatchPct={self.onUpdateBatchPct} key={key} />
        ));
     return pctInputByBatchSelection;
   }
@@ -122,6 +166,12 @@ class BatchesIncluded extends React.Component {
           <div className="barBatchSelectionPctInputs">
             {pctInputByBatchSelection}
           </div>
+          <div>
+            Total Batch (Ingredients) Weight: <b>{this.state.batchesIncludedTotalWeightInGrams}</b> grams
+          </div>
+          <div>
+            Total Batch (Ingredients) Cost: <b>${this.state.batchesIncludedTotalCost}</b>
+          </div>
         </div>
         <FirebaseContext.Consumer>
           {firebase =>
@@ -134,6 +184,7 @@ class BatchesIncluded extends React.Component {
                 sendDataOnUpdate={true}
                 selectedData={this.state.batchesSelected}
                 selectedDataInUse={this.batchesSelectedInUse}
+                immediatelyUpdateBatchData={this.updateBatchData}
               />
             }
         </FirebaseContext.Consumer>

@@ -14,6 +14,11 @@ import './Utils.css'
  *  displayTitle          : (optional) display title
  *  selectedData          : (optional) data already selected
  *
+       if (self.props.immediatelyUpdateBatchData) {
+         self.props.immediatelyUpdateBatchData(collection);
+       }
+
+
  *  Usage:
  *  <LookupSelection
         firebase={firebase}
@@ -78,6 +83,10 @@ class LookupSelection extends React.Component {
         collection : collectionMap,
         collectionOptions : collectionOptions
       });
+
+      if (self.props.immediatelyUpdateBatchData) {
+        self.props.immediatelyUpdateBatchData(collectionMap);
+      }
     });
   }
 
