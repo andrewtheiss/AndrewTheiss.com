@@ -6,8 +6,10 @@ export const BATCHES_INCLUDED = {
 }
 
 export const BAR_FROM_MOLD_DETAILS = {
+  label : '',
   barCount : '',
   barWeight : '',
+  moldId : '',
   pricesPerBar : {
     wrap : 0,
     overwrap : 0,
@@ -21,6 +23,10 @@ export const BAR_FROM_MOLD_DETAILS = {
   },
   nutritionFacts : {
 
+  },
+  totals : {
+    packagingPrice : 0,
+    weight : 0
   }
 }
 
@@ -64,5 +70,7 @@ export const DEFAULT_BAR = {
   // Is this bar part of a tasting set?
   tastingIDs : {
 
-  }
+  },
+
+  dateCreated : ''
 }

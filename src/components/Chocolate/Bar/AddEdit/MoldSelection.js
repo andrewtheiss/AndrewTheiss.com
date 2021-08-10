@@ -20,6 +20,7 @@ class MoldSelection extends React.Component {
     this.updateParent = this.updateParent.bind(this);
     this.generateRenderPerBarMoldSelection = this.generateRenderPerBarMoldSelection.bind(this);
     this.updateBarMoldSelection = this.updateBarMoldSelection.bind(this);
+    this.onUpdateBarMoldDetails = this.onUpdateBarMoldDetails.bind(this);
 
     // If something is selected for edit, override views
     this.editSelectionInUse = false;
@@ -27,7 +28,9 @@ class MoldSelection extends React.Component {
 
     this.state = {
       barMoldDetails : this.props.barMoldDetails,
-      barMoldsSelected : this.formatMoldsSelected()
+      barMoldsSelected : this.formatMoldsSelected(),
+      totalWeightAllBars : 0,
+      totalPackagingCostAllBars : 0
     }
   }
 
@@ -77,12 +80,33 @@ class MoldSelection extends React.Component {
     this.props.onUpdate(this.state.barMoldDetails);
   }
 
-  onUpdateBarMoldDetails(moldState) {
+  async onUpdateBarMoldDetails(moldState) {
+
+    let barMoldDetails = this.state.barMoldDetails;
+    barMoldDetails[moldState.label] = moldState;
+    await this.setState({barMoldDetails});
 
     // Recalculate weight of all molds and bars being used
     // Store individual wrapping cost per mold (and total wrapping from all molds)
     // Divide the total cost of all selected batches (**Need to calculate this first upstream),
         // by the weight of all molds and bars
+    // Recalculate totalBarWeight
+    let totalWeightAllBars = 0
+    let totalPackagingCostAllBars = 0;
+    let keys = Object.keys(this.state.barMoldDetails);
+    for (var i = 0; i < keys.length; i++) {
+      let barMold = this.state.barMoldDetails[keys[i]];
+      totalWeightAllBars += barMold.totals.weight;
+      totalPackagingCostAllBars += barMold.totals.packagingPrice;
+    }
+    totalWeightAllBars = Math.round(totalWeightAllBars * 100) /100;
+    totalPackagingCostAllBars = Math.round(totalPackagingCostAllBars * 100) /100;
+
+    let state = this.state;
+    state.totalWeightAllBars = totalWeightAllBars;
+    state.totalPackagingCost = totalPackagingCostAllBars;
+
+    await this.setState(state);
     console.log(moldState, this.state);
   }
 
