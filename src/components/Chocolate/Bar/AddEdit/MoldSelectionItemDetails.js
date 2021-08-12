@@ -55,6 +55,22 @@ class MoldSelectionItemDetails extends React.Component {
     this.state = state;
   }
 
+    // If batchesIncludedPct prop changes, we need to recalculate everything
+    componentDidUpdate(prevProps) {
+
+      // Only do something if there's a change in the batchToEdit
+      if (this.props.barMoldSelectionItemDetail !== prevProps.barMoldSelectionItemDetail) {
+        let isEdit = this.props.itemSelectedForEdit;
+
+        // If there's something to edit or the props don't match the default
+        if (isEdit) {
+          let state = JSON.parse(JSON.stringify(this.props.barMoldSelectionItemDetail));
+            this.setState(state);
+          }
+      }
+    }
+
+
   checkAndSetForEditExisting() {
     if (this.props.barMoldSelectionItemDetail.barCount ||
       !Object.keys(this.props.barMoldSelectionItemDetail.packagingSelection.label).length ||

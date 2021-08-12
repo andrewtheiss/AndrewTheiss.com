@@ -82,12 +82,15 @@ class MoldSelection extends React.Component {
 
         this.formatSelectedBarMolds();
 
+
         // Save the selected label we selected for edit
         this.editSelectionInUse = true;
         if (this.props.itemSelectedForEdit) {
           this.setState({
             barMoldDetails : this.props.barsFromMolds.barMoldDetails,
-            barMoldsSelected : this.formatMoldsSelected()
+            barMoldsSelected : this.formatMoldsSelected(),
+            totalWeightAllBars :this.props.barsFromMolds.totalWeightAllBars,
+            totalPackagingCostAllBars :this.props.barsFromMolds.totalPackagingCostAllBars
           });
         }
 
@@ -184,6 +187,7 @@ class MoldSelection extends React.Component {
                firebase={firebase}
                key={key}
                moldData={self.moldData[key]}
+               itemSelectedForEdit={this.props.itemSelectedForEdit}
                />
              }
          </FirebaseContext.Consumer>

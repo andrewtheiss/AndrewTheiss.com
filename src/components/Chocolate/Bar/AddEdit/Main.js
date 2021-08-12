@@ -147,6 +147,8 @@ class AddEditBar extends React.Component {
   }
 
   render() {
+    let reclatulateMoldsFlag = this.recalculateMolds;
+    this.recalculateMolds = false;
     return (
       <div>
         <div className="barAddEditExistingOutterContainer">
@@ -178,7 +180,7 @@ class AddEditBar extends React.Component {
                   batchesIncluded={this.state.batchesIncluded}
                   barsFromMolds={this.state.barsFromMolds}
                   onUpdateMoldSelection={this.onUpdateBarsForMolds}
-                  recalculateMolds={this.recalculateMolds}
+                  recalculateMolds={reclatulateMoldsFlag}
                 />
               }
           </FirebaseContext.Consumer>
