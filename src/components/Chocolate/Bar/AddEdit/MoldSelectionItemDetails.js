@@ -59,7 +59,8 @@ class MoldSelectionItemDetails extends React.Component {
     componentDidUpdate(prevProps) {
 
       // Only do something if there's a change in the batchToEdit
-      if (this.props.barMoldSelectionItemDetail !== prevProps.barMoldSelectionItemDetail) {
+      if (this.props.barMoldSelectionItemDetail !== prevProps.barMoldSelectionItemDetail ||
+        this.state.pricePerBar !== this.props.barMoldSelectionItemDetail.pricePerBar) {
         let isEdit = this.props.itemSelectedForEdit;
 
         // If there's something to edit or the props don't match the default

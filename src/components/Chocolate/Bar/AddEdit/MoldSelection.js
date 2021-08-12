@@ -94,6 +94,10 @@ class MoldSelection extends React.Component {
           });
         }
 
+        if (this.props.recalculateMolds) {
+          this.recalculateBarCosts();
+        }
+
       }
       else if (
         this.props.batchesIncluded.totalCost !== prevProps.batchesIncluded.totalCost ||
