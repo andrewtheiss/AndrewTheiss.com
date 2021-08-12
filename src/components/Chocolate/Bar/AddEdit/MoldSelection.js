@@ -22,6 +22,7 @@ class MoldSelection extends React.Component {
     this.updateBarMoldSelection = this.updateBarMoldSelection.bind(this);
     this.onUpdateBarMoldDetails = this.onUpdateBarMoldDetails.bind(this);
     this.recalculateBarCosts = this.recalculateBarCosts.bind(this);
+    this.getAndSetMoldData = this.getAndSetMoldData.bind(this);
 
     // If something is selected for edit, override views
     this.editSelectionInUse = false;
@@ -34,6 +35,26 @@ class MoldSelection extends React.Component {
       totalPackagingCostAllBars : 0
     }
   }
+
+  // Get data from DB in this function
+  async componentDidMount() {
+      await this.getAndSetMoldData();
+
+  }
+
+  async getAndSetMoldData() {
+    const collectionRef = this.props.firebase.db.collection("moldSize");
+    let self = this;
+    await collectionRef.get().then(function(collectionDocs) {
+      var moldData = {};
+      collectionDocs.forEach(function(doc) {
+        moldData[doc.id] = doc.data();
+      });
+
+      self.moldData = moldData;
+    });
+  }
+
 
   formatMoldsSelected() {
     let formattedMoldSelection = [];
@@ -58,7 +79,7 @@ class MoldSelection extends React.Component {
         this.editSelectionInUse = true;
         if (this.props.itemSelectedForEdit) {
           this.setState({
-            barMoldDetails : this.props.barMoldDetails,
+            barMoldDetails : this.props.barsFromMolds.barMoldDetails,
             barMoldsSelected : this.formatMoldsSelected()
           });
         }
