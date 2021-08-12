@@ -29,9 +29,18 @@ class MoldSelectionItemDetails extends React.Component {
     this.recalculateTotalPrice = this.recalculateTotalPrice.bind(this);
     this.recalculateUpstreamBarCosts = this.recalculateUpstreamBarCosts.bind(this);
     this.updateTotals = this.updateTotals.bind(this);
+    this.checkAndSetForEditExisting = this.checkAndSetForEditExisting.bind(this);
+
+    this.selectedPackaging = {
+      wrap : [],
+      overwrap : [],
+      label : []
+    };
+    this.checkAndSetForEditExisting();
 
     // contains map of all mold data for molds
     this.itemMoldData = this.props.moldData;
+    this.packagingSelectionInUse = false;
 
     let state = JSON.parse(JSON.stringify(this.props.barMoldSelectionItemDetail));
     if (!state.barWeight) {
@@ -44,9 +53,28 @@ class MoldSelectionItemDetails extends React.Component {
       state.moldId = this.itemMoldData.id;
     }
     this.state = state;
+  }
 
+  checkAndSetForEditExisting() {
+    if (this.props.barMoldSelectionItemDetail.barCount ||
+      !Object.keys(this.props.barMoldSelectionItemDetail.packagingSelection.label).length ||
+      !Object.keys(this.props.barMoldSelectionItemDetail.packagingSelection.wrap).length ||
+      !Object.keys(this.props.barMoldSelectionItemDetail.packagingSelection.overwrap).length)
+      {
+        let keys = Object.keys(CONSTS.BAR_MOLD_CATEGORIES_STRINGS);
+        for (var i = 0; i < keys.length; i++) {
+          let packagingType = keys[i];
+          let selectedArray = [];
+          let selectedValues = this.props.barMoldSelectionItemDetail.packagingSelection[packagingType];
 
-    //console.log(this.props, this.itemMoldData);
+         let selectedValueKeys = Object.keys(selectedValues);
+          for (var j = 0; j < selectedValueKeys.length; j++) {
+            selectedArray.push({label : selectedValueKeys[j], value : selectedValueKeys[j]});
+          }
+          this.selectedPackaging[packagingType] = selectedArray;
+        }
+          this.packagingSelectionInUse = true;
+      }
   }
 
   async onUpdateDetails(event) {
@@ -159,6 +187,8 @@ class MoldSelectionItemDetails extends React.Component {
                 allowMultiple={true}
                 sendDataOnUpdate={true}
                 customSearch={collectionRefSearchWrap}
+                selectedData={this.selectedPackaging['wrap']}
+                selectedDataInUse={this.packagingSelectionInUse}
               />
             }
         </FirebaseContext.Consumer>
@@ -172,6 +202,8 @@ class MoldSelectionItemDetails extends React.Component {
               allowMultiple={true}
               sendDataOnUpdate={true}
               customSearch={collectionRefSearchOverwrap}
+              selectedData={this.selectedPackaging['overwrap']}
+              selectedDataInUse={this.packagingSelectionInUse}
             />
           }
       </FirebaseContext.Consumer>
@@ -185,6 +217,8 @@ class MoldSelectionItemDetails extends React.Component {
               allowMultiple={true}
               sendDataOnUpdate={true}
               customSearch={collectionRefSearchLabel}
+              selectedData={this.selectedPackaging['label']}
+              selectedDataInUse={this.packagingSelectionInUse}
             />
           }
       </FirebaseContext.Consumer>

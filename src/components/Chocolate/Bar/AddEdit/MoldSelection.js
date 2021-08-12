@@ -160,7 +160,6 @@ class MoldSelection extends React.Component {
     state.totalPackagingCostAllBars = totalPackagingCostAllBars;
 
     await this.setState(state);
-    console.log(moldState, this.state);
     this.recalculateBarCosts();
     this.updateParent();
   }
