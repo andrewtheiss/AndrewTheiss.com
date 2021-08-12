@@ -141,7 +141,7 @@ class AddEditBar extends React.Component {
       value : value
     });
   }
-  
+
   onUpdateBarsForMolds(barsFromMolds) {
     this.setState({barsFromMolds});
   }

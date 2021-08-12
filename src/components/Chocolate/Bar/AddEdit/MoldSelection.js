@@ -23,10 +23,15 @@ class MoldSelection extends React.Component {
     this.onUpdateBarMoldDetails = this.onUpdateBarMoldDetails.bind(this);
     this.recalculateBarCosts = this.recalculateBarCosts.bind(this);
     this.getAndSetMoldData = this.getAndSetMoldData.bind(this);
+    this.formatSelectedBarMolds = this.formatSelectedBarMolds.bind(this);
+
+    this.selectedBarMoldsInUse = false;
+    this.selectedBarMolds = [];
+    this.formatSelectedBarMolds();
 
     // If something is selected for edit, override views
     this.editSelectionInUse = false;
-    this.moldData = undefined;
+    this.moldData = {};
 
     this.state = {
       barMoldDetails : this.props.barsFromMolds.barMoldDetails,
@@ -74,6 +79,8 @@ class MoldSelection extends React.Component {
 
       // If there's something to edit or the props don't match the default
       if (isEdit) {
+
+        this.formatSelectedBarMolds();
 
         // Save the selected label we selected for edit
         this.editSelectionInUse = true;
@@ -185,7 +192,23 @@ class MoldSelection extends React.Component {
     return barMoldDetails;
   }
 
+  formatSelectedBarMolds() {
+    if (this.props.barsFromMolds.barMoldDetails &&  Object.keys(this.props.barsFromMolds.barMoldDetails).length) {
+
+        let selectedArray = [];
+        let barMoldSelection = this.props.barsFromMolds.barMoldDetails;
+
+       let selectedValueKeys = Object.keys(barMoldSelection);
+        for (var j = 0; j < selectedValueKeys.length; j++) {
+          selectedArray.push({label : selectedValueKeys[j], value : selectedValueKeys[j]});
+        }
+        this.selectedBarMolds = selectedArray;
+        this.selectedBarMoldsInUse = true;
+    }
+  }
+
   updateBarMoldSelection(moldSelection, moldData) {
+    this.selectedBarMoldsInUse = false;
     let prevBarMoldDetails = this.state.barMoldDetails;
     let barMoldDetails = {};
     for (var i in moldSelection) {
@@ -216,7 +239,8 @@ class MoldSelection extends React.Component {
                displayTitle="Bar Molds"
                allowMultiple={true}
                sendDataOnUpdate={true}
-               key="lookupSelectionForUpdateBarMoldKey"
+               selectedData={this.selectedBarMolds}
+               selectedDataInUse={this.selectedBarMoldsInUse}
                />
              }
          </FirebaseContext.Consumer>
