@@ -120,6 +120,7 @@ class NutritionCalculator extends React.Component {
     return this.temporaryNutritionTotal;
   }
 
+  // Turn this into a Util
   generateOrderedIngredientList() {
     let ingredientString = "Ingredients: ";
 

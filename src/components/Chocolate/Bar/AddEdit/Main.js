@@ -5,6 +5,7 @@ import LookupSelection from '../../../Utils/LookupSelection.js'
 import BatchesIncluded from './BatchesIncluded.js'
 import MoldSelection from './MoldSelection.js'
 import '../Bar.css'
+import * as UTILS from './NutritionFactsPerGramFromBatches.js'
 /**
  *  AddEditBar
  *
@@ -127,19 +128,33 @@ class AddEditBar extends React.Component {
     }
   }
 
-  onUpdateBatchesIncluded(batchesIncludedToFormat) {
+  async onUpdateBatchesIncluded(batchesIncludedToFormat) {
     this.recalculateMolds = true;
+
+    // Recaulculate batch nutrition facts
+    // Returns [nutritionFacts, batchesIngredients, ingredientsLabel];
+    let nutritionFactsIngredientsAndLabel = await UTILS.RecalculateNutritionFactsPerGram(
+      batchesIncludedToFormat.batchesIncludedPct,
+      this.props.firebase.db.collection("batchesPublic"),
+      this.props.firebase.firebase.firestore.FieldPath.documentId()
+    );
+
     let batchesIncluded = {
       pct : batchesIncludedToFormat.batchesIncludedPct,
       cost : batchesIncludedToFormat.batchesIncludedCost,
       totalWeightInGrams :batchesIncludedToFormat.batchesIncludedTotalWeightInGrams,
-      totalCost : batchesIncludedToFormat.batchesIncludedTotalCost
+      totalCost : batchesIncludedToFormat.batchesIncludedTotalCost,
+      nutritionFacts : nutritionFactsIngredientsAndLabel[0],
+      batchIngredients : nutritionFactsIngredientsAndLabel[1],
+      ingredients : nutritionFactsIngredientsAndLabel[2]
     };
     let value = Math.random();
+
     this.setState({
       batchesIncluded : batchesIncluded,
       value : value
     });
+    console.log(batchesIncluded);
   }
 
   onUpdateBarsForMolds(barsFromMolds) {

@@ -2,7 +2,10 @@ export const BATCHES_INCLUDED = {
   pct : {},
   cost : {},
   totalWeightInGrams : 0,
-  totalCost : 0
+  totalCost : 0,
+  nutritionFacts : {},
+  batchIngredients : {},
+  ingredients : {}
 }
 
 export const BAR_FROM_MOLD_DETAILS = {
@@ -52,11 +55,8 @@ export const DEFAULT_BAR = {
   // * Can be multiple percentages of different batches {..00A : 100%, ..00B : 25%}
   batchesIncluded : BATCHES_INCLUDED,
 
-  totals : {
-    nutritionFacts : {
-
-    }
-  },
+  nutritionFacts : {},
+  ingerdients : {},
 
   // How many bars are poured for this batch and from what molds
   barsFromMolds : {
@@ -75,5 +75,6 @@ export const DEFAULT_BAR = {
 
   },
 
-  dateCreated : ''
+  dateCreated : '',
+  comments : ''
 }
