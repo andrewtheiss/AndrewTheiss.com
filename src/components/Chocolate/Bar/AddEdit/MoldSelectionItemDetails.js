@@ -4,6 +4,7 @@ import { FirebaseContext } from '../../../Firebase';
 import LookupSelection from '../../../Utils/LookupSelection.js'
 import * as CONSTS from '../constants.js'
 import * as UTILS from './NutritionFactsUtils.js'
+import NutritionFactsPreview from '../../Ingredient/NutritionFactsPreview.js'
 
 /**
 
@@ -62,7 +63,7 @@ class MoldSelectionItemDetails extends React.Component {
     componentDidUpdate(prevProps) {
 
       if (this.props != prevProps) {
-        
+
         if (this.props.updateIngredientsAndNutrition) {
           this.calculateNutritionFactsPerBar();
         }
@@ -205,6 +206,8 @@ class MoldSelectionItemDetails extends React.Component {
     const collectionRefSearchWrap = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.wrap);
     const collectionRefSearchOverwrap = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.overwrap);
     const collectionRefSearchLabel = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.label);
+
+    let nutritionFactsPreview = <NutritionFactsPreview previewData={this.state.nutritionFacts} ingredientList={this.state.ingredients}/>;
     return (
       <div>
       <div>
@@ -262,6 +265,7 @@ class MoldSelectionItemDetails extends React.Component {
           }
       </FirebaseContext.Consumer>
       <div className="barMoldDetailSelectionPreview">
+      {nutritionFactsPreview}
       </div>
     </div>
     );
