@@ -156,6 +156,7 @@ class BatchesIncluded extends React.Component {
     return pctInputByBatchSelection;
   }
 
+
   render() {
     let pctInputByBatchSelection = this.generateRenderPctInputByBatchSelection();
 

@@ -29,6 +29,7 @@ export const BAR_FROM_MOLD_DETAILS = {
   nutritionFacts : {
 
   },
+  ingredients : "",
   totals : {
     packagingPrice : 0,
     weight : 0

@@ -3,6 +3,7 @@ import "../Bar.css"
 import { FirebaseContext } from '../../../Firebase';
 import LookupSelection from '../../../Utils/LookupSelection.js'
 import * as CONSTS from '../constants.js'
+import * as UTILS from './NutritionFactsUtils.js'
 
 /**
 
@@ -30,6 +31,7 @@ class MoldSelectionItemDetails extends React.Component {
     this.recalculateUpstreamBarCosts = this.recalculateUpstreamBarCosts.bind(this);
     this.updateTotals = this.updateTotals.bind(this);
     this.checkAndSetForEditExisting = this.checkAndSetForEditExisting.bind(this);
+    this.calculateNutritionFactsPerBar = this.calculateNutritionFactsPerBar.bind(this);
 
     this.selectedPackaging = {
       wrap : [],
@@ -53,21 +55,28 @@ class MoldSelectionItemDetails extends React.Component {
       state.moldId = this.itemMoldData.id;
     }
     this.state = state;
+    this.calculateNutritionFactsPerBar();
   }
 
     // If batchesIncludedPct prop changes, we need to recalculate everything
     componentDidUpdate(prevProps) {
 
-      // Only do something if there's a change in the batchToEdit
-      if (this.props.barMoldSelectionItemDetail !== prevProps.barMoldSelectionItemDetail ||
-        this.state.pricePerBar !== this.props.barMoldSelectionItemDetail.pricePerBar) {
-        let isEdit = this.props.itemSelectedForEdit;
+      if (this.props != prevProps) {
+        
+        if (this.props.updateIngredientsAndNutrition) {
+          this.calculateNutritionFactsPerBar();
+        }
+        // Only do something if there's a change in the batchToEdit
+        if (this.props.barMoldSelectionItemDetail !== prevProps.barMoldSelectionItemDetail ||
+          this.state.pricePerBar !== this.props.barMoldSelectionItemDetail.pricePerBar) {
+          let isEdit = this.props.itemSelectedForEdit;
 
-        // If there's something to edit or the props don't match the default
-        if (isEdit) {
-          let state = JSON.parse(JSON.stringify(this.props.barMoldSelectionItemDetail));
-            this.setState(state);
-          }
+          // If there's something to edit or the props don't match the default
+          if (isEdit) {
+            let state = JSON.parse(JSON.stringify(this.props.barMoldSelectionItemDetail));
+              this.setState(state);
+            }
+        }
       }
     }
 
@@ -174,6 +183,19 @@ class MoldSelectionItemDetails extends React.Component {
 
   generatePreviewForSelectedWrapItems() {
 
+  }
+
+  // Uses batches included data to update nutrition facts per bar
+  async calculateNutritionFactsPerBar() {
+    let moldNutritionFacts = UTILS.AdjustNutritionFactsAndServingSizeForBar(
+      this.state,
+      this.props.batchesIncluded
+    );
+    let state = this.state;
+    state.nutritionFacts = moldNutritionFacts;
+    state.ingredients = this.props.batchesIncluded.ingredients;
+    await this.setState(state);
+    console.log(state);
   }
 
   render() {

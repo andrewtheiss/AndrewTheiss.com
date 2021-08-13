@@ -25,6 +25,7 @@ class MoldSelection extends React.Component {
     this.getAndSetMoldData = this.getAndSetMoldData.bind(this);
     this.formatSelectedBarMolds = this.formatSelectedBarMolds.bind(this);
 
+    this.updateIngredientsAndNutrition = false;
     this.selectedBarMoldsInUse = false;
     this.selectedBarMolds = [];
     this.formatSelectedBarMolds();
@@ -74,6 +75,10 @@ class MoldSelection extends React.Component {
 
     // Only do something if there's a change in the batchToEdit
     if (this.props !== prevProps) {
+      if (this.props.updateIngredientsAndNutrition) {
+        this.updateIngredientsAndNutrition = true;
+      }
+
       let isEdit = this.props.itemSelectedForEdit;
       this.editSelectionInUse = false;
 
@@ -105,7 +110,6 @@ class MoldSelection extends React.Component {
       ) {
 
         // Recalculate individual bar/mold selection
-        console.log('recalculate bar mold costs and nutrition');
         this.recalculateBarCosts();
       }
 
@@ -122,7 +126,6 @@ class MoldSelection extends React.Component {
   async recalculateBarCosts() {
     // Need to find cost based on total batch selection divided by total weight of bars poured
     let totalBatchSelectionCost = this.props.batchesIncluded.totalCost;
-    let totalBatchSelectionWeight = this.props.batchesIncluded.totalWeightInGrams;
 
     // Grab the bar selection data
     let totalWeightOfPouredBars = this.state.totalWeightAllBars;
@@ -144,7 +147,6 @@ class MoldSelection extends React.Component {
     }
 
     await this.setState({barMoldDetails});
-        console.log(this.state.barMoldDetails);
   }
 
   async onUpdateBarMoldDetails(moldState) {
@@ -180,6 +182,7 @@ class MoldSelection extends React.Component {
 
   generateRenderPerBarMoldSelection() {
     let self = this;
+    let updateIngredientsAndNutrition = JSON.parse(JSON.stringify(this.updateIngredientsAndNutrition));
     let barMoldDetails = Object.keys(this.state.barMoldDetails).map((key) => (
       <span className="barMoldDetailsContainerForBarCreation" key={key}>
         <FirebaseContext.Consumer>
@@ -191,12 +194,15 @@ class MoldSelection extends React.Component {
                firebase={firebase}
                key={key}
                moldData={self.moldData[key]}
-               itemSelectedForEdit={this.props.itemSelectedForEdit}
+               itemSelectedForEdit={self.props.itemSelectedForEdit}
+               updateIngredientsAndNutrition={updateIngredientsAndNutrition}
+               batchesIncluded={self.props.batchesIncluded}
                />
              }
          </FirebaseContext.Consumer>
        </span>
        ));
+    this.updateIngredientsAndNutrition = false;
     return barMoldDetails;
   }
 

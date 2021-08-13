@@ -5,7 +5,7 @@ import LookupSelection from '../../../Utils/LookupSelection.js'
 import BatchesIncluded from './BatchesIncluded.js'
 import MoldSelection from './MoldSelection.js'
 import '../Bar.css'
-import * as UTILS from './NutritionFactsPerGramFromBatches.js'
+import * as UTILS from './NutritionFactsUtils.js'
 /**
  *  AddEditBar
  *
@@ -21,6 +21,7 @@ class AddEditBar extends React.Component {
     this.onUpdateBarsForMolds = this.onUpdateBarsForMolds.bind(this);
 
     this.recalculateMolds = false;
+    this.updateIngredientsAndNutrition = false;
     this.state = CONSTS.DEFAULT_BAR;
     this.itemSelectedForEdit = false;
   }
@@ -138,6 +139,7 @@ class AddEditBar extends React.Component {
       this.props.firebase.db.collection("batchesPublic"),
       this.props.firebase.firebase.firestore.FieldPath.documentId()
     );
+    this.updateIngredientsAndNutrition = true;
 
     let batchesIncluded = {
       pct : batchesIncludedToFormat.batchesIncludedPct,
@@ -154,7 +156,6 @@ class AddEditBar extends React.Component {
       batchesIncluded : batchesIncluded,
       value : value
     });
-    console.log(batchesIncluded);
   }
 
   onUpdateBarsForMolds(barsFromMolds) {
@@ -163,7 +164,9 @@ class AddEditBar extends React.Component {
 
   render() {
     let reclatulateMoldsFlag = this.recalculateMolds;
+    let recalculateIndividualBarIngredientsAndNutrition = this.updateIngredientsAndNutrition;
     this.recalculateMolds = false;
+    this.updateIngredientsAndNutrition = false;
     return (
       <div>
         <div className="barAddEditExistingOutterContainer">
@@ -192,6 +195,7 @@ class AddEditBar extends React.Component {
               <MoldSelection
                   itemSelectedForEdit={this.itemSelectedForEdit}
                   firebase={firebase}
+                  updateIngredientsAndNutrition={recalculateIndividualBarIngredientsAndNutrition}
                   batchesIncluded={this.state.batchesIncluded}
                   barsFromMolds={this.state.barsFromMolds}
                   onUpdateMoldSelection={this.onUpdateBarsForMolds}
@@ -210,34 +214,3 @@ class AddEditBar extends React.Component {
 }
 
 export default AddEditBar;
-
-/*
-
-
-          <FirebaseContext.Consumer>
-            {firebase =>
-                <LookupSelection
-                  firebase={firebase}
-                  onUpdateSelection={this.onUpdateSelection}
-                  collectionName="packaging"
-                  displayTitle="Packaging Overwrap"
-                  allowMultiple={true}
-                  sendDataOnUpdate={true}
-                  customSearch={collectionRefSearchOverwrap}
-                />
-              }
-          </FirebaseContext.Consumer>
-          <FirebaseContext.Consumer>
-            {firebase =>
-                <LookupSelection
-                  firebase={firebase}
-                  onUpdateSelection={this.onUpdateSelection}
-                  collectionName="packaging"
-                  displayTitle="Packaging Label"
-                  allowMultiple={true}
-                  sendDataOnUpdate={true}
-                  customSearch={collectionRefSearchLabel}
-                />
-              }
-          </FirebaseContext.Consumer>
-          */

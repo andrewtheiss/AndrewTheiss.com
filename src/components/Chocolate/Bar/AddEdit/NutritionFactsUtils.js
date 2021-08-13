@@ -49,3 +49,28 @@ export const RecalculateNutritionFactsPerGram = async function(batchesIncluded, 
   // Generate Ingredients label
   return [nutritionFacts, batchesIngredients, ingredientsLabel];
 }
+
+export const AdjustNutritionFactsAndServingSizeForBar = function(nutritionFacts, barMold) {
+  let adjustedNutritionFacts = {};
+
+  // Figure out how much we want to adjust serving size to be
+  let servingSizeTargetInGrams = 10;  // TARGET 10 Grams per serving
+  let adjustmentMultiplier = Number(nutritionFacts.barWeight) / barMold.nutritionFacts.servingSizeInGrams;
+  let roundedServingCount = Math.round(Number(nutritionFacts.barWeight) / servingSizeTargetInGrams);
+
+  // Calculate nutrition Facts
+  Object.keys(barMold.nutritionFacts).forEach(key => {
+    if (adjustedNutritionFacts[key] === undefined) {
+      adjustedNutritionFacts[key] = 0;
+    }
+    if (key === 'servingsPerContainer') {
+      adjustedNutritionFacts[key] = Math.round(100*(Number(nutritionFacts.barWeight) / servingSizeTargetInGrams))/100;
+      adjustedNutritionFacts['adjustedServingsPerContainer'] = "About " + roundedServingCount;
+    } else if (key === 'servingSizeInGrams') {
+      adjustedNutritionFacts[key] = servingSizeTargetInGrams;
+    } else {
+      adjustedNutritionFacts[key] = Math.round(Number(barMold.nutritionFacts[key]) * adjustmentMultiplier);
+    }
+  });
+  return adjustedNutritionFacts;
+}
