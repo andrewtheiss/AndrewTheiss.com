@@ -1,6 +1,27 @@
-export const GenerateOrderedIngredientList = function(ingredients) {
+export const GenerateOrderedIngredientList = function(ingredients, ingredientsDbList) {
   let ingredientString = "Ingredients: ";
 
+  // Go through ingredients and get their correct names...
+  let correctedIngredients = {};
+  let cacaoBeansValue = 0;
+  for (var ingredient in ingredients) {
+
+    // Check if cacao beans (as they are listed by the actual Bean type and not ingredient name)
+    if (!ingredientsDbList[ingredient]) {
+
+      // Get the DB name for Cacao Beans and set value to 0 if there's no amount yet
+      let label = ingredientsDbList['Cacao Beans'].nutritionFactsIngredientLabel;
+      if (!correctedIngredients[label]) {
+        correctedIngredients[label] = 0;
+      }
+      correctedIngredients[label] += ingredients[ingredient];
+    } else {
+      let correctLabel = ingredientsDbList[ingredient].nutritionFactsIngredientLabel;
+      correctedIngredients[correctLabel] = ingredients[ingredient];
+    }
+  }
+  console.log(ingredients, correctedIngredients);
+  ingredients = correctedIngredients;
   let ingredientsArray = [];
   let totalWeight = 0;
   for (var ingredient in ingredients) {

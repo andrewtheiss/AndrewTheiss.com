@@ -20,10 +20,26 @@ class AddEditBar extends React.Component {
     this.updateBarSelection = this.updateBarSelection.bind(this);
     this.onUpdateBarsForMolds = this.onUpdateBarsForMolds.bind(this);
 
+    this.ingredientListOneTimeStorage = null;
+
     this.recalculateMolds = false;
     this.updateIngredientsAndNutrition = false;
     this.state = CONSTS.DEFAULT_BAR;
     this.itemSelectedForEdit = false;
+  }
+
+  // Get data from DB in this function
+  async componentDidMount() {
+    const collectionRef = this.props.firebase.db.collection("ingredients");
+    let self = this;
+    await collectionRef.get().then(function(collectionDocs) {
+      var ingredients = {};
+      collectionDocs.forEach(function(doc) {
+        ingredients[doc.id] = doc.data();
+      });
+
+      self.ingredientListOneTimeStorage = ingredients;
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -137,7 +153,8 @@ class AddEditBar extends React.Component {
     let nutritionFactsIngredientsAndLabel = await UTILS.RecalculateNutritionFactsPerGram(
       batchesIncludedToFormat.batchesIncludedPct,
       this.props.firebase.db.collection("batchesPublic"),
-      this.props.firebase.firebase.firestore.FieldPath.documentId()
+      this.props.firebase.firebase.firestore.FieldPath.documentId(),
+      this.ingredientListOneTimeStorage
     );
     this.updateIngredientsAndNutrition = true;
 

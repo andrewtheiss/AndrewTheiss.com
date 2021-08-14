@@ -136,16 +136,16 @@ class NutritionFactsPreview extends React.Component {
   }
 
   generateServingsPerContainer() {
-    let servingSizeSingularOrPlural = (this.props.previewData.servingsPerContainer === "1") ? 'serving' : 'servings';
+    let servingSizeSingularOrPlural = (Number(this.props.previewData.servingsPerContainer) === 1) ? 'serving' : 'servings';
     if (!this.props.previewData.servingsPerContainerOverride) {
       return (<div className="nutritionFactsServingsPerContainer">{this.props.previewData.servingsPerContainer} {servingSizeSingularOrPlural} per container</div>)
     }
-    servingSizeSingularOrPlural = (this.props.previewData.servingsPerContainerOverride === "1") ? 'serving' : 'servings';
+    servingSizeSingularOrPlural = (Number(this.props.previewData.servingsPerContainerOverride) === 1) ? 'serving' : 'servings';
     return (<div className="nutritionFactsServingsPerContainer">{this.props.previewData.servingsPerContainerOverride} {servingSizeSingularOrPlural} per container</div>)
   }
 
   generateServingSizeAmount() {
-    let servingAmountSingularOrPlural = (this.props.previewData.servingSizeInGrams === "1") ? 'gram' : 'grams';
+    let servingAmountSingularOrPlural = (Number(this.props.previewData.servingSizeInGrams) === 1) ? 'gram' : 'grams';
     if (!this.props.previewData.servingSizeOverride) {
       return (<div className="nutritionFactsServingSizeAmount">{this.props.previewData.servingSizeInGrams} {servingAmountSingularOrPlural}</div>)
     }

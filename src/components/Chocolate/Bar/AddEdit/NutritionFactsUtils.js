@@ -1,6 +1,6 @@
 import * as NUTRITION_UTILS from '../../Ingredient/NutritionUtils.js'
 
-export const RecalculateNutritionFactsPerGram = async function(batchesIncluded, batchesCollectionRef, docIdPath) {
+export const RecalculateNutritionFactsPerGram = async function(batchesIncluded, batchesCollectionRef, docIdPath, ingredientsDbList) {
   let nutritionFacts = {};
   let batchesIngredients = {};
   let ingredientsLabel = "";
@@ -39,7 +39,7 @@ export const RecalculateNutritionFactsPerGram = async function(batchesIncluded, 
           batchesIngredients[key] =+ Math.round(batchIngredients[key] * (nutritionFactsPct / 100));
         });
 
-        ingredientsLabel = NUTRITION_UTILS.GenerateOrderedIngredientList(batchIngredients);
+        ingredientsLabel = NUTRITION_UTILS.GenerateOrderedIngredientList(batchIngredients, ingredientsDbList);
       });
     }).catch((error) => {
       console.log('failure' , error);
