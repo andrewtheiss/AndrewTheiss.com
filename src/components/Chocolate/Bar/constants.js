@@ -13,6 +13,7 @@ export const BAR_FROM_MOLD_DETAILS = {
   barCount : '',
   barWeight : '',
   moldId : '',
+  barPieceCount : '',
   pricePerBar : 0,
   packagingPricesPerBar : {  // Should be packagingPricesPerBar
     wrap : 0,

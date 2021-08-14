@@ -55,6 +55,12 @@ class MoldSelectionItemDetails extends React.Component {
     if (!state.moldId) {
       state.moldId = this.itemMoldData.id;
     }
+    if (!state.barPieceCount) {
+      state.barPieceCount = this.itemMoldData.barPieceCount;
+    }
+    if (!state.barServingSizeInPieces) {
+      state.barServingSizeInPieces = this.itemMoldData.barServingSizeInPieces;
+    }
     this.state = state;
     this.calculateNutritionFactsPerBar();
   }
@@ -192,11 +198,13 @@ class MoldSelectionItemDetails extends React.Component {
       this.state,
       this.props.batchesIncluded
     );
-    let state = this.state;
-    state.nutritionFacts = moldNutritionFacts;
-    state.ingredients = this.props.batchesIncluded.ingredients;
-    await this.setState(state);
-    console.log(state);
+
+    if (Object.keys(moldNutritionFacts).length !== 0) {
+      let state = this.state;
+      state.nutritionFacts = moldNutritionFacts;
+      state.ingredients = this.props.batchesIncluded.ingredients;
+      await this.setState(state);
+    }
   }
 
   render() {

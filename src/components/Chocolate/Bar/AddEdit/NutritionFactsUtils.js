@@ -54,9 +54,41 @@ export const AdjustNutritionFactsAndServingSizeForBar = function(nutritionFacts,
   let adjustedNutritionFacts = {};
 
   // Figure out how much we want to adjust serving size to be
-  let servingSizeTargetInGrams = 10;  // TARGET 10 Grams per serving
   let adjustmentMultiplier = Number(nutritionFacts.barWeight) / barMold.nutritionFacts.servingSizeInGrams;
-  let roundedServingCount = Math.round(Number(nutritionFacts.barWeight) / servingSizeTargetInGrams);
+
+  // Get serving size in pieces from barMold
+  let barPieceCount = nutritionFacts.barPieceCount;
+  let barServingSizeInPieces = Number(nutritionFacts.barServingSizeInPieces);
+
+  let servingSizeOverride = Number(barServingSizeInPieces);
+  let servingsPerContainerOverride = barPieceCount / barServingSizeInPieces;
+  let servingsPerContainerOverrideText = servingsPerContainerOverride;
+  if (barServingSizeInPieces < 1) {
+    // Need to display '1/2 bar or 1/4 bar'
+    if (barServingSizeInPieces === 0.5) {
+      servingSizeOverride = "1/2 bar";
+      servingsPerContainerOverride = 2;
+    } else if (barServingSizeInPieces === 0.25) {
+      servingSizeOverride = "1/4 bar";
+      servingsPerContainerOverride = 4;
+    } else if (barServingSizeInPieces === 0.33) {
+      servingSizeOverride = "1/3 bar";
+      servingsPerContainerOverride = 3;
+    } else if (barServingSizeInPieces === 0) {
+      servingSizeOverride = "1 bar";
+      servingsPerContainerOverride = 1;
+    } else {
+      alert('bar size not supported');
+    }
+    servingsPerContainerOverrideText = servingsPerContainerOverride;
+  } else {
+    if (servingsPerContainerOverride !== Math.round(servingsPerContainerOverride)) {
+      servingSizeOverride = Math.round(barServingSizeInPieces) + " pieces";
+      servingsPerContainerOverrideText = "About " + servingsPerContainerOverride;
+    } else {
+      servingSizeOverride = barServingSizeInPieces + " pieces";
+    }
+  }
 
   // Calculate nutrition Facts
   Object.keys(barMold.nutritionFacts).forEach(key => {
@@ -64,13 +96,15 @@ export const AdjustNutritionFactsAndServingSizeForBar = function(nutritionFacts,
       adjustedNutritionFacts[key] = 0;
     }
     if (key === 'servingsPerContainer') {
-      adjustedNutritionFacts[key] = Math.round(100*(Number(nutritionFacts.barWeight) / servingSizeTargetInGrams))/100;
-      adjustedNutritionFacts['adjustedServingsPerContainer'] = "About " + roundedServingCount;
+      adjustedNutritionFacts[key] = 1;
+      adjustedNutritionFacts['servingsPerContainerOverride'] = servingsPerContainerOverrideText;
     } else if (key === 'servingSizeInGrams') {
-      adjustedNutritionFacts[key] = servingSizeTargetInGrams;
+      adjustedNutritionFacts[key] = Number(nutritionFacts.barWeight);
+      adjustedNutritionFacts['servingSizeOverride'] = servingSizeOverride + " (" + Math.round(Number(nutritionFacts.barWeight)/servingsPerContainerOverride) + "g)";
     } else {
-      adjustedNutritionFacts[key] = Math.round(Number(barMold.nutritionFacts[key]) * adjustmentMultiplier);
+      adjustedNutritionFacts[key] = Math.round((Number(barMold.nutritionFacts[key]) * adjustmentMultiplier)/servingsPerContainerOverride);
     }
   });
+  console.log(adjustedNutritionFacts);
   return adjustedNutritionFacts;
 }

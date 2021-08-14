@@ -13,6 +13,7 @@ export const MOLD_SIZE_DEFAULT_PROPS = {
     z : ''
   },
   barPieceCount : '',
+  barServingSizeInPieces : '',
   purchaseFromUrl : '',
   imageBase64 : '',
   packagingCameoPrintFileLocation : '',

@@ -66,6 +66,8 @@ class NutritionFactsPreview extends React.Component {
     this.generateSecondaryDetailsBuffer = this.generateSecondaryDetailsBuffer.bind(this);
     this.generateIngredientsList = this.generateIngredientsList.bind(this);
     this.updateListeners = this.updateListeners.bind(this);
+    this.generateServingsPerContainer = this.generateServingsPerContainer.bind(this);
+    this.generateServingSizeAmount = this.generateServingSizeAmount.bind(this);
 
     // Super hacky way to get dynamically expanding 100% width to adjust for textwrap
     let id = Math.floor(Math.random() * 1000000);
@@ -108,9 +110,14 @@ class NutritionFactsPreview extends React.Component {
     if (this.props.overrideIngreientBox || this.props.ingredientList === undefined || this.props.ingredientList === "") {
       return <div></div>;
     }
+    let hasIngredientsLabel = (this.props.ingredientList.indexOf('Ingredients:') !== -1) ? true : false;
+    let ingredients = "Ingredients: ";
+    if (hasIngredientsLabel) {
+      ingredients = "";
+    }
     return (
       <div className="nutritionCalculatorIngredientsBox">
-        <div className="nutritionFactsIngredients">Ingredients: {this.props.ingredientList}</div>
+        <div className="nutritionFactsIngredients">{ingredients}{this.props.ingredientList}</div>
       </div>
     );
   }
@@ -128,9 +135,26 @@ class NutritionFactsPreview extends React.Component {
     }
   }
 
-  render() {
+  generateServingsPerContainer() {
     let servingSizeSingularOrPlural = (this.props.previewData.servingsPerContainer === "1") ? 'serving' : 'servings';
+    if (!this.props.previewData.servingsPerContainerOverride) {
+      return (<div className="nutritionFactsServingsPerContainer">{this.props.previewData.servingsPerContainer} {servingSizeSingularOrPlural} per container</div>)
+    }
+    servingSizeSingularOrPlural = (this.props.previewData.servingsPerContainerOverride === "1") ? 'serving' : 'servings';
+    return (<div className="nutritionFactsServingsPerContainer">{this.props.previewData.servingsPerContainerOverride} {servingSizeSingularOrPlural} per container</div>)
+  }
+
+  generateServingSizeAmount() {
     let servingAmountSingularOrPlural = (this.props.previewData.servingSizeInGrams === "1") ? 'gram' : 'grams';
+    if (!this.props.previewData.servingSizeOverride) {
+      return (<div className="nutritionFactsServingSizeAmount">{this.props.previewData.servingSizeInGrams} {servingAmountSingularOrPlural}</div>)
+    }
+    return (<div className="nutritionFactsServingSizeAmount">{this.props.previewData.servingSizeOverride}</div>)
+  }
+
+  render() {
+    let servingsPerContainer = this.generateServingsPerContainer();
+    let servingSize = this.generateServingSizeAmount();
     let primaryDetails = this.generatePrimaryDetails();
     let secondaryDetailsBuffer = this.generateSecondaryDetailsBuffer();
     let secondaryDetails = this.generateSecondaryDetails();
@@ -140,9 +164,9 @@ class NutritionFactsPreview extends React.Component {
       <div>
         <div id={this.uniqueId} className="nutritionFactsOutline">
           <div className="nutritionFactsLabel">Nutrition Facts</div>
-          <div className="nutritionFactsServingsPerContainer">{this.props.previewData.servingsPerContainer} {servingSizeSingularOrPlural} per container</div>
+          {servingsPerContainer}
           <div className="nutritionFactsServingSizeLabel">Serving Size </div>
-          <div className="nutritionFactsServingSizeAmount">{this.props.previewData.servingSizeInGrams} {servingAmountSingularOrPlural}</div>
+          {servingSize}
           <div className="nutritionFactsLargeBarDivider"></div>
           <div className="nutritionFactsCloriesContainer">
           <div className="nutritionFactsCaloriesNumber">{this.props.previewData.calories}</div>
