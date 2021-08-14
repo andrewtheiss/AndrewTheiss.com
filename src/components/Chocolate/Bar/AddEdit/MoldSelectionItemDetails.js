@@ -204,6 +204,11 @@ class MoldSelectionItemDetails extends React.Component {
       state.nutritionFacts = moldNutritionFacts;
       state.ingredients = this.props.batchesIncluded.ingredients;
       await this.setState(state);
+    } else {
+      let state = this.state;
+      state.nutritionFacts = {};
+      state.ingredients = "";
+      await this.setState(state);
     }
   }
 
