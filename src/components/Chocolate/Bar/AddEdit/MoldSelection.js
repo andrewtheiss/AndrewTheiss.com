@@ -230,6 +230,7 @@ class MoldSelection extends React.Component {
         barMoldDetails[moldSelection[i].label] = prevBarMoldDetails[moldSelection[i].label];
       } else {
         barMoldDetails[moldSelection[i].label] = CONSTS.BAR_FROM_MOLD_DETAILS;
+        barMoldDetails[moldSelection[i].label].moldImageBase64 = moldData[moldSelection[i].label].imageBase64;
       }
     }
     this.moldData = moldData;

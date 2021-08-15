@@ -21,6 +21,7 @@ class AddEditBar extends React.Component {
     this.onUpdateBarsForMolds = this.onUpdateBarsForMolds.bind(this);
     this.generateLabel = this.generateLabel.bind(this);
     this.generateLabelButton = this.generateLabelButton.bind(this);
+    this.formatBarsForWrite = this.formatBarsForWrite.bind(this);
 
     this.ingredientListOneTimeStorage = null;
 
@@ -105,29 +106,49 @@ class AddEditBar extends React.Component {
     return valid;
   }
 
+  formatBarsForWrite() {
+    let bars = [];
+
+    let keysAsMoldId = Object.keys(this.state.barsFromMolds.barMoldDetails);
+    for (var i in keysAsMoldId) {
+      let moldId = keysAsMoldId[i];
+      let bar = JSON.parse(JSON.stringify(this.state.barsFromMolds.barMoldDetails[moldId]));
+      bar.id = this.state.label + "-" + bar.moldId;
+      bar.created = this.state.createdDate;
+      bars.push(bar);
+    }
+    return bars;
+  }
+
   async setBar() {
     if (this.validateBar()) {
 
       //let publicBar = await this.formatBarForSet();
       let barToWrite = JSON.parse(JSON.stringify(this.state));
-
+      let bars = this.formatBarsForWrite();
       // Used for rerendering
       delete barToWrite['value'];
 
       let documentToEdit = this.state.label;
+      //console.log(barToWrite);
+      console.log(bars);
       /*
-      const publicCollectionRef = this.props.firebase.db.collection("packagingPublic");
-      await publicCollectionRef.doc(documentToEdit).set('barPublic').then(() => {
-        console.log('set public packaging');
+      const collectionRef = this.props.firebase.db.collection("barGroup");
+      await collectionRef.doc(documentToEdit).set(barToWrite).then(() => {
+        console.log('set bar group');
       });
       */
-      const collectionRef = this.props.firebase.db.collection("bars");
-      await collectionRef.doc(documentToEdit).set(barToWrite).then(() => {
-        console.log('set bar');
-      });
+      // Set each individual bar!
 
-      let state = CONSTS.DEFAULT_BAR;
-      this.setState(state);
+      for (var i = 0; i < bars.length; i++) {
+        let barsCollectionRef = this.props.firebase.db.collection("barsPublic");
+        await barsCollectionRef.doc(bars[i].id).set(bars[i]).then(() => {
+          console.log('set bar: ' + bars[i].id);
+        });
+      }
+
+      //let state = CONSTS.DEFAULT_BAR;
+      //await this.setState(state);
     }
   }
 
@@ -238,7 +259,7 @@ class AddEditBar extends React.Component {
               <LookupSelection
                 firebase={firebase}
                 onUpdateSelection={this.updateBarSelection}
-                collectionName="bars"
+                collectionName="barGroup"
                 displayTitle="Existing Bar"
                 allowMultiple={false}
                 sendDataOnUpdate={true}

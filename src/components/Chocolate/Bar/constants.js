@@ -30,6 +30,7 @@ export const BAR_FROM_MOLD_DETAILS = {
   nutritionFacts : {
 
   },
+  moldImageBase64 : '',
   ingredients : "",
   totals : {
     packagingPrice : 0,
