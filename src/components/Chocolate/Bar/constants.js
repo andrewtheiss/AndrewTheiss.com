@@ -77,6 +77,6 @@ export const DEFAULT_BAR = {
 
   },
 
-  dateCreated : '',
+  createdDate : '',
   comments : ''
 }

@@ -37,3 +37,8 @@
   max-height: 200px;
   max-width: 200px;
 }
+
+.generateBarGroupLabel {
+  display: inline-block;
+  padding-left: 10px;
+}

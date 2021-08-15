@@ -68,7 +68,7 @@ class MoldSelectionItemDetails extends React.Component {
     // If batchesIncludedPct prop changes, we need to recalculate everything
     componentDidUpdate(prevProps) {
 
-      if (this.props != prevProps) {
+      if (this.props !== prevProps) {
 
         if (this.props.updateIngredientsAndNutrition) {
           this.calculateNutritionFactsPerBar();
@@ -213,7 +213,7 @@ class MoldSelectionItemDetails extends React.Component {
   }
 
   render() {
-    let imagesForPreview = this.generatePreviewForSelectedWrapItems();
+    //let imagesForPreview = this.generatePreviewForSelectedWrapItems();
     let totalPackagingPricePerUnit = this.state.totalPackagingPricePerUnit;
 
     const collectionRefSearchWrap = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.wrap);

@@ -105,6 +105,5 @@ export const AdjustNutritionFactsAndServingSizeForBar = function(nutritionFacts,
       adjustedNutritionFacts[key] = Math.round((Number(barMold.nutritionFacts[key]) * adjustmentMultiplier)/servingsPerContainerOverride);
     }
   });
-  console.log(adjustedNutritionFacts);
   return adjustedNutritionFacts;
 }

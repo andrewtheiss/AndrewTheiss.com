@@ -3,7 +3,6 @@ export const GenerateOrderedIngredientList = function(ingredients, ingredientsDb
 
   // Go through ingredients and get their correct names...
   let correctedIngredients = {};
-  let cacaoBeansValue = 0;
   for (var ingredient in ingredients) {
 
     // Check if cacao beans (as they are listed by the actual Bean type and not ingredient name)
@@ -20,11 +19,10 @@ export const GenerateOrderedIngredientList = function(ingredients, ingredientsDb
       correctedIngredients[correctLabel] = ingredients[ingredient];
     }
   }
-  console.log(ingredients, correctedIngredients);
   ingredients = correctedIngredients;
   let ingredientsArray = [];
   let totalWeight = 0;
-  for (var ingredient in ingredients) {
+  for (ingredient in ingredients) {
     totalWeight += ingredients[ingredient];
     ingredientsArray.push([ingredient, ingredients[ingredient]]);
   }
