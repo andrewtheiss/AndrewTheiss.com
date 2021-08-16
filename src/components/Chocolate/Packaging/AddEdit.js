@@ -97,6 +97,7 @@ class AddEditPackaging extends React.Component {
     return {
       category : this.state.category,
       label : this.state.label,
+      displayLabel : this.state.displayLabel,
       imageBase64 : this.state.imageBase64,
       latestAverageCostPerUnit : this.state.latestAverageCostPerUnit,
       latestAverageCostPerUnitBasedOnBarMold : this.state.latestAverageCostPerUnitBasedOnBarMold
@@ -209,6 +210,7 @@ class AddEditPackaging extends React.Component {
       />
       </div>
       Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" placeholder="" type="text"></input><br />
+      Display Label:  <input name="displayLabel"  onChange={this.onUpdateDetails} value={this.state.displayLabel} size="20" placeholder="" type="text"></input><br />
       Purcahsed Price: $<input name="purchasedPrice"  onChange={this.onUpdateDetails} value={this.state.purchasedPrice} size="10" type="text"></input><br />
       Count Purchased:  <input name="purchasedCount"  onChange={this.onUpdateDetails} value={this.state.purchasedCount} size="3" placeholder="1" type="text"></input><br />
       Units Per Item: <input name="unitsPerItem" disabled={disableBasedOnSelection} onChange={this.onUpdateDetails} value={this.state.unitsPerItem} size="3" placeholder="500"  type="text"></input><br />

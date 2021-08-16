@@ -8,6 +8,7 @@ export const PACKAGING_CATEGORIES = [
 
 export const PACKAGING_DEFAULT_DETAILS = {
   label : '',
+  displayLabel : '',
   category : '',
   categorySelection : [],
   categoryCategories : [
@@ -38,6 +39,7 @@ export const PACKAGING_DEFAULT_DETAILS = {
 
 export const PACKAGING_DEFAULT_DETAILS_PUBLIC = {
   label : '',
+  displayLabel : '',
   imageBase64 : '',
   latestAverageCostPerUnit : ''
 }

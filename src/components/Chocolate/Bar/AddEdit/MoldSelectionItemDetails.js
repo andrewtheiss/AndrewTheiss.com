@@ -150,6 +150,7 @@ class MoldSelectionItemDetails extends React.Component {
       let data = selectionData[key];
       let details = {
         imageBase64 : data['imageBase64'],
+        displayLabel : data['displayLabel'],
         latestAverageCostPerUnit : data['latestAverageCostPerUnit'],
       };
       type[key] = details;
