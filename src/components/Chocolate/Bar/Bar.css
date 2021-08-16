@@ -42,3 +42,9 @@
   display: inline-block;
   padding-left: 10px;
 }
+
+/*  Bar Preview */
+.barPreviewMold {
+  height: 300px;
+  width: 300px;
+}

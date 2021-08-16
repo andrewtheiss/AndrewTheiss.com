@@ -174,6 +174,9 @@ class SplitChocolateBatch extends React.Component {
     });
 
     // Comments!
+    if (!batch.Details.comments) {
+      batch.Details.comments = "";
+    }
     batch.Details.comments += this.state.additionalComments + " This batch was " + Math.round(pct*1000)/10 + "% of original:" + this.state.values.Details.label + " (which has also been adjusted proprtionally); ";
     return batch;
   }

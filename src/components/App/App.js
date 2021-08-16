@@ -2,7 +2,7 @@ import React from 'react';
 import Navigation from '../Navigation/Navigation.js';
 import './App.css';
 import { FirebaseContext } from '../Firebase';
-import { BrowserRouter as Router, Route, useParams} from 'react-router-dom';
+import { BrowserRouter as Router, Route} from 'react-router-dom';
 import * as ROUTES from '../../constants/routes.js'
 import { withAuthentication } from '../Session';
 
