@@ -82,6 +82,9 @@ const NavigationAdminAuth = () => (
           <Link to={ROUTES.CHOCOLATE.BAR}>Bars</Link>
         </li>
         <li>
+          <Link to={ROUTES.CHOCOLATE.BAR_ADD_EDIT}>Bar Add Edit</Link>
+        </li>
+        <li>
           <Link to={ROUTES.CHOCOLATE.BAR_DEPENDENCIES}>Bar Dependencies</Link>
         </li>
 

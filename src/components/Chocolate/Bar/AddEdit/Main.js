@@ -76,20 +76,6 @@ class AddEditBar extends React.Component {
     await this.setState(state);
   }
 
-  async formatBarForSet() {
-    /*
-    let latestAverageCostPerUnit = Math.round(Number(this.state.purchasedPrice / this.state.unitsPerItem)*100)/100 * Number((this.state.percentWaste / 100) + 1);
-    await   this.setState({latestAverageCostPerUnit});
-
-
-    return {
-      category : this.state.category,
-      label : this.state.label,
-      imageBase64 : this.state.imageBase64,
-      latestAverageCostPerUnit : this.state.latestAverageCostPerUnit
-    };
-    */
-  }
 
   validateBar() {
     let valid = true;
@@ -123,32 +109,29 @@ class AddEditBar extends React.Component {
   async setBar() {
     if (this.validateBar()) {
 
-      //let publicBar = await this.formatBarForSet();
       let barToWrite = JSON.parse(JSON.stringify(this.state));
       let bars = this.formatBarsForWrite();
+      
       // Used for rerendering
       delete barToWrite['value'];
 
       let documentToEdit = this.state.label;
-      //console.log(barToWrite);
-      console.log(bars);
-      /*
       const collectionRef = this.props.firebase.db.collection("barGroup");
       await collectionRef.doc(documentToEdit).set(barToWrite).then(() => {
         console.log('set bar group');
       });
-      */
-      // Set each individual bar!
 
+      // Set each individual bar!
       for (var i = 0; i < bars.length; i++) {
         let barsCollectionRef = this.props.firebase.db.collection("barsPublic");
-        await barsCollectionRef.doc(bars[i].id).set(bars[i]).then(() => {
-          console.log('set bar: ' + bars[i].id);
+        let barId = bars[i].id;
+        await barsCollectionRef.doc(barId).set(bars[i]).then(() => {
+          console.log('set bar: ' + barId);
         });
       }
 
-      //let state = CONSTS.DEFAULT_BAR;
-      //await this.setState(state);
+      let state = CONSTS.DEFAULT_BAR;
+      await this.setState(state);
     }
   }
 

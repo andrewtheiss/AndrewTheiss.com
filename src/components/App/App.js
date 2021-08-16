@@ -2,7 +2,7 @@ import React from 'react';
 import Navigation from '../Navigation/Navigation.js';
 import './App.css';
 import { FirebaseContext } from '../Firebase';
-import { BrowserRouter as Router, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Route, useParams} from 'react-router-dom';
 import * as ROUTES from '../../constants/routes.js'
 import { withAuthentication } from '../Session';
 
@@ -14,6 +14,7 @@ import SignUpPage from '../Session/SignUpForm.js'
 // Chocolate Pages
 import IngredientPage from '../Chocolate/Ingredient/Pages/IngredientPage.js'
 import BarLookupPage from '../Chocolate/Bar/Pages/Lookup.js'
+import BarAddEditPage from '../Chocolate/Bar/Pages/AddEdit.js'
 import BarConfigurePage from '../Chocolate/Bar/Pages/ConfigurePage.js'
 import BeanLookupPage from '../Chocolate/Bean/Pages/Lookup.js'
 import AddEditChocolateBatchPage from '../Chocolate/Batch/Pages/AddEdit.js'
@@ -41,6 +42,12 @@ const App = () => (
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
           {firebase => <Route exact path={ROUTES.CHOCOLATE.BAR} component={BarLookupPage} firebase={firebase} />}
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+          {firebase => <Route exact path={ROUTES.CHOCOLATE.BAR_LOOKUP} component={BarLookupPage} firebase={firebase} />}
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+          {firebase => <Route exact path={ROUTES.CHOCOLATE.BAR_ADD_EDIT} component={BarAddEditPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
           {firebase => <Route exact path={ROUTES.CHOCOLATE.BAR_DEPENDENCIES} component={BarConfigurePage} firebase={firebase} />}

@@ -11,6 +11,8 @@ export const CHOCOLATE = {
   INGREDIENT : '/chocolate/ingredient',
   BATCH : '/chocolate/batch',
   BAR : '/chocolate/bar',
+  BAR_LOOKUP : '/chocolate/bar/:barId',
+  BAR_ADD_EDIT : '/chocolate/barAddEdit',
   BAR_DEPENDENCIES : '/chocolate/barConfigure',
   INTENTION : '/chocolate/intention',
   TASTING : '/chocolate/tasting',
