@@ -57,12 +57,12 @@ class AddEditBar extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    let isEdit = this.props.itemSelectedForEdit;
+    this.itemSelectedForEdit = false;
     this.recalculateMolds = false;
 
     // Only do something if there's a change in the batchToEdit
     if (this.props !== prevProps) {
-      this.itemSelectedForEdit = false;
+      let isEdit = this.props.itemSelectedForEdit;
 
       // If there's something to edit or the props don't match the default
       if (isEdit) {

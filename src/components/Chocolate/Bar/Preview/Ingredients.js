@@ -1,15 +1,23 @@
 import React from 'react';
 import '../Bar.css'
+import FlavorProfilePreview from '../../Bean/FlavorProfilePreview.js'
+import * as CONSTS from '../../Bean/constants.js'
 
 // Props are:  ingredients, beans
 class PreviewIngredients extends React.Component {
   constructor(props) {
     super(props);
     this.generateIngredientsList = this.generateIngredientsList.bind(this);
-    this.beanList = [];
+    this.beanMap = {};
+
+    this.dimensions = {
+      width: 320,
+      height: 300
+    };
   }
 
     generateIngredientsList() {
+      let self = this;
       if (!this.props.ingredients || Object.keys(this.props.ingredients).length < 1) {
         return <div></div>
       }
@@ -21,20 +29,31 @@ class PreviewIngredients extends React.Component {
         }
 
         if (this.props.beans[index]) {
-          this.beanList.push(index);
+          let newBeanId = "Chocolate Bean: " + this.props.beans[index].displayLabel;
+          this.beanMap[newBeanId] = this.props.beans[index];
           let value = ingredients[index];
           delete ingredients[index];
-          ingredients["Chocolate Bean: " + this.props.beans[index].displayLabel] = value;
+          ingredients[newBeanId] = value;
         }
       }
 
-      return Object.keys(ingredients).map((key) => (
-        <div key={key} className="barPreviewIngredientsContainerSingleIngredient">{key}: <b>{Math.round(ingredients[key] * 100) / 100}g</b>
-          <b className=""></b>
-          {console.log(key)}
-        </div>
-      ))
+
+      let ingredientsList = Object.keys(ingredients).map((key) => {
+        return self.beanMap[key] ?
+          <div key={key} className="barPreviewIngredientsContainerSingleIngredient">{key}: <b>{Math.round(ingredients[key] * 100) / 100}g</b>
+            <b className=""></b>
+            <FlavorProfilePreview bean={{flavorArrays : CONSTS.GetFlavorProfileAsArrays(self.beanMap[key].flavorProfile)}} dimensions={self.dimensions} key="b3" />
+            {console.log(CONSTS.GetFlavorProfileAsArrays(self.beanMap[key].flavorProfile))}
+          </div>
+          :
+          <div key={key} className="barPreviewIngredientsContainerSingleIngredient">{key}: <b>{Math.round(ingredients[key] * 100) / 100}g</b>
+            <b className=""></b>
+          </div>
+      });
+
+      return ingredientsList;
     }
+
 
   render() {
     let ingredientsList = this.generateIngredientsList();
@@ -45,6 +64,8 @@ class PreviewIngredients extends React.Component {
         {ingredientsList}
         <div>
           Bean Spider Chart
+
+
           {JSON.stringify(this.beanList)}
         </div>
       </div>

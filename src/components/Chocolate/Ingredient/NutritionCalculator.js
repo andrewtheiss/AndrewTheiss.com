@@ -101,7 +101,7 @@ class NutritionCalculator extends React.Component {
       if (beans !== undefined) {
         for (let i = 0; i < beans.length; i++) {
           this.addToRunningTotal(CONSTS.BEAN_NUTRITION_DB_ID, Number(beans[i].nibWeightInGrams));
-          this.orderedIngredientList.push({label : CONSTS.BEAN_NUTRITION_DB_ID, quantity : Number(beans[i].nibWeightInGrams)});
+          this.orderedIngredientList.push({label : "Cocoa Beans", quantity : Number(beans[i].nibWeightInGrams)});
         }
       }
     }
