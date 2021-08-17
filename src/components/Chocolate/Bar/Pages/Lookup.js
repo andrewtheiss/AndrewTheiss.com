@@ -1,6 +1,6 @@
 import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
-import BarPreview from '../Preview.js'
+import PreviewAllBarDetails from '../Preview/AllBarDetails.js'
 
 
 class BarLookupPage extends React.Component {
@@ -13,7 +13,7 @@ class BarLookupPage extends React.Component {
     return (
       <div>
         <FirebaseContext.Consumer>
-          {firebase => <BarPreview barId={barId} firebase={firebase} />}
+          {firebase => <PreviewAllBarDetails barId={barId} firebase={firebase} />}
         </FirebaseContext.Consumer>
         </div>
     );

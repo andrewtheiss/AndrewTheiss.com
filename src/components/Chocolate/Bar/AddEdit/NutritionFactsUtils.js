@@ -4,7 +4,6 @@ export const ExtractBeansFromIngredientList = function(beansDbList, batchesIngre
   let beans = {};
   for (var potentialBeanIdx in batchesIngredients) {
       if (beansDbList[potentialBeanIdx]) {
-        let beanToAdd = beansDbList[potentialBeanIdx];
         let bean = {
           value : beansDbList[potentialBeanIdx].value,
           displayLabel : beansDbList[potentialBeanIdx].displayLabel,

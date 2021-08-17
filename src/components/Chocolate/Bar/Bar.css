@@ -47,4 +47,69 @@
 .barPreviewMold {
   height: 300px;
   width: 300px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-bottom: 1px solid #ccc;
+}
+
+.barPreviewPackagingImg {
+  width: 120px;
+  height: 120px;
+}
+
+.barPreviewPackagingSelectionTypeSingleItemContainer {
+  width: 120px;
+  margin: 0px auto;
+  padding: 2px;
+  display: inline-block;
+}
+
+.barPreviewContainer {
+  width: 400px;
+  border: 1px solid black;
+}
+
+.barSelectionTypeSingleItemDisplayLabel {
+  padding: 7px;
+  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.barPreviewPackagingTitle {
+  margin-top: 10px;
+  float: left;
+  padding-left: 20px;
+}
+
+.barPreviewClearBoth {
+  clear: both;
+}
+
+.barPreviewPackaging {
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  font-size: 1.1em;
+}
+
+.barPreviewIngredients {}
+
+.barPreviewIngredientsContainer {
+  font-size: 1.1em;
+  margin: 20px;
+  line-height: 2em;
+}
+
+.barPreviewIngredientsContainerSingleIngredient {
+  border-bottom: 1px solid #ddd;
+}
+
+.barPreviewNutritionFacts {
+  width: 240px;
+  margin: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }

@@ -73,6 +73,7 @@ class NutritionFactsPreview extends React.Component {
     let id = Math.floor(Math.random() * 1000000);
     this.uniqueId = 'nutritionFactsPreview_' + id;
     this.footerUniqueId = 'nutritionFactsPreviewFooter_' + id;
+
   }
 
   generatePrimaryDetails() {
