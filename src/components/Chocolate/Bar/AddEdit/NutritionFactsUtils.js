@@ -1,9 +1,20 @@
 import * as NUTRITION_UTILS from '../../Ingredient/NutritionUtils.js'
 
-export const RecalculateNutritionFactsPerGram = async function(batchesIncluded, batchesCollectionRef, docIdPath, ingredientsDbList) {
+export const ExtractBeansFromIngredientList = function(beansDbList, batchesIngredients) {
+  let beans = {};
+  for (var potentialBeanIdx in batchesIngredients) {
+      if (beansDbList[potentialBeanIdx]) {
+          beans[potentialBeanIdx] = beansDbList[potentialBeanIdx];
+      }
+  }
+  return beans;
+}
+
+export const RecalculateNutritionFactsPerGram = async function(batchesIncluded, batchesCollectionRef, docIdPath, ingredientsDbList, beansDbList) {
   let nutritionFacts = {};
   let batchesIngredients = {};
   let ingredientsLabel = "";
+  let beans = {};
 
   let ids = Object.keys(batchesIncluded);
   if (ids.length > 10) {
@@ -44,10 +55,15 @@ export const RecalculateNutritionFactsPerGram = async function(batchesIncluded, 
     }).catch((error) => {
       console.log('failure' , error);
     });
+
+    // Grab beans out from ingredients and beansDbList
+    beans = ExtractBeansFromIngredientList(beansDbList, batchesIngredients);
   }
 
+
+
   // Generate Ingredients label
-  return [nutritionFacts, batchesIngredients, ingredientsLabel];
+  return [nutritionFacts, batchesIngredients, ingredientsLabel, beans];
 }
 
 export const AdjustNutritionFactsAndServingSizeForBar = function(nutritionFacts, barMold) {

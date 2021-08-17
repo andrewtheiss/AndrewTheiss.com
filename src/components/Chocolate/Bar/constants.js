@@ -59,7 +59,7 @@ export const DEFAULT_BAR = {
   batchesIncluded : BATCHES_INCLUDED,
 
   nutritionFacts : {},
-  ingerdients : {},
+  ingredients : {},
 
   // How many bars are poured for this batch and from what molds
   barsFromMolds : {

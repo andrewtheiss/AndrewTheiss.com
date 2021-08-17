@@ -24,6 +24,7 @@ class AddEditBar extends React.Component {
     this.formatBarsForWrite = this.formatBarsForWrite.bind(this);
 
     this.ingredientListOneTimeStorage = null;
+    this.beansListOneTimeStorage = null;
 
     this.isEdit = false;
     this.recalculateMolds = false;
@@ -43,6 +44,15 @@ class AddEditBar extends React.Component {
       });
 
       self.ingredientListOneTimeStorage = ingredients;
+    });
+    const beansCollectionRef = this.props.firebase.db.collection("beans");
+    await beansCollectionRef.get().then(function(collectionDocs) {
+      var beans = {};
+      collectionDocs.forEach(function(doc) {
+        beans[doc.id] = doc.data();
+      });
+
+      self.beansListOneTimeStorage = beans;
     });
   }
 
@@ -111,7 +121,7 @@ class AddEditBar extends React.Component {
 
       let barToWrite = JSON.parse(JSON.stringify(this.state));
       let bars = this.formatBarsForWrite();
-      
+
       // Used for rerendering
       delete barToWrite['value'];
 
@@ -163,7 +173,8 @@ class AddEditBar extends React.Component {
       batchesIncludedToFormat.batchesIncludedPct,
       this.props.firebase.db.collection("batchesPublic"),
       this.props.firebase.firebase.firestore.FieldPath.documentId(),
-      this.ingredientListOneTimeStorage
+      this.ingredientListOneTimeStorage,
+      this.beansListOneTimeStorage
     );
     this.updateIngredientsAndNutrition = true;
 
@@ -174,7 +185,8 @@ class AddEditBar extends React.Component {
       totalCost : batchesIncludedToFormat.batchesIncludedTotalCost,
       nutritionFacts : nutritionFactsIngredientsAndLabel[0],
       batchIngredients : nutritionFactsIngredientsAndLabel[1],
-      ingredients : nutritionFactsIngredientsAndLabel[2]
+      ingredients : nutritionFactsIngredientsAndLabel[2],
+      beans : nutritionFactsIngredientsAndLabel[3]
     };
     let value = Math.random();
 
