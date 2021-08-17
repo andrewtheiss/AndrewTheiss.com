@@ -51,8 +51,8 @@ class AddEditBean extends React.Component {
 
   async setBean() {
 
-    if (this.state.label) {
-      let documentToEdit = this.state.label;
+    if (this.state.value) {
+      let documentToEdit = this.state.value;
       const publicCollectionRef = this.props.firebase.db.collection("beansPublic");
       await publicCollectionRef.doc(documentToEdit).set(this.state).then(() => {
         console.log('set public beans');
@@ -71,6 +71,7 @@ class AddEditBean extends React.Component {
     return (
       <div>
       Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" type="text"></input><br />
+      Uniquie DB Value Label:  <input name="value"  onChange={this.onUpdateDetails} value={this.state.value} size="10" type="text"></input><br />
       Display Label:  <input name="displayLabel"  onChange={this.onUpdateDetails} value={this.state.displayLabel} size="20" type="text"></input><br />
       Price: <input name="price"  onChange={this.onUpdateDetails} value={this.state.price} size="6" type="text"></input><br />
       Purchase Lbs: <input name="purchaseLbs"  onChange={this.onUpdateDetails} value={this.state.purchaseLbs} size="6" type="text"></input><br />

@@ -199,18 +199,34 @@ class MoldSelectionItemDetails extends React.Component {
       this.state,
       this.props.batchesIncluded
     );
+    let state = this.state;
 
     if (Object.keys(moldNutritionFacts).length !== 0) {
-      let state = this.state;
       state.nutritionFacts = moldNutritionFacts;
       state.ingredients = this.props.batchesIncluded.ingredients;
-      await this.setState(state);
     } else {
-      let state = this.state;
       state.nutritionFacts = {};
       state.ingredients = "";
-      await this.setState(state);
     }
+
+    let beansIncluded = this.props.batchesIncluded.beans;
+    let beans = {};
+    if (beansIncluded && Object.keys(beansIncluded).length > 0) {
+      beans = beansIncluded;
+    }
+    state.beans = beans;
+
+    let adjustedBatchIngredients = JSON.parse(JSON.stringify(this.props.batchesIncluded.batchIngredients));
+    let ingredientKeys = Object.keys(this.props.batchesIncluded.batchIngredients);
+    if (ingredientKeys && ingredientKeys.length > 0) {
+      for (var keyIndex in ingredientKeys) {
+        let key = ingredientKeys[keyIndex];
+        adjustedBatchIngredients[key] = Math.round(1000 * adjustedBatchIngredients[key] * this.props.barMoldSelectionItemDetail.barWeight / this.props.batchesIncluded.totalWeightInGrams)/1000;
+      }
+      state.batchIngredients = JSON.parse(JSON.stringify(adjustedBatchIngredients));
+    }
+    await this.setState(state);
+    this.recalculateUpstreamBarCosts();
   }
 
   render() {

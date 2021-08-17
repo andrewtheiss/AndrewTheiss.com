@@ -35,7 +35,8 @@ export const BAR_FROM_MOLD_DETAILS = {
   totals : {
     packagingPrice : 0,
     weight : 0
-  }
+  },
+  batchIngredients : {}
 }
 
 export const BAR_MOLD_CATEGORIES_ARRAY = ['wrap', 'overwrap', 'label'];

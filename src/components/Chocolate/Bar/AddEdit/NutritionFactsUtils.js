@@ -4,7 +4,14 @@ export const ExtractBeansFromIngredientList = function(beansDbList, batchesIngre
   let beans = {};
   for (var potentialBeanIdx in batchesIngredients) {
       if (beansDbList[potentialBeanIdx]) {
-          beans[potentialBeanIdx] = beansDbList[potentialBeanIdx];
+        let beanToAdd = beansDbList[potentialBeanIdx];
+        let bean = {
+          value : beansDbList[potentialBeanIdx].value,
+          displayLabel : beansDbList[potentialBeanIdx].displayLabel,
+          flavorProfile : beansDbList[potentialBeanIdx].flavorProfile,
+          imageBase64 : beansDbList[potentialBeanIdx].imageBase64
+        };
+        beans[potentialBeanIdx] = JSON.parse(JSON.stringify(bean));
       }
   }
   return beans;
@@ -47,7 +54,7 @@ export const RecalculateNutritionFactsPerGram = async function(batchesIncluded, 
           if (batchesIngredients[key] === undefined) {
             batchesIngredients[key] = 0;
           }
-          batchesIngredients[key] =+ Math.round(batchIngredients[key] * (nutritionFactsPct / 100));
+          batchesIngredients[key] += Math.round(batchIngredients[key] * (nutritionFactsPct / 100));
         });
 
         ingredientsLabel = NUTRITION_UTILS.GenerateOrderedIngredientList(batchIngredients, ingredientsDbList);
