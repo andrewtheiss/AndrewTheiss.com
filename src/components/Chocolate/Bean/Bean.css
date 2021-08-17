@@ -46,3 +46,13 @@
 .beanDetailsNotes {
   padding: 10px;
 }
+
+.flavorProfileAdditionDetails {
+  width: 200px;
+  float: left;
+  display: inline-block;
+}
+
+.flavorProfileAdditionPreview {
+  display: inline-block;
+}

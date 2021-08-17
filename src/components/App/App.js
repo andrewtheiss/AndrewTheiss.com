@@ -17,6 +17,7 @@ import BarLookupPage from '../Chocolate/Bar/Pages/Lookup.js'
 import BarAddEditPage from '../Chocolate/Bar/Pages/AddEdit.js'
 import BarConfigurePage from '../Chocolate/Bar/Pages/ConfigurePage.js'
 import BeanLookupPage from '../Chocolate/Bean/Pages/Lookup.js'
+import BeanMainPage from '../Chocolate/Bean/Pages/Main.js'
 import AddEditChocolateBatchPage from '../Chocolate/Batch/Pages/AddEdit.js'
 
 const App = () => (
@@ -29,7 +30,7 @@ const App = () => (
       </FirebaseContext.Consumer>
       <Route path={ROUTES.SCRIPTS} component={ScriptsPage} />
       <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.BEAN} component={BeanLookupPage} firebase={firebase} />}
+          {firebase => <Route path={ROUTES.CHOCOLATE.BEAN} component={BeanMainPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
           {firebase => <Route path={ROUTES.CHOCOLATE.INGREDIENT} component={IngredientPage} firebase={firebase} />}

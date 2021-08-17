@@ -44,7 +44,7 @@ class BeanPreparation extends React.Component {
       beanCollectionDocs.forEach(function(doc) {
         beansMap[doc.id] = doc.data();
         beanOptions.push({
-          label : doc.data()['name'],
+          label : doc.data()['label'],
           value : doc.id,
           pricePerKilogram : self.pricePerLbToKilogramConversion(doc.data()['price'],doc.data()['purchaseLbs'])
         });

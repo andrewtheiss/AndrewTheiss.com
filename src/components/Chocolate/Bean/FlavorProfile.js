@@ -1,158 +1,75 @@
 import React from 'react';
-import StaticCanvas from '../../Utils/StaticCanvas.js'
+import * as CONSTS from './constants.js'
+import FlavorProfilePreview from './FlavorProfilePreview.js'
+import './Bean.css'
 
 class FlavorProfile extends React.Component {
-  canvasRef: React.RefObject<HTMLCanvasElement>;
-  canvas: HTMLCanvasElement | null;
-  ctx: CanvasRenderingContext2D | null;
-  canvasBounding: DOMRect | null;
   constructor(props) {
     super(props);
-    this.canvasRef = React.createRef();
-    this.canvas = null;
-    this.ctx = null;
-    this.canvasBounding = null;
+    this.onUpdateDetails = this.onUpdateDetails.bind(this);
 
-    this.updateAnimationState = this.updateAnimationState.bind(this);
-    this.renderFlavorProfile = this.renderFlavorProfile.bind(this)
-    this.state = {
-      flavorProfile : {},
-      selectedBeanId : undefined,
-      name: "",
-      angle: 0
+    this.dimensions = {
+      width: 500,
+      height: 500
     };
 
+    if (!this.props.flavorProfile) {
+      this.state = CONSTS.FLAVOR_PROFILE;
+    } else {
+      this.state = this.props.flavorProfile;
+    }
   }
 
-    // Draw and label web
-    // Input values if they exist
-  renderFlavorProfile(ctx, width, height) {
+  componentDidUpdate(prevProps) {
 
-    // Draw Web
-    ctx.save();
-    ctx.clearRect(0, 0, width, height);
-    ctx.shadowBlur = 1;
-    ctx.lineWidth = 0.3;
-    ctx.shadowColor = 'rgb(255, 255, 255)';
-    let spiderPercentageOfSpace = 0.7;
-    let distancePerLevel = (Math.min(width/2, height/2) * spiderPercentageOfSpace) / 5;
-    let centerx = width / 2;
-    let centery = height / 2;
-    ctx.beginPath();
-    let spiderSize = 9;
-    for (let level = 1; level < 6; level++) {
+    // Only do something if there's a change
+    if (this.props !== prevProps) {
+      let isEdit = this.props.itemSelectedForEdit;
 
-      let ogX = Math.sin(((2 * Math.PI) / spiderSize)) * distancePerLevel * level;
-      let ogY = Math.cos(((2 * Math.PI) / spiderSize)) * distancePerLevel * level;
-      ctx.moveTo(ogX + centerx,ogY + centery);
-      for (let i = 0; i <= spiderSize; i++) {
-        let angle = ((2 * Math.PI) / spiderSize) * i;
-
-        let x = Math.sin(angle) * distancePerLevel * level;
-        let y = Math.cos(angle) * distancePerLevel * level;
-        ctx.lineTo(x + centerx,y + centery);
-
-        if (level === 5) {
-          let x = Math.sin(angle) * distancePerLevel * (level+1);
-          let y = Math.cos(angle) * distancePerLevel * (level+1);
-          if (this.props.preview) {
-            ctx.font = "12px Helvetica";
-          } else {
-            ctx.font = "20px Helvetica";
-          }
-          ctx.textAlign = "center";
-          if (i < spiderSize) {
-            if (this.props.bean && this.props.bean.flavorArrays) {
-              ctx.fillText(this.props.bean.flavorArrays[i][0], x + centerx,y + centery);
-            }
-          }
+      // If there's something to edit or the props don't match the default
+      if (isEdit) {
+        // Save the selected label we selected for edit
+        if (this.props.flavorProfile) {
+          let flavorProfile = this.props.flavorProfile;
+          this.setState(flavorProfile);
         }
       }
-
-      for (let i = 0; i <= spiderSize; i++) {
-        let angle = ((2 * Math.PI) / spiderSize) * i;
-
-        ctx.moveTo(centerx,centery);
-        let x = Math.sin(angle) * distancePerLevel * level;
-        let y = Math.cos(angle) * distancePerLevel * level;
-        ctx.lineTo(x + centerx,y + centery);
-      }
-    }
-    ctx.closePath();
-    ctx.stroke();
-
-    ctx.beginPath();
-    if (this.props.preview) {
-      ctx.lineWidth = 1.5;
-      ctx.shadowBlur = 1;
-    } else {
-      ctx.lineWidth = 3;
-      ctx.shadowBlur = 2;
-    }
-    ctx.shadowColor = 'rgb(0, 0, 0)';
-    // Draw spider graph
-    if (this.props.bean && this.props.bean.flavorArrays) {
-        let x1 = Math.sin(0) * distancePerLevel * this.props.bean.flavorArrays[0][1];
-        let y1 = Math.cos(0) * distancePerLevel * this.props.bean.flavorArrays[0][1];
-        ctx.moveTo(x1 + centerx,y1 + centery);
-
-      for (let i = 0; i < this.props.bean.flavorArrays.length; i++) {
-        let angle = ((2 * Math.PI) / spiderSize) * i;
-
-        let x = Math.sin(angle) * distancePerLevel * this.props.bean.flavorArrays[i][1];
-        let y = Math.cos(angle) * distancePerLevel * this.props.bean.flavorArrays[i][1];
-        ctx.lineTo(x + centerx,y + centery);
-
-      }
-        ctx.lineTo(x1 + centerx,y1 + centery);
-    }
-
-    ctx.closePath();
-    ctx.stroke();
-
-    // Label Web
-
-    ctx.restore();
-    return ctx;
-  }
-
-  // On state change IF state changes, re-render here
-  updateAnimationState() {
-    this.setState(prevState => ({ angle: prevState.angle + 1 }));
-    //this.rAF = requestAnimationFrame(this.updateAnimationState);
-  }
-
-  componentWillUnmount() {
-    cancelAnimationFrame(this.rAF);
-  }
-
-  getContext() {
-    this.canvas = this.canvasRef.current;
-    if (this.canvas) {
-      this.ctx = this.canvas.getContext("2d");
     }
   }
-  getCanvasBounding() {
-    if (this.canvas) {
-      this.canvasBounding = this.canvas.getBoundingClientRect();
+
+  async onUpdateDetails(event) {
+    var state = this.state;
+    state[event.target.name] = Number(event.target.value);
+    await this.setState(state);
+
+    if (this.props.onUpdate) {
+      this.props.onUpdate(this.state);
     }
   }
-  componentDidMount() {
-    this.getContext();
-    this.getCanvasBounding();
-    this.rAF = requestAnimationFrame(this.updateAnimationState);
-  }
-  componentDidUpdate() {
-    this.getCanvasBounding();
-  }
+
   render() {
+    let beanFlavorProfileArray = {
+      flavorArrays : CONSTS.GetFlavorProfileAsArrays(this.props.flavorProfile)
+    };
     return (
-      [<StaticCanvas key="0"
-        staticRenderFunction={this.renderFlavorProfile}
-        dimensions={this.props.dimensions}
-        />,
-        <div key="1">{this.props.name}</div>]
-    );
+      <div>
+        <div className="flavorProfileAdditionDetails">
+        <h5>Flavor Profile</h5>
+        Acidity:  <input name="acidity"  onChange={this.onUpdateDetails} value={this.state.acidity} size="5" type="text"></input><br />
+        Astringent:  <input name="astringent"  onChange={this.onUpdateDetails} value={this.state.astringent} size="5" type="text"></input><br />
+        Bitter:  <input name="bitter"  onChange={this.onUpdateDetails} value={this.state.bitter} size="5" type="text"></input><br />
+        Chocolate:  <input name="chocolate"  onChange={this.onUpdateDetails} value={this.state.chocolate} size="5" type="text"></input><br />
+        Earthy:  <input name="earthy"  onChange={this.onUpdateDetails} value={this.state.earthy} size="5" type="text"></input><br />
+        Floral:  <input name="floral"  onChange={this.onUpdateDetails} value={this.state.floral} size="5" type="text"></input><br />
+        Fruity:  <input name="fruity"  onChange={this.onUpdateDetails} value={this.state.fruity} size="5" type="text"></input><br />
+        Nutty:  <input name="nutty"  onChange={this.onUpdateDetails} value={this.state.nutty} size="5" type="text"></input><br />
+        Sweet:  <input name="sweet"  onChange={this.onUpdateDetails} value={this.state.sweet} size="5" type="text"></input><br />
+        </div>
+        <div className="flavorProfileAdditionPreview">
+          <FlavorProfilePreview bean={beanFlavorProfileArray} dimensions={this.dimensions} key="b3" />
+        </div>
+      </div>
+    )
   }
 }
 

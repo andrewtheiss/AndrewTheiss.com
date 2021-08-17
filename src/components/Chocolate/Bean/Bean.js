@@ -1,5 +1,5 @@
 import React from 'react';
-import FlavorProfile from './FlavorProfile.js'
+import FlavorProfilePreview from './FlavorProfilePreview.js'
 import BeanDetails from './BeanDetails.js'
 import './Bean.css';
 
@@ -104,12 +104,12 @@ class Bean extends React.Component {
         ))}
         </div>
         <div key="b1" className="beanPreview">
-          <FlavorProfile preview={true} bean={this.previewBean} dimensions={this.previewDimensions} />
+          <FlavorProfilePreview preview={true} bean={this.previewBean} dimensions={this.previewDimensions} />
         </div>
         <div className="beanOptions">
           <input type="checkbox" defaultChecked="checked" id="showLatestBeans" name="showLatestBeans" value="showLatestBeans"/>
             <label htmlFor="showLatestBeans">Show Recent Beans</label></div>
-        <FlavorProfile bean={this.selectedBean} dimensions={this.dimensions} key="b3" />
+        <FlavorProfilePreview bean={this.selectedBean} dimensions={this.dimensions} key="b3" />
         <BeanDetails bean={this.selectedBean} />
       </div>
     );
