@@ -11,6 +11,8 @@ import ScriptsPage from '../Scripts/Pages/ScriptsPage.js'
 import SignInPage from '../Session/SignInPage.js'
 import SignUpPage from '../Session/SignUpForm.js'
 
+import SplashPage from './SplashPage.js'
+
 // Chocolate Pages
 import IngredientPage from '../Chocolate/Ingredient/Pages/IngredientPage.js'
 import BarLookupPage from '../Chocolate/Bar/Pages/Lookup.js'
@@ -20,6 +22,7 @@ import BeanLookupPage from '../Chocolate/Bean/Pages/Lookup.js'
 import BeanMainPage from '../Chocolate/Bean/Pages/Main.js'
 import AddEditChocolateBatchPage from '../Chocolate/Batch/Pages/AddEdit.js'
 import TastingMainPage from '../Chocolate/Tasting/Pages/MainPage.js'
+import TastingLookupPage from '../Chocolate/Tasting/Pages/Lookup.js'
 
 const App = () => (
   <Router>
@@ -27,7 +30,7 @@ const App = () => (
 
     <div className="app-container">
       <FirebaseContext.Consumer>
-            {firebase => <Route exact path={ROUTES.LANDING} component={BeanLookupPage} firebase={firebase} />}
+            {firebase => <Route exact path={ROUTES.LANDING} component={SplashPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <Route path={ROUTES.SCRIPTS} component={ScriptsPage} />
       <FirebaseContext.Consumer>
@@ -55,7 +58,10 @@ const App = () => (
           {firebase => <Route exact path={ROUTES.CHOCOLATE.BAR_DEPENDENCIES} component={BarConfigurePage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.TASTING} component={TastingMainPage} firebase={firebase} />}
+          {firebase => <Route path={ROUTES.CHOCOLATE.TASTING} component={TastingLookupPage} firebase={firebase} />}
+      </FirebaseContext.Consumer>
+      <FirebaseContext.Consumer>
+          {firebase => <Route exact path={ROUTES.CHOCOLATE.TASTING_ADD_EDIT} component={TastingMainPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <Route path={ROUTES.SIGNUP} component={SignUpPage} />
       <FirebaseContext.Consumer>

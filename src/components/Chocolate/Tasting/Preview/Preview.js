@@ -49,8 +49,8 @@ class TastingPreview extends React.Component {
 
     // If we give this a tastingId
     let tasting = {};
-    if (this.props.tasting === {}) {
-      const docRef = this.props.firebase.db.collection("tasting").doc(this.props.tastingId);
+    if (!this.props.tasting || Object.keys(this.props.tasting).length === 0) {
+      const docRef = this.props.firebase.db.collection("tastingPublic").doc(this.props.tastingId);
       await docRef.get().then(function(doc) {
         if (doc.exists) {
           tasting = doc.data();
@@ -59,7 +59,7 @@ class TastingPreview extends React.Component {
       });
     } else {
         tasting = this.props.tasting;
-        await self.setState({tasting});
+        self.setState({tasting});
     }
   }
 
@@ -70,7 +70,7 @@ class TastingPreview extends React.Component {
 
   generateBarComparisonImages() {
     let barPreview = <td></td>;
-    let bars = this.props.tasting.bars;
+    let bars = this.state.tasting.bars;
     if (bars && Object.keys(bars).length > 0) {
       barPreview = Object.keys(bars).map((key) => (
         <td key={key} className="">
@@ -83,7 +83,7 @@ class TastingPreview extends React.Component {
 
   generateBarComparisonPackaging() {
     let barPreview = <td></td>;
-    let bars = this.props.tasting.bars;
+    let bars = this.state.tasting.bars;
     if (bars && Object.keys(bars).length > 0) {
       barPreview = Object.keys(bars).map((key) => (
         <td key={key} className="">
@@ -97,12 +97,12 @@ class TastingPreview extends React.Component {
   generateBarComparisonIngredients() {
     let barPreview = <td></td>;
     let self = this;
-    let bars = this.props.tasting.bars;
+    let bars = this.state.tasting.bars;
     if (bars && Object.keys(bars).length > 0) {
       barPreview = Object.keys(bars).map((key) => (
         <td key={key} className="">
           <PreviewIngredients
-          highlightType={self.props.tasting}
+          highlightType={self.state.tasting}
           ingredientsListForHighlightType={self.state.ingredientsList}
           ingredients={bars[key]['batchIngredients']}
           beans={bars[key]['beans']} />
@@ -114,7 +114,7 @@ class TastingPreview extends React.Component {
 
   generateBarComparisonNutritionFacts() {
     let barPreview = <td></td>;
-    let bars = this.props.tasting.bars;
+    let bars = this.state.tasting.bars;
     if (bars && Object.keys(bars).length > 0) {
       barPreview = Object.keys(bars).map((key) => (
         <td key={key}>
@@ -128,6 +128,9 @@ class TastingPreview extends React.Component {
   }
 
   render() {
+    if (!this.state.tasting || Object.keys(this.state.tasting).length === 0) {
+      return <div></div>
+    }
     let barImages = this.generateBarComparisonImages();
     let barPackaging = this.generateBarComparisonPackaging();
     let barIngredients = this.generateBarComparisonIngredients();
@@ -137,11 +140,11 @@ class TastingPreview extends React.Component {
       <div>
         <div>
           <h1 className="barTastingPreviewTitle">Bar Tasting:</h1>
-          <h2  className="barTastingPreviewLabel">{this.props.tasting.label}</h2>
+          <h2  className="barTastingPreviewLabel">{this.state.tasting.label}</h2>
         </div>
         <div>
-          <p className="tastingPreviewTitle">{this.props.tasting.notes}</p>
-          <p className="tastingPreviewTitle minor">{this.props.tasting.notesMinor}</p>
+          <p className="tastingPreviewTitle">{this.state.tasting.notes}</p>
+          <p className="tastingPreviewTitle minor">{this.state.tasting.notesMinor}</p>
           <table  className="tastingSideBySideBarComparisonConainer">
           <tbody>
             <tr className="tastingSideBySideBarImages">

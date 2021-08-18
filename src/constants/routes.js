@@ -15,7 +15,9 @@ export const CHOCOLATE = {
   BAR_ADD_EDIT : '/chocolate/barAddEdit',
   BAR_DEPENDENCIES : '/chocolate/barConfigure',
   INTENTION : '/chocolate/intention',
-  TASTING : '/chocolate/tasting',
+  TASTING : '/chocolate/tasting/:tastingId',
+  TASTING_ROOT : '/chocolate/tasting/',
+  TASTING_ADD_EDIT : '/chocolate/tastingAddEdit',
   LANDING : '/chocolate',
   BEAN : '/chocolate/bean'
 };

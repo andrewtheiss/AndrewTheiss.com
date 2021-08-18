@@ -89,3 +89,8 @@
   max-width: 700px;
   margin: auto;
 }
+
+.tastingPreviewContainer {
+  width: 800px;
+  margin: 20px;
+}

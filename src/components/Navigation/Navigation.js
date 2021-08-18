@@ -48,7 +48,7 @@ const NavigationAnyAuth = () => (
   </li>
     <ul>
       <li>
-        <Link to={ROUTES.CHOCOLATE.TASTING}>Tasting</Link>
+        <Link to={ROUTES.CHOCOLATE.TASTING_ROOT}>Tasting</Link>
       </li>
     </ul>
 </ul>
@@ -85,7 +85,10 @@ const NavigationAdminAuth = () => (
           <Link to={ROUTES.CHOCOLATE.BAR_DEPENDENCIES}>Bar Dependencies</Link>
         </li>
         <li>
-          <Link to={ROUTES.CHOCOLATE.TASTING}>Tasting</Link>
+          <Link to={ROUTES.CHOCOLATE.TASTING_ROOT}>Tasting</Link>
+        </li>
+        <li>
+          <Link to={ROUTES.CHOCOLATE.TASTING_ADD_EDIT}>Tasting Add Edit</Link>
         </li>
 
     </ul>
