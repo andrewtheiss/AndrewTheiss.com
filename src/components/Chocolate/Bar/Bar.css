@@ -45,7 +45,7 @@
 
 /*  Bar Preview */
 .barPreviewMold {
-  height: 300px;
+  padding: 20px;
   width: 300px;
   display: block;
   margin-left: auto;
@@ -104,6 +104,13 @@
 
 .barPreviewIngredientsContainerSingleIngredient {
   border-bottom: 1px solid #ddd;
+}
+
+.barPreviewIngredientsContainerSingleIngredient.highlighted {
+  background-color: #dfc;
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: 600;
 }
 
 .barPreviewNutritionFacts {

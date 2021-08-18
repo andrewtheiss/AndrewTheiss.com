@@ -13,7 +13,8 @@ class AddEditTasting extends React.Component {
     this.setSelected = this.setSelected.bind(this);
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
     this.setStateAndUpdateParent = this.setStateAndUpdateParent.bind(this);
-    this.setTastingSelected = this.setTastingSelected.bind(this);
+    this.setTastingTypeSelected = this.setTastingTypeSelected.bind(this);
+    this.formatTastingTypeAndBarSelections = this.formatTastingTypeAndBarSelections.bind(this);
 
     this.state = CONSTS.TASTING_DEFAULT_PROPS;
   }
@@ -22,19 +23,34 @@ class AddEditTasting extends React.Component {
   componentDidUpdate(prevProps) {
 
     // Only do something if there's a change in the batchToEdit
-    if (this.props !== prevProps) {
+    if (this.props.itemSelectedForEdit !== prevProps.itemSelectedForEdit) {
       let isEdit = this.props.itemSelectedForEdit;
 
       // If there's something to edit or the props don't match the default
       if (isEdit) {
         // Save the selected label we selected for edit
-        this.setStateAndUpdateParent(this.props.itemSelectedForEdit);
+        this.formatTastingTypeAndBarSelections();
 
       } else if (prevProps.itemSelectedForEdit !== this.props.itemSelectedForEdit){
         this.setStateAndUpdateParent(CONSTS.TASTING_DEFAULT_PROPS);
 
       }
     }
+  }
+
+  formatTastingTypeAndBarSelections() {
+    let tastingTypeSelection = [{label : this.props.itemSelectedForEdit.type, value : this.props.itemSelectedForEdit.type}];
+    let barsSelected = [];
+
+    let bars = this.props.itemSelectedForEdit.bars;
+    let barKeys = Object.keys(bars);
+    for (var i in barKeys) {
+        barsSelected.push({label : barKeys[i], value : barKeys[i]});
+    }
+    let itemSelectedForEdit = this.props.itemSelectedForEdit;
+    itemSelectedForEdit['tastingTypeSelection'] = tastingTypeSelection;
+    itemSelectedForEdit['barsSelected'] = barsSelected;
+    this.setStateAndUpdateParent(itemSelectedForEdit);
   }
 
   // Get data from DB in this function
@@ -84,15 +100,13 @@ class AddEditTasting extends React.Component {
 
     let tastingToWrite = JSON.parse(JSON.stringify(this.state));
     delete tastingToWrite['allBars'];
+    delete tastingToWrite['barsSelected'];
+    delete tastingToWrite['tastingTypeSelection'];
     delete tastingToWrite['allBarsSelectionOptions'];
 
     const publicCollectionRef = this.props.firebase.db.collection("tastingPublic");
     await publicCollectionRef.doc(documentToEdit).set(tastingToWrite).then(() => {
       console.log('set public tasting');
-    });
-    const collectionRef = this.props.firebase.db.collection("tasting");
-    await collectionRef.doc(documentToEdit).set(tastingToWrite).then(() => {
-      console.log('set tasting');
     });
 
     let state = CONSTS.TASTING_DEFAULT_PROPS;
@@ -115,9 +129,43 @@ class AddEditTasting extends React.Component {
   }
 
   // LIMIT TASTING TYPE TO 1 FOR NOW!
-  async setTastingSelected(tastingSelection) {
-    let tasting = tastingSelection[0].label;
-    await this.setStateAndUpdateParent({tasting : tasting, tastingSelection : tastingSelection});
+  async setTastingTypeSelected(tastingTypeSelection) {
+    let type = '';
+    if (tastingTypeSelection.length > 0) {
+      type = tastingTypeSelection[0].label;
+    }
+
+
+    if (!this.state.notes && type) {
+      let notes = "";
+      let notesMinor = "";
+      switch (type) {
+        case "Sweetener":
+          notes = "Taste the sweetness between these bars!";
+          notesMinor = "(Other ingredient discrepancies are to ensure bar integrity...)";
+          break;
+        case "Dairy":
+          notes = "Taste the milk difference between these bars!  ";
+          notesMinor = "Each has the same ingredients apart from the type of milk powder.";
+          break;
+        case "Cacao":
+          notes = "Taste the chocolate bean difference!";
+          notesMinor = " Each bean should have a fairly distinct taste and hopefully you have a preference!";
+          break;
+        default:
+          break;
+      }
+      notesMinor += " Bon Appetit!"
+
+      await this.setStateAndUpdateParent({
+        notes : notes,
+        notesMinor : notesMinor,
+        type : type,
+        tastingTypeSelection : tastingTypeSelection
+      });
+    } else {
+      await this.setStateAndUpdateParent({type : type, tastingTypeSelection : tastingTypeSelection});
+    }
   }
 
   render() {
@@ -138,13 +186,14 @@ class AddEditTasting extends React.Component {
       Tasting Type:
        <MultiSelect
           options={CONSTS.TASTING_TYPES}
-          value={this.state.tastingSelection}
-          onChange={this.setTastingSelected}
+          value={this.state.tastingTypeSelection}
+          onChange={this.setTastingTypeSelected}
           labelledBy="Select"
           hasSelectAll={false}
         />
       </div>
-      Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
+      Notes: <textarea name="notes" className="tastingPreviewNotes" onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
+      Notes Minor: <textarea name="notesMinor" className="tastingPreviewNotesMinor" onChange={this.onUpdateDetails} value={this.state.notesMinor} type="text"></textarea><br />
       <button onClick={this.setTasting}>Update Tasting</button>
       </div>
     );

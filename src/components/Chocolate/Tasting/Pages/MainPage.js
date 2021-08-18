@@ -62,13 +62,27 @@ class TastingMainPage extends React.Component {
       );
     }
 
-    let previewTasting = <TastingPreview tasting={this.state.latestTastingState} />
     let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "tastingMainPageContainer" : "tastingMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";
     return (
       <div className="tastingPageOutterContainer">
         <span><span className={showHideCarat}></span><h2 className="commonToggleDiv" onClick={this.togglePageContentVisibilityDropdown}>Tasting</h2></span>
         <div className={showHideContent}>
+        <FirebaseContext.Consumer>
+          {firebase =>
+              <LookupSelection
+                firebase={firebase}
+                onUpdateSelection={this.onUpdateSelection}
+                collectionName="tastingPublic"
+                displayTitle="Existing Tasting"
+                allowMultiple={true}
+                sendDataOnUpdate={true}
+              />
+            }
+        </FirebaseContext.Consumer>
+        <br />
+        <br />
+        <br />
 
           <FirebaseContext.Consumer>
             {firebase =>
@@ -79,22 +93,17 @@ class TastingMainPage extends React.Component {
               />
             }
           </FirebaseContext.Consumer>
+          <br />
           <div className="tastingAddEditPreview">
-          {previewTasting}
-          </div>
-          <br /><br /><br /><br /><br /><br /><br /><br />
           <FirebaseContext.Consumer>
-            {firebase =>
-                <LookupSelection
+              {firebase =>
+                <TastingPreview
                   firebase={firebase}
-                  onUpdateSelection={this.onUpdateSelection}
-                  collectionName="tasting"
-                  displayTitle="Existing Tasting"
-                  allowMultiple={true}
-                  sendDataOnUpdate={true}
+                  tasting={this.state.latestTastingState}
                 />
               }
           </FirebaseContext.Consumer>
+          </div>
         </div>
       </div>
     );

@@ -1,6 +1,5 @@
 .tastingMainPageContainer {
   max-width: 800px;
-  border: 2px solid black;
 }
 
 .tastingMainPageContainer.hidden {
@@ -35,10 +34,6 @@
   margin: 5px;
 }
 
-.tastingSideBySideBarComparisonConainer {
-  border: 2px solid #e00;
-}
-
 .tastingSideBySideBarImages {
   border: 1px solid #555;
   margin: 5px;
@@ -46,4 +41,51 @@
 
 .barSideBySideBarImage {
   width: 270px;
+  margin: auto;
+  display: block;
+}
+
+.barSideBySidePackagingTd {
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  font-size: 1.1em;
+}
+
+.tastingSideBySideBarNutritionFactsTd {
+  max-width: 250px;
+  margin: 0px auto;
+}
+
+.tastingPreviewNotes {
+  width: 350px;
+  min-height: 50px;
+}
+
+.tastingPreviewTitle {
+  margin: auto;
+  padding: 20px 0px 0px 0px;
+  width: 620px;
+  font-weight: 600;
+  font-size: 1.4em;
+  text-align: center;
+}
+
+.tastingPreviewTitle.minor {
+  padding: 5px 0px 20px 0px;
+  font-size: 1.1em;
+  font-weight: 300;
+}
+
+.barTastingPreviewTitle {
+  line-height: 20px;
+  text-align: center;
+}
+
+.barTastingPreviewLabel {
+  line-height: 20px;
+  padding-bottom: 20px;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  max-width: 700px;
+  margin: auto;
 }

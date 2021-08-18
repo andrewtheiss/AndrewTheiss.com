@@ -1,29 +1,31 @@
 export const TASTING_DEFAULT_PROPS = {
   label : '',
   bars : [],
-  tasting : '',
-  barAnswers : {},  // Maybe have Static types of bar answers
+  type : '',
   notes : '',
+  notesMinor : '',
 
   // To be removed before edit
   allBars : {},
   barsSelected : [],
-  tastingSelection: [],
+  tastingTypeSelection: [],
   allBarsSelectionOptions : []
 }
 
 export const TASTING_DEFAULT_PROPS_OBJECT_FOR_WRITE = {
   label : '',
   bars : [],
-  tasting : '',
+  type : '',
   barAnswers : {},  // Maybe have Static types of bar answers
-  notes : ''
+  notes : '',
+  notesMinor : ''
 }
 
 export const TASTING_TYPES = [
-  {label : 'Sweetness', value : 'Sweetness'},
-  {label : 'Bean', value : 'Bean'},
-  {label : 'Milk', value : 'Milk'},
-  {label : 'Specific Ingredient', value : 'Specific Ingredient'},
+  {label : 'Sweetener', value : 'Sweetener'},
+  {label : 'Cacao', value : 'Cacao'},
+  {label : 'Dairy', value : 'Dairy'},
+  {label : 'Cocoa', value : 'Cocoa'},
+  {label : 'Other', value : 'Other'},
   {label : 'Roast', value : 'Roast'}
 ]

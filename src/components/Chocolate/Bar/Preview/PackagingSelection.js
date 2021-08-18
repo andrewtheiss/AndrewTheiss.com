@@ -11,7 +11,6 @@ class PreviewPackagingSelection extends React.Component {
       if (!this.props.packagingSelection) {
         return <div></div>
       }
-      console.log(selectionType);
       let self = this;
       return Object.keys(this.props.packagingSelection[selectionType]).map((key) => (
         <div key={key} className="barPreviewPackagingSelectionTypeSingleItemContainer">
