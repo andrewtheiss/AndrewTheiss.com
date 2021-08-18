@@ -1,13 +1,13 @@
 import React from 'react';
 
 /**
- *  PreviewTasting
+ *  TastingPreview
  *
  *  Input:
  *  state   :   tasting state object
  *
  */
-class PreviewTasting extends React.Component {
+class TastingPreview extends React.Component {
   render() {
     if (!this.props.state) {
       return (<div></div>);
@@ -23,4 +23,4 @@ class PreviewTasting extends React.Component {
   }
 }
 
-export default PreviewTasting;
+export default TastingPreview;

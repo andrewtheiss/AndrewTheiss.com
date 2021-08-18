@@ -2,7 +2,7 @@ import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
 import AddEditTasting from '../AddEdit.js'
 import LookupSelection from '../../../Utils/LookupSelection.js'
-import PreviewTasting from '../Preview.js'
+import TastingPreview from '../Preview.js'
 import '../Tasting.css'
 
 
@@ -17,7 +17,7 @@ class TastingMainPage extends React.Component {
       selectedTastingSingle : null,
       selectedTastings : null,
       allTastingData : null,
-      pageContentVisibilityDropdownToggled : false
+      pageContentVisibilityDropdownToggled : true
     };
   }
 
@@ -55,7 +55,7 @@ class TastingMainPage extends React.Component {
       );
     }
 
-    let previewTasting = <PreviewTasting state={this.state.selectedTastingSingle} />
+    let previewTasting = <TastingPreview state={this.state.selectedTastingSingle} />
     let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "tastingMainPageContainer" : "tastingMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";
     return (
@@ -71,13 +71,14 @@ class TastingMainPage extends React.Component {
               />
             }
           </FirebaseContext.Consumer>
+          <br /><br /><br /><br /><br /><br /><br /><br />
           <FirebaseContext.Consumer>
             {firebase =>
                 <LookupSelection
                   firebase={firebase}
                   onUpdateSelection={this.onUpdateSelection}
                   collectionName="tasting"
-                  displayTitle="Tasting"
+                  displayTitle="Existing Tasting"
                   allowMultiple={true}
                   sendDataOnUpdate={true}
                 />

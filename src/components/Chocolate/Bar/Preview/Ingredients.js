@@ -63,9 +63,6 @@ class PreviewIngredients extends React.Component {
         <br />
         {ingredientsList}
         <div>
-          Bean Spider Chart
-
-
           {JSON.stringify(this.beanList)}
         </div>
       </div>

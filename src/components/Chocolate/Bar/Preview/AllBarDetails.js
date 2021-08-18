@@ -36,7 +36,10 @@ class PreviewAllBarDetails extends React.Component {
 
   render() {
     if (!this.state.bar) {
-      return (<div>No bar found</div>)
+      if (!this.props.barId) {
+        return (<div></div>)
+      }
+      return (<div>Loading Bar...</div>)
     }
 
     let packagingSelection = <PreviewPackagingSelection packagingSelection={this.state.bar.packagingSelection} />
