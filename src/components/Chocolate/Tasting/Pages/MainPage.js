@@ -2,7 +2,7 @@ import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
 import AddEditTasting from '../AddEdit.js'
 import LookupSelection from '../../../Utils/LookupSelection.js'
-import TastingPreview from '../Preview.js'
+import TastingPreview from '../Preview/Preview.js'
 import '../Tasting.css'
 
 
@@ -12,12 +12,14 @@ class TastingMainPage extends React.Component {
     super(props);
     this.onUpdateSelection = this.onUpdateSelection.bind(this);
     this.togglePageContentVisibilityDropdown = this.togglePageContentVisibilityDropdown.bind(this);
+    this.onUpdateTasting = this.onUpdateTasting.bind(this);
 
     this.state = {
       selectedTastingSingle : null,
       selectedTastings : null,
       allTastingData : null,
-      pageContentVisibilityDropdownToggled : true
+      pageContentVisibilityDropdownToggled : true,
+      latestTastingState : {}
     };
   }
 
@@ -33,6 +35,7 @@ class TastingMainPage extends React.Component {
       allTastingData : selectedTastingsData,
       pageContentVisibilityDropdownToggled : this.state.pageContentVisibilityDropdownToggled
     };
+    console.log(state, this.state);
     this.setState(state);
   }
 
@@ -42,8 +45,12 @@ class TastingMainPage extends React.Component {
     this.setState({pageContentVisibilityDropdownToggled});
   }
 
-  render() {
+  onUpdateTasting(state) {
+    let latestTastingState = state;
+    this.setState({latestTastingState});
+  }
 
+  render() {
     // Render without loading all data if we don't ever toggle visibility
     if (!this.state.pageContentVisibilityDropdownToggled)  {
       return (
@@ -55,7 +62,7 @@ class TastingMainPage extends React.Component {
       );
     }
 
-    let previewTasting = <TastingPreview state={this.state.selectedTastingSingle} />
+    let previewTasting = <TastingPreview tasting={this.state.latestTastingState} />
     let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "tastingMainPageContainer" : "tastingMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";
     return (
@@ -68,9 +75,13 @@ class TastingMainPage extends React.Component {
               <AddEditTasting
                 firebase={firebase}
                 itemSelectedForEdit={this.state.selectedTastingSingle}
+                onUpdate={this.onUpdateTasting}
               />
             }
           </FirebaseContext.Consumer>
+          <div className="tastingAddEditPreview">
+          {previewTasting}
+          </div>
           <br /><br /><br /><br /><br /><br /><br /><br />
           <FirebaseContext.Consumer>
             {firebase =>
@@ -84,7 +95,6 @@ class TastingMainPage extends React.Component {
                 />
               }
           </FirebaseContext.Consumer>
-          {previewTasting}
         </div>
       </div>
     );

@@ -19,3 +19,31 @@
   max-width: 900px;
   padding: 5px;
 }
+
+.tastingAddEditPreview {
+  border: 1px solid #ccc;
+  margin: 5px;
+}
+
+.addEditTastingTypeContainer {
+  width: 500px;
+  margin: 5px;
+}
+
+.addEditTastingBarSelectionContainer {
+  width: 500px;
+  margin: 5px;
+}
+
+.tastingSideBySideBarComparisonConainer {
+  border: 2px solid #e00;
+}
+
+.tastingSideBySideBarImages {
+  border: 1px solid #555;
+  margin: 5px;
+}
+
+.barSideBySideBarImage {
+  width: 270px;
+}
