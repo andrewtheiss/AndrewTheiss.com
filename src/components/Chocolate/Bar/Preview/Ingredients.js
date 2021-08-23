@@ -41,7 +41,7 @@ class PreviewIngredients extends React.Component {
     }
 
     // Split the highlighted ingredients if they exist
-    if (this.props.highlightType.type && this.props.ingredientsListForHighlightType) {
+    if (this.props.highlightType && this.props.highlightType.type && this.props.ingredientsListForHighlightType) {
       this.splitIngredients = {};
       for (index in ingredients) {
         if (this.props.ingredientsListForHighlightType[index]) {
@@ -74,7 +74,7 @@ class PreviewIngredients extends React.Component {
 
   generateHighlightedIngredientsList() {
     let self = this;
-    if (!this.props.highlightType.type || !this.props.ingredientsListForHighlightType) {
+    if (!this.props.highlightType || !this.props.highlightType.type || !this.props.ingredientsListForHighlightType) {
       return <div></div>
     }
     let ingredientsList = Object.keys(this.splitIngredients).map((key) => {
