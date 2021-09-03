@@ -160,9 +160,10 @@ class NutritionFactsPreview extends React.Component {
     let secondaryDetailsBuffer = this.generateSecondaryDetailsBuffer();
     let secondaryDetails = this.generateSecondaryDetails();
     let ingredientsList = this.generateIngredientsList();
+    let cssForSvg = this.props.cssForSvg;
     this.updateListeners();
     return (
-      <div>
+      <div className={cssForSvg}>
         <div id={this.uniqueId} className="nutritionFactsOutline">
           <div className="nutritionFactsLabel">Nutrition Facts</div>
           {servingsPerContainer}
@@ -170,8 +171,8 @@ class NutritionFactsPreview extends React.Component {
           {servingSize}
           <div className="nutritionFactsLargeBarDivider"></div>
           <div className="nutritionFactsCloriesContainer">
-          <div className="nutritionFactsCaloriesNumber">{this.props.previewData.calories}</div>
             <div className="nutritionFactsAmountPerServing">Amount Per Serving</div>
+            <div className="nutritionFactsCaloriesNumber">{this.props.previewData.calories}</div>
             <div className="nutritionFactsCalories">Calories</div>
           </div>
           <div className="nutritionFactsPrimaryDetails">

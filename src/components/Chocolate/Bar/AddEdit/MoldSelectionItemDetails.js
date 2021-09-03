@@ -1,10 +1,12 @@
 import React from 'react';
 import "../Bar.css"
+import "../../Ingredient/IngredientToSvg.css"
 import { FirebaseContext } from '../../../Firebase';
 import LookupSelection from '../../../Utils/LookupSelection.js'
 import * as CONSTS from '../constants.js'
 import * as UTILS from './NutritionFactsUtils.js'
 import NutritionFactsPreview from '../../Ingredient/NutritionFactsPreview.js'
+import { documentToSVG, elementToSVG, inlineResources, formatXML } from 'dom-to-svg'
 
 /**
 
@@ -33,6 +35,8 @@ class MoldSelectionItemDetails extends React.Component {
     this.updateTotals = this.updateTotals.bind(this);
     this.checkAndSetForEditExisting = this.checkAndSetForEditExisting.bind(this);
     this.calculateNutritionFactsPerBar = this.calculateNutritionFactsPerBar.bind(this);
+    this.exportToSvg = this.exportToSvg.bind(this);
+    this.renderExportToSvg = this.renderExportToSvg.bind(this);
 
     this.selectedPackaging = {
       wrap : [],
@@ -44,6 +48,7 @@ class MoldSelectionItemDetails extends React.Component {
     // contains map of all mold data for molds
     this.itemMoldData = this.props.moldData;
     this.packagingSelectionInUse = false;
+    this.svgString = null;
 
     let state = JSON.parse(JSON.stringify(this.props.barMoldSelectionItemDetail));
     if (!state.barWeight) {
@@ -65,28 +70,27 @@ class MoldSelectionItemDetails extends React.Component {
     this.calculateNutritionFactsPerBar();
   }
 
-    // If batchesIncludedPct prop changes, we need to recalculate everything
-    componentDidUpdate(prevProps) {
+  // If batchesIncludedPct prop changes, we need to recalculate everything
+  componentDidUpdate(prevProps) {
 
-      if (this.props !== prevProps) {
+    if (this.props !== prevProps) {
 
-        if (this.props.updateIngredientsAndNutrition) {
-          this.calculateNutritionFactsPerBar();
-        }
-        // Only do something if there's a change in the batchToEdit
-        if (this.props.barMoldSelectionItemDetail !== prevProps.barMoldSelectionItemDetail ||
-          this.state.pricePerBar !== this.props.barMoldSelectionItemDetail.pricePerBar) {
-          let isEdit = this.props.itemSelectedForEdit;
+      if (this.props.updateIngredientsAndNutrition) {
+        this.calculateNutritionFactsPerBar();
+      }
+      // Only do something if there's a change in the batchToEdit
+      if (this.props.barMoldSelectionItemDetail !== prevProps.barMoldSelectionItemDetail ||
+        this.state.pricePerBar !== this.props.barMoldSelectionItemDetail.pricePerBar) {
+        let isEdit = this.props.itemSelectedForEdit;
 
-          // If there's something to edit or the props don't match the default
-          if (isEdit) {
-            let state = JSON.parse(JSON.stringify(this.props.barMoldSelectionItemDetail));
-              this.setState(state);
-            }
-        }
+        // If there's something to edit or the props don't match the default
+        if (isEdit) {
+          let state = JSON.parse(JSON.stringify(this.props.barMoldSelectionItemDetail));
+            this.setState(state);
+          }
       }
     }
-
+  }
 
   checkAndSetForEditExisting() {
     if (this.props.barMoldSelectionItemDetail.barCount ||
@@ -193,6 +197,27 @@ class MoldSelectionItemDetails extends React.Component {
 
   }
 
+  async exportToSvg(event) {
+    const svgDocument = elementToSVG(event.currentTarget);
+
+    // Inline external resources (fonts, images, etc) as data: URIs
+    await inlineResources(svgDocument.documentElement);
+
+    // Get SVG string
+    const svgString = new XMLSerializer().serializeToString(svgDocument);
+    this.svgString = svgString;
+    this.setState({svgString});
+  }
+
+  renderExportToSvg() {
+    if (!this.svgString) {
+      return <div></div>
+    }
+    var svgBlob = new Blob([this.svgString], {type:"image/svg+xml;charset=utf-8"});
+    var svgUrl = URL.createObjectURL(svgBlob);
+    return <a href={svgUrl}>Download SVG</a>
+  }
+
   // Uses batches included data to update nutrition facts per bar
   async calculateNutritionFactsPerBar() {
     let moldNutritionFacts = UTILS.AdjustNutritionFactsAndServingSizeForBar(
@@ -231,13 +256,14 @@ class MoldSelectionItemDetails extends React.Component {
 
   render() {
     //let imagesForPreview = this.generatePreviewForSelectedWrapItems();
+    let svgDownload = this.renderExportToSvg();
     let totalPackagingPricePerUnit = this.state.totalPackagingPricePerUnit;
 
     const collectionRefSearchWrap = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.wrap);
     const collectionRefSearchOverwrap = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.overwrap);
     const collectionRefSearchLabel = this.props.firebase.db.collection("packaging").where("category", "==", CONSTS.BAR_MOLD_DB_CATEGORIES_STRINGS.label);
 
-    let nutritionFactsPreview = <NutritionFactsPreview previewData={this.state.nutritionFacts} ingredientList={this.state.ingredients}/>;
+    let nutritionFactsPreview = <NutritionFactsPreview cssForSvg={"overrideCssForSvg"} previewData={this.state.nutritionFacts} ingredientList={this.state.ingredients}/>;
     return (
       <div>
       <div>
@@ -294,8 +320,11 @@ class MoldSelectionItemDetails extends React.Component {
             />
           }
       </FirebaseContext.Consumer>
-      <div className="barMoldDetailSelectionPreview">
+      <div className="barMoldDetailSelectionPreview" onClick={this.exportToSvg}>
       {nutritionFactsPreview}
+      </div>
+      <div className="downloadNutritionFactsSvg">
+      {svgDownload}
       </div>
     </div>
     );

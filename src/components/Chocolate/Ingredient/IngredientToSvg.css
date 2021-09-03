@@ -1,0 +1,226 @@
+.overrideCssForSvg .ib {
+  display: inline-block;
+  padding: 10px;
+}
+
+.overrideCssForSvg .fl {
+  float: left;
+}
+
+.overrideCssForSvg .newIngredientAddIngredientTitle {
+  font-size: 2em;
+  text-align: center;
+  font-weight: bold;
+}
+
+.overrideCssForSvg .newIngredientAddDetailsFormContainer {
+  max-width: 500px;
+}
+
+.overrideCssForSvg .ingredientPreviewName {
+  font-size: 1.3em;
+  text-align: center;
+  padding-bottom: 5px;
+}
+
+.overrideCssForSvg .inventoryNotes {
+  max-width: 200px;
+  font-size: 0.8em;
+  line-height: 1em;
+}
+
+.overrideCssForSvg .ingredientPreviewImage {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.overrideCssForSvg .ingredientPreviewOverviewDetails {
+  margin: 0px auto;
+  max-width: 250px;
+  font-size: 1.1em;
+  line-height: 1.2em;
+  word-break: normal;
+}
+
+.overrideCssForSvg .ingredientPreviewLineItem {
+  padding-top: 7px;
+}
+
+.overrideCssForSvg .newIngredientMultiselectContainer {
+  max-width: 400px;
+}
+
+/**  Nutirion Facts */
+.overrideCssForSvg .nutritionFactsOutline {
+  border: 2px solid black;
+  padding: 5px;
+}
+
+.overrideCssForSvg .nutritionFactsLabel {
+  font-weight: 900;
+  font-size: 1.8em;
+  border-bottom: 1px solid black;
+}
+
+.overrideCssForSvg .nutritionFactsServingsPerContainer {
+  font-size: 0.9em;
+}
+
+.overrideCssForSvg .nutritionFactsServingSizeLabel {
+  display: inline-block;
+  font-weight: 800;
+}
+
+.overrideCssForSvg .nutritionFactsServingSizeAmount {
+  display: inline-block;
+  float: right;
+  font-weight: 800;
+}
+
+.overrideCssForSvg .nutritionFactsLargeBarDivider {
+  height: 10px;
+  width: 100%;
+  margin: 7px 0px -3px;
+  background-color: black;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.6);
+}
+
+.overrideCssForSvg .nutritionFactsMediumBarDivider {
+  border-bottom: 4px solid black;
+  height: 2px;
+  width: 100%;
+  margin: 4px auto;
+  background-color: transparent;
+}
+
+.overrideCssForSvg .nutritionFactsMediumBarDivider.t2 {
+  margin-top: 4px;
+}
+
+.overrideCssForSvg .nutritionFactsAmountPerServing {
+  font-weight: 800;
+  height: 14px;
+  font-size: 14px;
+  float: left;
+}
+
+.overrideCssForSvg .nutritionFactsCloriesContainer {
+  font-size: 21px;
+  border-bottom: 5px solid black;
+}
+
+.overrideCssForSvg .nutritionFactsCaloriesNumber {
+  margin-top: -6px;
+  font-weight: 800;
+  line-height: 55px;
+  font-size: 40px;
+  float: right;
+}
+
+.overrideCssForSvg .nutritionFactsPrimaryDetails {
+  clear: both;
+}
+
+.overrideCssForSvg .nutritionFactsSingleRow {
+  margin-bottom: -6px;
+  margin-top: 2px;
+  padding-bottom: 4px;
+  line-height: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+.overrideCssForSvg .nutritionFactsCalories {
+  padding-top: 11px;
+  font-weight: 800;
+  font-size: 25px;
+}
+
+.overrideCssForSvg .nutritionFactsTabSpacing0 {
+  width: 0px;
+  float: left;
+  height: 0px;
+}
+
+.overrideCssForSvg .nutritionFactsTabSpacing1 {
+  width: 15px;
+  float: left;
+  height: 2px;
+}
+
+.overrideCssForSvg .nutritionFactsTabSpacing2 {
+  width: 30px;
+  float: left;
+  height: 2px;
+}
+
+.overrideCssForSvg .nutritionFactsIb {
+  display: inline-block;
+}
+
+.overrideCssForSvg .nutritionFactsIb.right {
+  padding-left: 10px;
+  float: right;
+}
+
+.overrideCssForSvg .nutritionFactsSingleRow:last-child {
+  border-bottom: none;
+}
+
+.overrideCssForSvg .nutritionFactsFooterDisclaimer {
+  max-width: inherit;
+  font-size: 0.6em;
+  font-weight: 500;
+  margin: 0px;
+}
+
+.overrideCssForSvg .nutirionFactsFooterWrapper {
+  max-width: 200px;
+  margin: 0px;
+}
+
+.overrideCssForSvg .nutritionFactsPctDailyValues {
+  margin: 2px 0px;
+  float: right;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+/** Ingredient Page Main */
+.overrideCssForSvg .ingredientPageAddIngredientContainer {
+  display: block;
+}
+
+.overrideCssForSvg .ingredientPageAddIngredientContainer.hidden {
+  display: none;
+}
+
+.overrideCssForSvg .ingredientPageAddIngredientViewToggle {
+  margin: 20px;
+  padding-bottom: 20px;
+}
+
+.overrideCssForSvg .floatRight {
+  float: right;
+  width: 300px;
+}
+
+.overrideCssForSvg .w700 {
+  width: 700px;
+}
+
+.overrideCssForSvg .floatLeft {
+  float: left;
+}
+
+.overrideCssForSvg .clearBoth {
+  clear: both;
+}
+
+.overrideCssForSvg .nutritionCalculatorIngredientsBox {
+  line-height: 1.1em;
+  font-size: 0.9em;
+  margin: 5px 0px;
+  border: 2px solid black;
+  padding: 2px 4px;
+}
