@@ -61,3 +61,11 @@
 .navigation-side-bar li:hover {
   background-color: #dddddd;
 }
+
+#logo {
+  display: none;
+}
+
+#navigation-wrap {
+  display: none;
+}

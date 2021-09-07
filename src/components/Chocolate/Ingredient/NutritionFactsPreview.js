@@ -160,10 +160,18 @@ class NutritionFactsPreview extends React.Component {
     let secondaryDetailsBuffer = this.generateSecondaryDetailsBuffer();
     let secondaryDetails = this.generateSecondaryDetails();
     let ingredientsList = this.generateIngredientsList();
+    let ingredientsListBefore = <div></div>;
+    let ingredientsListImage = <div></div>;
+    if (this.props.cssForSvg === "overrideCssForSvg") {
+      ingredientsListBefore = ingredientsList;
+      ingredientsList = <div></div>;
+      ingredientsListImage = <div></div>;
+    }
     let cssForSvg = this.props.cssForSvg;
     this.updateListeners();
     return (
       <div className={cssForSvg}>
+        {ingredientsListBefore}
         <div id={this.uniqueId} className="nutritionFactsOutline">
           <div className="nutritionFactsLabel">Nutrition Facts</div>
           {servingsPerContainer}

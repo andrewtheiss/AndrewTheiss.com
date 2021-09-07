@@ -10,8 +10,8 @@ const Navigation = () => (
   <div className="navigation-side-bar-spacing">
   <header className="navigation-header">
     <div className="navigation-top-bar">
-      <div id="logo">LOGO_HERE</div>
-      <div id="navigation-wrap">Andrew Theiss</div>
+      <div id="logo"></div>
+      <div id="navigation-wrap"></div>
       <div className="navigation-session">
       <AuthUserContext.Consumer>
       {authUser =>
