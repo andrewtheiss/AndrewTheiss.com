@@ -94,3 +94,38 @@
   width: 800px;
   margin: 20px;
 }
+
+.tastingDifficultyContainer {
+  text-align: center;
+  display: inline-block;
+}
+
+.tastingDifficulty {
+  padding: 10px 20px;
+  font-size: 30px;
+  font-weight: bold;
+  border: 2px solid black;
+  max-width: 200px;
+  border-radius: 30px;
+}
+
+/** Got some good color pics off of cssgradient.io */
+.tastingDifficulty.Easy {
+  color: black;
+  background-image: linear-gradient(#98FB98, #4FFFB0);
+}
+
+.tastingDifficulty.Medium {
+  color: black;
+  background-image: linear-gradient(#007FFF, #00CED1);
+}
+
+.tastingDifficulty.Difficult {
+  color: black;
+  background-image: linear-gradient(#fd5c63, #FF7F50);
+}
+
+.tastingDifficulty.Challenging {
+  color: black;
+  background-image: linear-gradient(#C80815, #F2003C);
+}

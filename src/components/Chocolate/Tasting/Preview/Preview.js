@@ -17,6 +17,7 @@ class TastingPreview extends React.Component {
     this.generateBarComparisonImages = this.generateBarComparisonImages.bind(this);
     this.generateBarComparisonPackaging = this.generateBarComparisonPackaging.bind(this);
     this.generateBarComparisonIngredients = this.generateBarComparisonIngredients.bind(this);
+    this.generateDifficulty = this.generateDifficulty.bind(this);
 
     this.state = {
       tasting : {},
@@ -127,10 +128,20 @@ class TastingPreview extends React.Component {
     return barPreview;
   }
 
+  generateDifficulty() {
+    let barDifficulty = <div></div>;
+    if (this.state.tasting.difficulty) {
+      let className = "tastingDifficulty " + this.state.tasting.difficulty;
+      barDifficulty = <div className="tastingDifficultyContainer"><div className={className}>{this.state.tasting.difficulty}</div></div>
+    }
+    return barDifficulty;
+  }
+
   render() {
     if (!this.state.tasting || Object.keys(this.state.tasting).length === 0) {
       return <div></div>
     }
+    let tastingDifficulty = this.generateDifficulty();
     let barImages = this.generateBarComparisonImages();
     let barPackaging = this.generateBarComparisonPackaging();
     let barIngredients = this.generateBarComparisonIngredients();
@@ -139,7 +150,8 @@ class TastingPreview extends React.Component {
     return (
       <div>
         <div>
-          <h1 className="barTastingPreviewTitle">Bar Tasting:</h1>
+          <h1 className="barTastingPreviewTitle">Difficulty: {tastingDifficulty}</h1>
+
           <h2  className="barTastingPreviewLabel">{this.state.tasting.label}</h2>
         </div>
         <div>

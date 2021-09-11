@@ -14,6 +14,7 @@ class AddEditTasting extends React.Component {
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
     this.setStateAndUpdateParent = this.setStateAndUpdateParent.bind(this);
     this.setTastingTypeSelected = this.setTastingTypeSelected.bind(this);
+    this.setDifficultySelected = this.setDifficultySelected.bind(this);
     this.formatTastingTypeAndBarSelections = this.formatTastingTypeAndBarSelections.bind(this);
 
     this.state = CONSTS.TASTING_DEFAULT_PROPS;
@@ -102,6 +103,7 @@ class AddEditTasting extends React.Component {
     delete tastingToWrite['allBars'];
     delete tastingToWrite['barsSelected'];
     delete tastingToWrite['tastingTypeSelection'];
+    delete tastingToWrite['difficultySelection'];
     delete tastingToWrite['allBarsSelectionOptions'];
 
     const publicCollectionRef = this.props.firebase.db.collection("tastingPublic");
@@ -126,6 +128,19 @@ class AddEditTasting extends React.Component {
       }
     }
     await this.setStateAndUpdateParent({ bars : bars, barsSelected : allSelectedItems});
+  }
+
+  // LIMIT Difficulty TYPE TO 1 FOR NOW!
+  async setDifficultySelected(difficultySelection) {
+    let difficulty = '';
+    if (difficultySelection.length > 0) {
+      difficulty = difficultySelection[0].label;
+    }
+
+    await this.setStateAndUpdateParent({
+      difficulty : difficulty,
+      difficultySelection : difficultySelection
+    });
   }
 
   // LIMIT TASTING TYPE TO 1 FOR NOW!
@@ -194,6 +209,17 @@ class AddEditTasting extends React.Component {
       </div>
       Notes: <textarea name="notes" className="tastingPreviewNotes" onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
       Notes Minor: <textarea name="notesMinor" className="tastingPreviewNotesMinor" onChange={this.onUpdateDetails} value={this.state.notesMinor} type="text"></textarea><br />
+
+      <div className="addEditTastingTypeContainer">
+      Difficulty:
+       <MultiSelect
+          options={CONSTS.TASTING_DIFFICULTY}
+          value={this.state.difficultySelection}
+          onChange={this.setDifficultySelected}
+          labelledBy="Select"
+          hasSelectAll={false}
+        />
+      </div>
       <button onClick={this.setTasting}>Update Tasting</button>
       </div>
     );
