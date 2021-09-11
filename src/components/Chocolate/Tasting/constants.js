@@ -4,11 +4,13 @@ export const TASTING_DEFAULT_PROPS = {
   type : '',
   notes : '',
   notesMinor : '',
+  difficulty : '',
 
   // To be removed before edit
   allBars : {},
   barsSelected : [],
   tastingTypeSelection: [],
+  difficultySelection: [],
   allBarsSelectionOptions : []
 }
 
@@ -18,7 +20,8 @@ export const TASTING_DEFAULT_PROPS_OBJECT_FOR_WRITE = {
   type : '',
   barAnswers : {},  // Maybe have Static types of bar answers
   notes : '',
-  notesMinor : ''
+  notesMinor : '',
+  difficulty : ''
 }
 
 export const TASTING_TYPES = [
@@ -28,4 +31,11 @@ export const TASTING_TYPES = [
   {label : 'Cocoa', value : 'Cocoa'},
   {label : 'Other', value : 'Other'},
   {label : 'Roast', value : 'Roast'}
+]
+
+export const TASTING_DIFFICULTY = [
+  {label : 'Easy', value : 'Easy'},
+  {label : 'Medium', value : 'Medium'},
+  {label : 'Difficult', value : 'Difficult'},
+  {label : 'Challenging', value : 'Challenging'}
 ]
