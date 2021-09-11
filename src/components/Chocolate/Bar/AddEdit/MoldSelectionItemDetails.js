@@ -246,7 +246,7 @@ class MoldSelectionItemDetails extends React.Component {
     if (ingredientKeys && ingredientKeys.length > 0) {
       for (var keyIndex in ingredientKeys) {
         let key = ingredientKeys[keyIndex];
-        adjustedBatchIngredients[key] = Math.round(1000 * adjustedBatchIngredients[key] * this.props.barMoldSelectionItemDetail.barWeight / this.props.batchesIncluded.totalWeightInGrams)/1000;
+        adjustedBatchIngredients[key] = Math.round(1000 * adjustedBatchIngredients[key] * this.state.barWeight / this.props.batchesIncluded.totalWeightInGrams)/1000;
       }
       state.batchIngredients = JSON.parse(JSON.stringify(adjustedBatchIngredients));
     }
