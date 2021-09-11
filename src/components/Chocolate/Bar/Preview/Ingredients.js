@@ -99,7 +99,7 @@ class PreviewIngredients extends React.Component {
     let highlightedIngredientsList = this.generateHighlightedIngredientsList();
     return (
       <div className="barPreviewIngredientsContainer">
-        <b>Ingredients:</b>
+        <b>Ingredients Per Bar:</b>
         <br />
         {highlightedIngredientsList}
         {ingredientsList}
