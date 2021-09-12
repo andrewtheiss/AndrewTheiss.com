@@ -90,7 +90,11 @@ var NODE_MAJOR_VERSION = parseInt(process.version);// parseInt(process.versions.
 
 
 ### TODO For First Tasting:
-difficulty
 Hide answers
 Optimize Mobile CSS
 QR Code Generation for Tasting / Bar  :  https://www.npmjs.com/package/qr-code-styling
+Mouse over or click ingredients (or show ingredients below in preview?)
+
+* Show bean last in ingredients list
+* Order ingredient list in Tasting by name
+*Bug in cost creation for edited bars
