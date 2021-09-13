@@ -108,7 +108,7 @@ class NutritionFactsPreview extends React.Component {
   }
 
   generateIngredientsList() {
-    if (this.props.overrideIngreientBox || this.props.ingredientList === undefined || this.props.ingredientList === "") {
+    if (this.props.overrideIngreientBox || this.props.ingredientList === undefined || this.props.ingredientList === "" || this.props.hideIngredientList) {
       return <div></div>;
     }
     let hasIngredientsLabel = (this.props.ingredientList.indexOf('Ingredients:') !== -1) ? true : false;

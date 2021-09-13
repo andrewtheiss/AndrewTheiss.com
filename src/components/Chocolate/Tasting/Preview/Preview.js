@@ -124,7 +124,7 @@ class TastingPreview extends React.Component {
       barPreview = Object.keys(bars).map((key) => (
         <td key={key}>
           <div className="tastingSideBySideBarNutritionFactsTd">
-            <NutritionFactsPreview previewData={bars[key]['nutritionFacts']} ingredientList={bars[key]['ingredients']}/>
+            <NutritionFactsPreview hideIngredientList={true} previewData={bars[key]['nutritionFacts']} ingredientList={bars[key]['ingredients']}/>
           </div>
         </td>
       ));
