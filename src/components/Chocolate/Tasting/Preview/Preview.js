@@ -2,6 +2,7 @@ import React from 'react';
 import PreviewIngredients from '../../Bar/Preview/Ingredients.js'
 import PreviewPackagingSelection from '../../Bar/Preview/PackagingSelection.js'
 import NutritionFactsPreview from '../../Ingredient/NutritionFactsPreview.js'
+import TableRowWrapper from './TableRowWrapper.js'
 import '../../Bar/Bar.css'
 /**
  *  TastingPreview
@@ -22,7 +23,8 @@ class TastingPreview extends React.Component {
 
     this.state = {
       tasting : {},
-      ingredientsList : {}
+      ingredientsList : {},
+      showAnswers : false
     }
   }
 
@@ -111,7 +113,8 @@ class TastingPreview extends React.Component {
         </td>
       ));
     }
-    return barPreview;
+    let barPreviewRow = <TableRowWrapper showAnswers={this.state.showAnswers} tableRowClass="tastingSideBySideIngredients" tastingType={this.state.tasting.type} type="Ingredients" tableData={barPreview} />;
+    return barPreviewRow;
   }
 
   generateBarComparisonNutritionFacts() {
@@ -139,7 +142,7 @@ class TastingPreview extends React.Component {
   }
 
   showAnswers() {
-
+    this.setState({showAnswers: true});
   }
 
   render() {
@@ -151,7 +154,8 @@ class TastingPreview extends React.Component {
     let barPackaging = this.generateBarComparisonPackaging();
     let barIngredients = this.generateBarComparisonIngredients();
     let barNutritionFacts = this.generateBarComparisonNutritionFacts();
-
+    let showAnswersShowHide = (this.state.showAnswers) ? " hidden" : "";
+    let showAnswersCss = "tastingButtonContainer" + showAnswersShowHide;
     return (
       <div>
         <div>
@@ -162,7 +166,7 @@ class TastingPreview extends React.Component {
         <div>
           <p className="tastingPreviewTitle">{this.state.tasting.notes}</p>
           <p className="tastingPreviewTitle minor">{this.state.tasting.notesMinor}</p>
-          <div className="tastingButtonContainer">
+          <div className={showAnswersCss}>
             <button className="tastingPreviewShowAnswersButton" onClick={this.showAnswers}>Show Answers</button>
           </div>
           <table  className="tastingSideBySideBarComparisonConainer">
@@ -173,9 +177,7 @@ class TastingPreview extends React.Component {
             <tr className="barSideBySidePackagingTd">
             {barPackaging}
             </tr>
-            <tr className="tastingSideBySideBarImages">
             {barIngredients}
-            </tr>
             <tr className="tastingSideBySideBarNutritionFacts">
             {barNutritionFacts}
             </tr>

@@ -90,7 +90,6 @@ var NODE_MAJOR_VERSION = parseInt(process.version);// parseInt(process.versions.
 
 
 ### TODO For First Tasting:
-Hide answers
 Optimize Mobile CSS
 QR Code Generation for Tasting / Bar  :  https://www.npmjs.com/package/qr-code-styling
 Mouse over or click ingredients (or show ingredients below in preview?)
