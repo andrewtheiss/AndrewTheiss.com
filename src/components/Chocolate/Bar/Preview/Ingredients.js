@@ -12,8 +12,8 @@ class PreviewIngredients extends React.Component {
     this.beanMap = {};
 
     this.dimensions = {
-      width: 320,
-      height: 300
+      width: 220,
+      height: 200
     };
     this.splitIngredients = {};
   }
@@ -79,7 +79,7 @@ class PreviewIngredients extends React.Component {
       return self.beanMap[key] ?
         <div key={key} className="barPreviewIngredientsContainerSingleIngredient">{key}: <b>{Math.round(ingredients[key] * 100) / 100}g</b>
           <b className=""></b>
-          <FlavorProfilePreview bean={{flavorArrays : CONSTS.GetFlavorProfileAsArrays(self.beanMap[key].flavorProfile)}} dimensions={self.dimensions} key="b3" />
+          <FlavorProfilePreview bean={{flavorArrays : CONSTS.GetFlavorProfileAsArrays(self.beanMap[key].flavorProfile)}} preview={true} dimensions={self.dimensions} key="b3" />
         </div>
         :
         <div key={key} className="barPreviewIngredientsContainerSingleIngredient">{key}: <b>{Math.round(ingredients[key] * 100) / 100}g</b>
@@ -100,7 +100,7 @@ class PreviewIngredients extends React.Component {
       return self.beanMap[key] ?
         <div key={key} className="barPreviewIngredientsContainerSingleIngredient highlighted">{key}: <b>{Math.round(self.splitIngredients[key] * 100) / 100}g</b>
           <b className=""></b>
-          <FlavorProfilePreview bean={{flavorArrays : CONSTS.GetFlavorProfileAsArrays(self.beanMap[key].flavorProfile)}} dimensions={self.dimensions} key="b3" />
+          <FlavorProfilePreview bean={{flavorArrays : CONSTS.GetFlavorProfileAsArrays(self.beanMap[key].flavorProfile)}}  preview={true} dimensions={self.dimensions} key="b3" />
         </div>
         :
         <div key={key} className="barPreviewIngredientsContainerSingleIngredient highlighted">{key}: <b>{Math.round(self.splitIngredients[key] * 100) / 100}g</b>

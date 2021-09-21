@@ -250,3 +250,33 @@
 .toggleQRCodeButton {
   margin: auto;
 }
+
+@media only screen and (max-width: 740px) {
+
+  .navigation-top-bar,
+  .navigation-side-bar {
+    display: none;
+  }
+
+  .app-container {
+    margin-top: 0px;
+    width: 600px;
+  }
+
+  .tastingPreviewContainer {
+    max-width: 600px;
+  }
+
+  .barSideBySideBarImage {
+    width: 210px;
+  }
+
+  .tastingPreviewTitle {
+    padding: 10px 0px 0px 0px;
+    width: 520px;
+  }
+
+  .tastingPreviewContainer {
+    margin: 0px;
+  }
+}
