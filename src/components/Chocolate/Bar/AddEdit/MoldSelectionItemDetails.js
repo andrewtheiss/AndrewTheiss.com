@@ -6,7 +6,7 @@ import LookupSelection from '../../../Utils/LookupSelection.js'
 import * as CONSTS from '../constants.js'
 import * as UTILS from './NutritionFactsUtils.js'
 import NutritionFactsPreview from '../../Ingredient/NutritionFactsPreview.js'
-import { documentToSVG, elementToSVG, inlineResources, formatXML } from 'dom-to-svg'
+import { elementToSVG, inlineResources } from 'dom-to-svg'
 
 /**
 

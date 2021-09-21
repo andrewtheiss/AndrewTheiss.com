@@ -242,3 +242,11 @@
 .tastingSideBySideIngredients.Cocoa.hidden {
   visibility: collapse;
 }
+
+.qrhidden {
+  display: none;
+}
+
+.toggleQRCodeButton {
+  margin: auto;
+}

@@ -10,10 +10,12 @@ class TastingLookupPage extends React.Component {
   constructor(props) {
     super(props);
     this.onUpdateSelection = this.onUpdateSelection.bind(this);
+    this.toggleQRCode = this.toggleQRCode.bind(this);
 
     this.setState({
-      tastingId : null
-    })
+      tastingId : null,
+      showQRCode : false
+    });
   }
   onUpdateSelection(selectionArray) {
     let tastingId = null;
@@ -22,6 +24,13 @@ class TastingLookupPage extends React.Component {
     }
     this.setState({tastingId});
   }
+  toggleQRCode() {
+    var showQRCode = true;
+    if (this.state && this.state.showQRCode) {
+        showQRCode = false;
+    }
+    this.setState({showQRCode});
+  }
   render() {
     let tastingId = undefined;
     if (this.state && this.state.tastingId) {
@@ -29,13 +38,22 @@ class TastingLookupPage extends React.Component {
     } else if (this.props.match && this.props.match.params && this.props.match.params.tastingId) {
       tastingId = this.props.match.params.tastingId;
     }
+    var React = require('react');
+    var QRCode = require('qrcode.react');
+    var tastingUrl = window.location.origin + "/chocolate/tasting/" + tastingId;
+
+    var qrCodeDivClass = 'qrhidden';
+    if (this.state && this.state.showQRCode) {
+      qrCodeDivClass = "qrshown";
+    }
+    var size = 1000;
     return (
       <div className="tastingPreviewContainer">
 
          <AuthUserContext.Consumer>
           {authUser =>
               authUser['admin'] ?
-              <FirebaseContext.Consumer>
+              <div className="tastingPreviewLeft"><FirebaseContext.Consumer>
                 {firebase =>
                     <LookupSelection
                       firebase={firebase}
@@ -46,7 +64,17 @@ class TastingLookupPage extends React.Component {
                       sendDataOnUpdate={true}
                     />
                   }
-              </FirebaseContext.Consumer> : <div></div>
+              </FirebaseContext.Consumer>
+              <button className="toggleQRCodeButton" onClick={this.toggleQRCode}>Toggle QR Code</button>
+              <div  className={qrCodeDivClass} >
+                <QRCode
+                  value={tastingUrl}
+                  renderAs="canvas"
+                  size={size}
+                  level="H"
+                />
+              </div>
+              </div> : <div></div>
             }
           </AuthUserContext.Consumer>
           <FirebaseContext.Consumer>

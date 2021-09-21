@@ -161,11 +161,11 @@ class NutritionFactsPreview extends React.Component {
     let secondaryDetails = this.generateSecondaryDetails();
     let ingredientsList = this.generateIngredientsList();
     let ingredientsListBefore = <div></div>;
-    let ingredientsListImage = <div></div>;
+    //let ingredientsListImage = <div></div>;
     if (this.props.cssForSvg === "overrideCssForSvg") {
       ingredientsListBefore = ingredientsList;
       ingredientsList = <div></div>;
-      ingredientsListImage = <div></div>;
+      //ingredientsListImage = <div></div>;
     }
     let cssForSvg = this.props.cssForSvg;
     this.updateListeners();
