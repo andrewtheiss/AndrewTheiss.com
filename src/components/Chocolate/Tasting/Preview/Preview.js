@@ -30,9 +30,17 @@ class TastingPreview extends React.Component {
 
   async componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
-      if (JSON.stringify(this.props.tasting) !== JSON.stringify(prevProps.tasting)) {
-        let tasting = this.props.tasting;
-        this.setState({tasting});
+      if (JSON.stringify(this.props.tastingId) !== JSON.stringify(prevProps.tastingId)) {
+
+        let self = this;
+        let tasting = {};
+        const docRef = this.props.firebase.db.collection("tastingPublic").doc(this.props.tastingId);
+        await docRef.get().then(function(doc) {
+          if (doc.exists) {
+            tasting = doc.data();
+          }
+          self.setState({tasting});
+        });
       }
     }
   }
