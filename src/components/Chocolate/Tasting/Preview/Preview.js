@@ -61,7 +61,7 @@ class TastingPreview extends React.Component {
 
     // If we give this a tastingId
     let tasting = {};
-    if (!this.props.tasting || Object.keys(this.props.tasting).length === 0) {
+    if (this.props.tastingId && (!this.props.tasting || Object.keys(this.props.tasting).length === 0)) {
       const docRef = this.props.firebase.db.collection("tastingPublic").doc(this.props.tastingId);
       await docRef.get().then(function(doc) {
         if (doc.exists) {
@@ -154,7 +154,7 @@ class TastingPreview extends React.Component {
   }
 
   render() {
-    if (!this.state.tasting || Object.keys(this.state.tasting).length === 0) {
+    if (!this.state.tasting) {
       return <div></div>
     }
     let tastingDifficulty = this.generateDifficulty();

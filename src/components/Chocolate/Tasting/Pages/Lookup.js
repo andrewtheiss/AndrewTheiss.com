@@ -40,7 +40,7 @@ class TastingLookupPage extends React.Component {
     }
     var React = require('react');
     var QRCode = require('qrcode.react');
-    var tastingUrl = window.location.origin + "/chocolate/tasting/" + tastingId;
+    var tastingUrl = window.location.origin + "/chocolate/tasting/" + encodeURI(tastingId);
 
     var qrCodeDivClass = 'qrhidden';
     if (this.state && this.state.showQRCode) {
