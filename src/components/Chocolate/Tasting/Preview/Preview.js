@@ -30,10 +30,10 @@ class TastingPreview extends React.Component {
 
   async componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
+      let tasting = {};
       if (JSON.stringify(this.props.tastingId) !== JSON.stringify(prevProps.tastingId)) {
 
         let self = this;
-        let tasting = {};
         const docRef = this.props.firebase.db.collection("tastingPublic").doc(this.props.tastingId);
         await docRef.get().then(function(doc) {
           if (doc.exists) {
@@ -41,6 +41,9 @@ class TastingPreview extends React.Component {
           }
           self.setState({tasting});
         });
+      } else if (JSON.stringify(this.props.tasting) !== JSON.stringify(prevProps.tasting)) {
+        tasting = this.props.tasting;
+        this.setState({tasting});
       }
     }
   }
@@ -61,7 +64,7 @@ class TastingPreview extends React.Component {
 
     // If we give this a tastingId
     let tasting = {};
-    if (this.props.tastingId && (!this.props.tasting || Object.keys(this.props.tasting).length === 0)) {
+    if  (!this.props.tasting || Object.keys(this.props.tasting).length === 0) {
       const docRef = this.props.firebase.db.collection("tastingPublic").doc(this.props.tastingId);
       await docRef.get().then(function(doc) {
         if (doc.exists) {
@@ -154,7 +157,7 @@ class TastingPreview extends React.Component {
   }
 
   render() {
-    if (!this.state.tasting) {
+    if (!this.state.tasting || Object.keys(this.state.tasting).length === 0) {
       return <div></div>
     }
     let tastingDifficulty = this.generateDifficulty();
