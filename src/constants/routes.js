@@ -21,3 +21,8 @@ export const CHOCOLATE = {
   LANDING : '/chocolate',
   BEAN : '/chocolate/bean'
 };
+
+export const TAXES = {
+  OVERVIEW : '/taxes',
+  CHAIN : '/taxes/chain/:chainId'
+};

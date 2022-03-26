@@ -92,6 +92,9 @@ const NavigationAdminAuth = () => (
         </li>
 
     </ul>
+    <li>
+      <Link to={ROUTES.TAXES.OVERVIEW}>Taxes</Link>
+    </li>
   </ul>
 );
 
