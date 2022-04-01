@@ -67,7 +67,7 @@ const App = () => (
           {firebase => <Route exact path={ROUTES.CHOCOLATE.TASTING_ADD_EDIT} component={TastingMainPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.TAXES} component={TaxesOverviewMainPage} firebase={firebase} />}
+          {firebase => <Route path={ROUTES.TAXES.OVERVIEW} component={TaxesOverviewMainPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
       <Route path={ROUTES.SIGNUP} component={SignUpPage} />
       <FirebaseContext.Consumer>
