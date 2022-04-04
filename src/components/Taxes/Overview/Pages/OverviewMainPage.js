@@ -31,9 +31,28 @@ class TaxesOverviewMainPage extends React.Component {
 
     //ethers.provider = new ethers.providers.Web3Provider(window.ethereum);
     eth.ethers = ethers;
+    var latestTransction = this.getLatestProcessedTransaction();
+
     var transactionList = this.grabTransactionList(eth.provider);
     this.setState({eth});
   }
+
+  //
+  async getLatestProcessedTransaction() {
+    /*
+    const collectionRef = this.props.firebase.db.collection("moldSize");
+    let self = this;
+    await collectionRef.get().then(function(collectionDocs) {
+      var moldData = {};
+      collectionDocs.forEach(function(doc) {
+        moldData[doc.id] = doc.data();
+      });
+
+      self.moldData = moldData;
+    });
+    */
+  }
+
 
 
   async grabTransactionList(provider) {
@@ -47,21 +66,36 @@ class TaxesOverviewMainPage extends React.Component {
     transactionDetails.count = await provider.getTransactionCount(this.defaultWallet);
     console.log('found ' + transactionDetails.count);
 
-    const response = await fetch(`https://api.etherscan.io/api?module=account
-         &action=txlist
-         &address=` + transactionDetails.wallet + `
-         &startblock=0
-         &endblock=99999999
-         &page=1
-         &offset=10
-         &sort=asc
-         &apikey=` + this.etherscanApi
+    // Figure out how many transactions we already processed and grab that many
+    // transactions + a couple more to process
+    // NEED TO GET TRANSACTION BY HASH
+    let TEMP_totalTransactionsProcessed = 830; // Ox2ae8d7ae8e7f7a8d78f7889098709ad
+    // Find number of transactions processed after that one
+
+    // How many extra transactions we want to grab since the one which was processed
+    let transactionCountBuffer = 5;
+
+    let transactionCountToGrab = transactionDetails.count - TEMP_totalTransactionsProcessed;
+    transactionCountToGrab += transactionCountBuffer;
+
+    const response = await fetch('https://api.etherscan.io/api?module=account' +
+         '&action=txlist' +
+         '&address=' + transactionDetails.wallet +
+         '&startblock=0' +
+         '&endblock=99999999' +
+         '&page=1' +
+         '&offset=' + transactionCountToGrab +
+         '&sort=desc' +
+         '&apikey=' + this.etherscanApi
        );
     const json = await response.json();
-    console.log(json);
-    this.setState({ data: json });
-    // Grab transactions from database and check
+    transactionDetails.json = json;
+    this.setState({
+      transactionsToProcess: json,
+      totalTransactions :transactionDetails.json
+    });
 
+    
   }
 
   render() {

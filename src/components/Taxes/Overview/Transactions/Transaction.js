@@ -4,99 +4,63 @@ import { ethers } from "ethers";
 class Transaction extends React.Component {
   constructor(props) {
     super(props);
-    this.componentDidMount = this.componentDidMount.bind(this);
-    this.handleMouseOver = this.handleMouseOver.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.dimensions = {
-      width: 500,
-      height: 500
-    };
-    this.previewDimensions = {
-      width: 300,
-      height: 300
-    };
-    // When state changes, render is called
-    this.state = {
-      beans : {},
-      selectedBeanId : undefined,
-      previewBeanId : undefined
-    };
-    this.selectedBean = {};
-    this.previewBean = {};
+
+    this.setState({
+      index : '', // Same as block number?
+      blockNumber : '',
+      order : '', // Probably not used but there could be 2 transactions in the same block...
+      txnHash : '',
+      timestamp : '',
+      gasCost : 0, // This doubles as determining if it's to/from
+      contractInteraction : '',
+
+      // Heavy lifting here, but get other parts to work first
+      input : '',
+      processedInput : {}
+    });
   }
 
   // Get data from DB in this function
-  componentDidMount = () => {
-    const beanCollectionRef = this.props.firebase.db.collection("beans");
+  async componentDidMount(){
+    // Grab the transaction with this index from the master list
+  }
+
+  async grabTxnFromDb() {
+    const transaction = this.props.firebase.db.collection("transactions");
     let self = this;
-    beanCollectionRef.get().then(function(beanCollectionDocs) {
-      var beansMap = {};
-      beanCollectionDocs.forEach(function(doc) {
-        beansMap[doc.id] = doc.data();
+    txnCollectionRef.where("txnHash", "==", txn).get().then(function(transactionCollectionDocs) {
+      var transactionMap = {};
+      transactionCollectionDocs.forEach(function(doc) {
+        transactionMap[doc.id] = doc.data();
       });
 
       self.setState({
-        beans : beansMap
+        transaction : transactionMap
       });
     });
 
   }
 
-  handleMouseOver(e) {
-    var dataID = e.target.getAttribute('data-id');
-    let beanData = this.state.beans[dataID];
+  processTransaction(txnId) {
+    // Grab from the DB and see if it's there
+    // If Not // (NOW) we should grab the transaction from the
 
-    // Only if there is a selected bean
-    if (beanData) {
-      this.previewBean = this.state.beans[dataID];
-      this.previewBean['id'] = dataID;
-      this.previewBean['flavorArrays'] = this.getFlavorProfileAsArrays(this.previewBean['flavorProfile']);
-      this.setState({
-        previewBeanId : dataID
-      });
-    }
-  }
-
-  handleClick(e) {
-    var dataID = e.target.getAttribute('data-id');
-    let beanData = this.state.beans[dataID];
-
-    // Only if there is a selected bean
-    if (beanData) {
-      this.selectedBean = this.state.beans[dataID];
-      this.selectedBean['id'] = dataID;
-      this.selectedBean['flavorArrays'] = this.getFlavorProfileAsArrays(this.selectedBean['flavorProfile']);
-      this.setState({
-        selectedBeanId : dataID
-      });
-    }
-  }
-
-  getFlavorProfileAsArrays(dataMap) {
-    let flavorArrays = [];
-    for (const value in dataMap) {
-      flavorArrays.push([value[0].toUpperCase() + value.substring(1), dataMap[value]]);
-    }
-    flavorArrays.sort(function(a,b) {
-      return a[0].localeCompare(b[0]);
-    });
-    return flavorArrays;
+    //
+    // transactionListAsc.json file and grab it by index
+    //
   }
 
   render() {
     return (
-      <div className="transactionContainer">
-        <div className="transactionMasterListContainer" key="b0" >
-        {Object.keys(this.state.transactions).map((key) => (
-          <div key={key} data-id={key} onMouseEnter={this.handleMouseOver} onClick={this.handleClick}>
-            <b>{key} - </b>{this.state.transactions[key].id}
-          </div>
-        ))}
-        </div>
-        <BeanDetails bean={this.lastUnprocessedTreansaction} />
+      <div className="transactionDetails">
+        <div>Currencies this transaction touches</div>
+         <div>Txn: {this.state.transaction.txnHash}</div>
+         <div>Txn Block Number: {this.state.transaction.blockNumber}</div>
+         <div>Txn Time: {this.state.transaction.timestamp}</div>
+         <div></div>
       </div>
     );
   }
 }
 
-export default Bean;
+export default Transaction;
