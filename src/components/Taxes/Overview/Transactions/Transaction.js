@@ -8,6 +8,7 @@ class Transaction extends React.Component {
 
     this.processTransaction = this.processTransaction.bind(this);
     this.grabTxnFromDb = this.grabTxnFromDb.bind(this);
+    this.etherscanApi = 'NCTXRETEMIUZU5FJTDZHHV43DE99699FDP';
     this.tempTxnHash = '0x4ee17bcd40533c68e9152db5f60b9d9d951f0a6653e813ca958003101b6371ab';
 
 
@@ -54,12 +55,12 @@ class Transaction extends React.Component {
   async getTxnReceiptFromChain(txnHash) {
     let txn = {};
     //
-    if (1) {
+    if (0) {
+      console.log('This data dump is missing the Logs for each receipt');
       txn = await this.getFromChainLocal(txnHash)
     } else {
       txn = this.getFromChainLive(txnHash);
     }
-    console.log(txn);
     return txn;
   }
 
@@ -80,7 +81,8 @@ class Transaction extends React.Component {
   }
 
   async getFromChainLive(txnHash) {
-
+    const response = await this.props.utils.provider.getTransactionReceipt(txnHash);
+    return response;
   }
 
   async processTransaction() {

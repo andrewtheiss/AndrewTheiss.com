@@ -6,6 +6,7 @@ import Transaction from '../Transactions/Transaction.js'
 class TaxesOverviewMainPage extends React.Component {
   constructor(props) {
     super(props);
+
     this.defaultWallet = 'theiss.eth';
     this.etherscanApi = 'NCTXRETEMIUZU5FJTDZHHV43DE99699FDP';
     this.grabTransactionList = this.grabTransactionList.bind(this);
@@ -41,6 +42,7 @@ class TaxesOverviewMainPage extends React.Component {
 
   //
   async getLatestProcessedTransaction() {
+
     /*
     const collectionRef = this.props.firebase.db.collection("moldSize");
     let self = this;
@@ -52,6 +54,7 @@ class TaxesOverviewMainPage extends React.Component {
 
       self.moldData = moldData;
     });
+
     */
   }
 
@@ -107,7 +110,7 @@ class TaxesOverviewMainPage extends React.Component {
 
       <div key="1" className="txn-container">
         <FirebaseContext.Consumer>
-          {firebase => <Transaction firebase={firebase} txnHash={this.txnHash}/>}
+          {firebase => <Transaction firebase={firebase} txnHash={this.txnHash} utils={this.state.eth}/>}
         </FirebaseContext.Consumer>
       </div>
       </div>
