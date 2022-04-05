@@ -1,5 +1,7 @@
 import React from 'react';
+import { FirebaseContext } from '../../../Firebase';
 import { ethers } from "ethers";
+import Transaction from '../Transactions/Transaction.js'
 
 class TaxesOverviewMainPage extends React.Component {
   constructor(props) {
@@ -95,15 +97,19 @@ class TaxesOverviewMainPage extends React.Component {
       totalTransactions :transactionDetails.json
     });
 
-    
+
   }
 
   render() {
     return (
       <div className="scripts-page">
       <h1>Transactions</h1>
-      <button onClick={this.runSafetyNetLogin} id="safetyLogin">Safety Net Login</button>
-      {this.state.sent ?  <div>Sent!</div> : ''}
+
+      <div key="1" className="txn-container">
+        <FirebaseContext.Consumer>
+          {firebase => <Transaction firebase={firebase} txnHash={this.txnHash}/>}
+        </FirebaseContext.Consumer>
+      </div>
       </div>
     );
   }
