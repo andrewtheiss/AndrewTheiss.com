@@ -60,9 +60,6 @@ const NavigationAdminAuth = () => (
       <Link to={ROUTES.LANDING}>Home</Link>
     </li>
     <li>
-      <Link to={ROUTES.SCRIPTS}>Scripts</Link>
-    </li>
-    <li>
       <Link to={ROUTES.CHOCOLATE.LANDING}>Chocolate</Link>
     </li>
       <ul>

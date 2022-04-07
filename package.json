@@ -19,7 +19,6 @@
     "resolve": "^1.20.0",
     "set-value": "^3.0.2",
     "update": "^0.4.2",
-    "urllib": "^2.37.2",
     "uuid": "^8.3.2",
     "web-vitals": "^0.2.4"
   },
