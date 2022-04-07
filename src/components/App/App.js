@@ -7,7 +7,6 @@ import * as ROUTES from '../../constants/routes.js'
 import { withAuthentication } from '../Session';
 
 // Import different pages to view based on routing
-import ScriptsPage from '../Scripts/Pages/ScriptsPage.js'
 import SignInPage from '../Session/SignInPage.js'
 import SignUpPage from '../Session/SignUpForm.js'
 
@@ -31,7 +30,6 @@ const App = () => (
       <FirebaseContext.Consumer>
             {firebase => <Route exact path={ROUTES.LANDING} component={SplashPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
-      <Route path={ROUTES.SCRIPTS} component={ScriptsPage} />
       <FirebaseContext.Consumer>
           {firebase => <Route path={ROUTES.CHOCOLATE.BEAN} component={BeanMainPage} firebase={firebase} />}
       </FirebaseContext.Consumer>
