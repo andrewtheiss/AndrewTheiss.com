@@ -20,6 +20,7 @@ class AddEditBean extends React.Component {
 
   componentDidUpdate(prevProps) {
     let editExistingItem = this.props.itemSelectedForEdit;
+    this.selectedCountryInUse = false;
 
     // Only do something if there's a change in the batchToEdit
     if (this.props !== prevProps) {
@@ -33,7 +34,6 @@ class AddEditBean extends React.Component {
           this.setState(this.props.itemSelectedForEdit);
         }
       } else {
-        this.selectedCountryInUse = false;
         this.setState(CONSTS.BEAN_DEFAULT_PROPS);
       }
     }
@@ -96,10 +96,10 @@ class AddEditBean extends React.Component {
   }
 
   formatCountryForDropdown() {
-    if (this.state.country) {
+    if (this.state.country && this.state.country.length !== 0) {
       return([{name : this.state.country, label : this.state.country}]);
     }
-    return '';
+    return [];
   }
 
   render() {
