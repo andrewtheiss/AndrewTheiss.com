@@ -19,7 +19,9 @@ export const BEAN_DEFAULT_PROPS = {
   notes : '',
   price : 0,
   purchaseLbs : 0,
-  value : ''
+  value : '',
+  country : '',
+  countrySubCategory : ''
 }
 
 export const GetFlavorProfileAsArrays = function(dataMap) {

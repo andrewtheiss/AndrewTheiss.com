@@ -12,7 +12,8 @@ import './Utils.css'
  *  allowMultiple         : (optional) returns Array of all selected instead of single
  *  sendDataOnUpdate      : (optional) returns second parameter back which is the collectionData
  *  displayTitle          : (optional) display title
- *  selectedData          : (optional) data already selected
+ *  selectedData          : (optional) data already selected  Format: [{name:___,value:___},...]
+ *  selectedDataInUse     : (optional) Boolean to flag which is used to show pre loaded (non user selected data)
  *
        if (self.props.immediatelyUpdateBatchData) {
          self.props.immediatelyUpdateBatchData(collection);
@@ -65,12 +66,22 @@ class LookupSelection extends React.Component {
   }
 
   componentDidMount = async () => {
+    let self = this;
+
+    // If we don't want to load collection data, we can override the reuqest
+    if (!this.props.collectionName || this.props.staticCollectionDataOverride) {
+      self.setState({
+        collection : this.props.staticCollectionDataOverride.collection,
+        collectionOptions : this.props.staticCollectionDataOverride.collectionOptions
+      });
+
+      return;
+    }
     let collectionRef = this.props.firebase.db.collection(this.props.collectionName);
     if (this.props.customSearch) {
       collectionRef = this.props.customSearch;
     }
 
-    let self = this;
     await collectionRef.get().then(function(collectionDocs) {
       var collectionMap = {};
       var collectionOptions = [];

@@ -2,6 +2,7 @@ import React from 'react';
 import * as CONSTS from './constants.js'
 import ImageUpload from '../../Utils/ImageUpload.js'
 import FlavorProfile from './FlavorProfile.js'
+import LookupSelection from '../../Utils/LookupSelection.js'
 
 class AddEditBean extends React.Component {
   constructor(props) {
@@ -10,27 +11,47 @@ class AddEditBean extends React.Component {
     this.updateImage = this.updateImage.bind(this);
     this.onUpdateDetails = this.onUpdateDetails.bind(this);
     this.onUpdateFlavorProile = this.onUpdateFlavorProile.bind(this);
+    this.onUpdateCountrySelection = this.onUpdateCountrySelection.bind(this);
 
+    this.countriesDataOverride = this.formatCountriesForDropdown();
+    this.selectedCountryInUse = false;
     this.state = CONSTS.BEAN_DEFAULT_PROPS;
   }
 
   componentDidUpdate(prevProps) {
-    let isEdit = this.props.itemSelectedForEdit;
+    let editExistingItem = this.props.itemSelectedForEdit;
 
     // Only do something if there's a change in the batchToEdit
     if (this.props !== prevProps) {
 
       // If there's something to edit or the props don't match the default
-      if (isEdit) {
+      if (editExistingItem) {
 
         // Save the selected label we selected for edit
         if (this.props.itemSelectedForEdit) {
+          this.selectedCountryInUse = true;
           this.setState(this.props.itemSelectedForEdit);
         }
       } else {
+        this.selectedCountryInUse = false;
         this.setState(CONSTS.BEAN_DEFAULT_PROPS);
       }
     }
+  }
+
+  formatCountriesForDropdown() {
+    let collectionMap = [];
+    let collectionOptions = [];
+    let countries = require('country-data-list').countries;
+    countries.all.forEach(function(doc) {
+        collectionMap[doc.name] = doc;
+        collectionOptions.push({value : doc.name, label : doc.name});
+    });
+
+    return {
+      collection : collectionMap,
+      collectionOptions : collectionOptions
+    };
   }
 
   async onUpdateDetails(event) {
@@ -47,6 +68,13 @@ class AddEditBean extends React.Component {
   onUpdateFlavorProile(newProfile) {
     let flavorProfile = newProfile;
     this.setState({flavorProfile});
+  }
+
+  onUpdateCountrySelection(selection) {
+    let state = {
+      country : selection
+    };
+    this.setState(state);
   }
 
   async setBean() {
@@ -67,7 +95,15 @@ class AddEditBean extends React.Component {
     }
   }
 
+  formatCountryForDropdown() {
+    if (this.state.country) {
+      return([{name : this.state.country, label : this.state.country}]);
+    }
+    return '';
+  }
+
   render() {
+    this.formattedCountry = this.formatCountryForDropdown();
     return (
       <div>
       Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" type="text"></input><br />
@@ -78,6 +114,17 @@ class AddEditBean extends React.Component {
       Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
       Alchemist Notes: <textarea name="alchemistNotes"  onChange={this.onUpdateDetails} value={this.state.alchemistNotes} type="text"></textarea><br />
       <FlavorProfile flavorProfile={this.state.flavorProfile} onUpdate={this.onUpdateFlavorProile} itemSelectedForEdit={this.props.itemSelectedForEdit}/>
+      <LookupSelection
+        onUpdateSelection={this.onUpdateCountrySelection}
+        staticCollectionDataOverride={this.countriesDataOverride}
+        displayTitle="Country"
+        allowMultiple={false}
+        sendDataOnUpdate={true}
+        selectedData={this.formattedCountry}
+        selectedDataInUse={this.selectedCountryInUse}
+      />
+      Country Subcatagory: <input name="countrySubCategory"  onChange={this.onUpdateDetails} value={this.state.countrySubCategory} size="60" type="text"></input><br />
+
       <ImageUpload onUpdate={this.updateImage} image={this.state.imageBase64} />
       <button onClick={this.setBean}>Update Bean</button>
       </div>
