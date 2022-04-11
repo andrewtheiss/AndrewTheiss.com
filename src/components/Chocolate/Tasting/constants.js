@@ -5,13 +5,15 @@ export const TASTING_DEFAULT_PROPS = {
   notes : '',
   notesMinor : '',
   difficulty : '',
+  comparison : '',
 
   // To be removed before edit
   allBars : {},
   barsSelected : [],
   tastingTypeSelection: [],
   difficultySelection: [],
-  allBarsSelectionOptions : []
+  allBarsSelectionOptions : [],
+  comparisonSelection : []
 }
 
 export const TASTING_DEFAULT_PROPS_OBJECT_FOR_WRITE = {
@@ -21,8 +23,14 @@ export const TASTING_DEFAULT_PROPS_OBJECT_FOR_WRITE = {
   barAnswers : {},  // Maybe have Static types of bar answers
   notes : '',
   notesMinor : '',
-  difficulty : ''
+  difficulty : '',
+  comparison : ''
 }
+
+export const TASTING_COMPARISONS = [
+  {label : 'Side By Side', value : 'Side By Side'},
+  {label : 'Geographic', value: 'Geographic'}
+]
 
 export const TASTING_TYPES = [
   {label : 'Sweetener', value : 'Sweetener'},

@@ -61,7 +61,7 @@ class TastingMainPage extends React.Component {
         </div>
       );
     }
-
+console.log(this.state.latestTastingState);
     let showHideContent = (this.state.pageContentVisibilityDropdownToggled) ? "tastingMainPageContainer" : "tastingMainPageContainer hidden";
     let showHideCarat = (this.state.pageContentVisibilityDropdownToggled) ? "carat down" : "carat";
     return (

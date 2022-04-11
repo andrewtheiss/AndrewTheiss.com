@@ -37,7 +37,9 @@ class Firebase {
           // features required to enable persistence
           // ...
       }
-  });
+
+    });
+    firebase.firestore().disableNetwork();
   }
 
 

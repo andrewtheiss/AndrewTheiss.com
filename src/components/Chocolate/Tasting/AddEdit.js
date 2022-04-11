@@ -15,6 +15,7 @@ class AddEditTasting extends React.Component {
     this.setStateAndUpdateParent = this.setStateAndUpdateParent.bind(this);
     this.setTastingTypeSelected = this.setTastingTypeSelected.bind(this);
     this.setDifficultySelected = this.setDifficultySelected.bind(this);
+    this.setComparisonSelected = this.setComparisonSelected.bind(this);
     this.formatTastingTypeAndBarSelections = this.formatTastingTypeAndBarSelections.bind(this);
 
     this.state = CONSTS.TASTING_DEFAULT_PROPS;
@@ -143,6 +144,18 @@ class AddEditTasting extends React.Component {
     });
   }
 
+  async setComparisonSelected(comparisonSelection) {
+    let comparison = '';
+    if (comparisonSelection.length > 0) {
+      comparison = comparisonSelection[0].label;
+    }
+
+    await this.setStateAndUpdateParent({
+      comparison : comparison,
+      comparisonSelection : comparisonSelection
+    });
+  }
+
   // LIMIT TASTING TYPE TO 1 FOR NOW!
   async setTastingTypeSelected(tastingTypeSelection) {
     let type = '';
@@ -210,6 +223,16 @@ class AddEditTasting extends React.Component {
       Notes: <textarea name="notes" className="tastingPreviewNotes" onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />
       Notes Minor: <textarea name="notesMinor" className="tastingPreviewNotesMinor" onChange={this.onUpdateDetails} value={this.state.notesMinor} type="text"></textarea><br />
 
+      <div className="addEditTastingComparision">
+      Comparison:
+       <MultiSelect
+          options={CONSTS.TASTING_COMPARISONS}
+          value={this.state.comparisonSelection}
+          onChange={this.setComparisonSelected}
+          labelledBy="Select"
+          hasSelectAll={false}
+        />
+      </div>
       <div className="addEditTastingTypeContainer">
       Difficulty:
        <MultiSelect
