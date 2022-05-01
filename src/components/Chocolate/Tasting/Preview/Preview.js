@@ -1,6 +1,7 @@
 import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
 import TastingSideBySide from './SideBySide.js'
+import TastingGeographic from './Geographic.js'
 /**
  *  TastingPreview
  *
@@ -40,6 +41,16 @@ class TastingPreview extends React.Component {
       return (
         <div>
         Geographic Preview
+        
+        <FirebaseContext.Consumer>
+            {firebase =>
+              <TastingGeographic
+                firebase={firebase}
+                tasting={this.state.latestTastingState}
+                tastingId={this.state.tastingId}
+              />
+            }
+        </FirebaseContext.Consumer>
         </div>
       )
     }

@@ -1,17 +1,13 @@
 import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
-import svgMap from 'svgmap';
-import 'svgmap/dist/svgMap.min.css';
+import World from "@svg-maps/world";
+import { SVGMap } from "react-svg-map";
+import "react-svg-map/lib/index.css";
 
 class TastingGeographic extends React.Component {
   constructor(props) {
     super(props);
-    this.generateBarComparisonImages = this.generateBarComparisonImages.bind(this);
-    this.generateBarComparisonPackaging = this.generateBarComparisonPackaging.bind(this);
-    this.generateBarComparisonIngredients = this.generateBarComparisonIngredients.bind(this);
-    this.showAnswers = this.showAnswers.bind(this);
-    this.generateDifficulty = this.generateDifficulty.bind(this);
-
+    
     this.state = {
       tasting : {},
       ingredientsList : {},
@@ -69,123 +65,11 @@ class TastingGeographic extends React.Component {
     }
   }
 
-  generatePreviewForBars() {
-    let barPreview = <div></div>;
-    return barPreview;
-  }
-
-  generateBarComparisonImages() {
-    let barPreview = <td></td>;
-    let bars = this.state.tasting.bars;
-    if (bars && Object.keys(bars).length > 0) {
-      barPreview = Object.keys(bars).map((key) => (
-        <td key={key} className="">
-          <img src={bars[key]['moldImageBase64']} alt="" className="barSideBySideBarImage" />
-        </td>
-      ));
-    }
-    return barPreview;
-  }
-
-  generateBarComparisonPackaging() {
-    let barPreview = <td></td>;
-    let bars = this.state.tasting.bars;
-    if (bars && Object.keys(bars).length > 0) {
-      barPreview = Object.keys(bars).map((key) => (
-        <td key={key} className="">
-          <PreviewPackagingSelection packagingSelection={bars[key]['packagingSelection']} />
-        </td>
-      ));
-    }
-    return barPreview;
-  }
-
-  generateBarComparisonIngredients() {
-    let barPreview = <td></td>;
-    let self = this;
-    let bars = this.state.tasting.bars;
-    if (bars && Object.keys(bars).length > 0) {
-      barPreview = Object.keys(bars).map((key) => (
-        <td key={key} className="">
-          <PreviewIngredients
-          highlightType={self.state.tasting}
-          ingredientsListForHighlightType={self.state.ingredientsList}
-          ingredients={bars[key]['batchIngredients']}
-          beans={bars[key]['beans']} />
-        </td>
-      ));
-    }
-    let barPreviewRow = <TableRowWrapper showAnswers={this.state.showAnswers} tableRowClass="tastingSideBySideIngredients" tastingType={this.state.tasting.type} type="Ingredients" tableData={barPreview} />;
-    return barPreviewRow;
-  }
-
-  generateBarComparisonNutritionFacts() {
-    let barPreview = <td></td>;
-    let bars = this.state.tasting.bars;
-    if (bars && Object.keys(bars).length > 0) {
-      barPreview = Object.keys(bars).map((key) => (
-        <td key={key}>
-          <div className="tastingSideBySideBarNutritionFactsTd">
-            <NutritionFactsPreview hideIngredientList={true} previewData={bars[key]['nutritionFacts']} ingredientList={bars[key]['ingredients']}/>
-          </div>
-        </td>
-      ));
-    }
-    return barPreview;
-  }
-
-  generateDifficulty() {
-    let barDifficulty = <div></div>;
-    if (this.state.tasting.difficulty) {
-      let className = "tastingDifficulty " + this.state.tasting.difficulty;
-      barDifficulty = <div className="tastingDifficultyContainer"><div className={className}>{this.state.tasting.difficulty}</div></div>
-    }
-    return barDifficulty;
-  }
-
-  showAnswers() {
-    this.setState({showAnswers: true});
-  }
-
   render() {
-    if (!this.state.tasting || Object.keys(this.state.tasting).length === 0) {
-      return <div></div>
-    }
-    let tastingDifficulty = this.generateDifficulty();
-    let barImages = this.generateBarComparisonImages();
-    let barPackaging = this.generateBarComparisonPackaging();
-    let barIngredients = this.generateBarComparisonIngredients();
-    let barNutritionFacts = this.generateBarComparisonNutritionFacts();
-    let showAnswersShowHide = (this.state.showAnswers) ? " hidden" : "";
-    let showAnswersCss = "tastingButtonContainer" + showAnswersShowHide;
     return (
       <div>
-        <div>
-          <h1 className="barTastingPreviewTitle">GEOGRAPHIC</h1>
-
-          <h2  className="barTastingPreviewLabel">{this.state.tasting.label}</h2>
-        </div>
-        <div>
-          <p className="tastingPreviewTitle">{this.state.tasting.notes}</p>
-          <p className="tastingPreviewTitle minor">{this.state.tasting.notesMinor}</p>
-          <div className={showAnswersCss}>
-            <button className="tastingPreviewShowAnswersButton" onClick={this.showAnswers}>Show Answers</button>
-          </div>
-          <table  className="tastingSideBySideBarComparisonConainer">
-          <tbody>
-            <tr className="tastingSideBySideBarImages">
-            {barImages}
-            </tr>
-            <tr className="barSideBySidePackagingTd">
-            {barPackaging}
-            </tr>
-            {barIngredients}
-            <tr className="tastingSideBySideBarNutritionFacts">
-            {barNutritionFacts}
-            </tr>
-            </tbody>
-          </table>
-        </div>
+        Whaddup
+        <SVGMap map={World} />;
       </div>
     );
   }
