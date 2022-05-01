@@ -59,6 +59,16 @@ class AddEditTasting extends React.Component {
   async componentDidMount() {
     let self = this;
 
+    // Grab all beans for their country
+    const beansCollectionRef = this.props.firebase.db.collection("beansPublic");
+    await beansCollectionRef.get().then(function(collectionDocs) {
+      let allBeans = {};
+      let allCountries = {};
+      collectionDocs.forEach(function(doc){
+        console.log(doc.data());
+      });
+    });
+
     const collectionRef = this.props.firebase.db.collection("barsPublic");
     await collectionRef.get().then(function(collectionDocs) {
       var allBars = {};

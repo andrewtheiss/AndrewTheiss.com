@@ -39,7 +39,7 @@ class Firebase {
       }
 
     });
-    firebase.firestore().disableNetwork();
+    //firebase.firestore().disableNetwork();
   }
 
 

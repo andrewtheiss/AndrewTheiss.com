@@ -6,6 +6,7 @@ export const TASTING_DEFAULT_PROPS = {
   notesMinor : '',
   difficulty : '',
   comparison : '',
+  countries : [],
 
   // To be removed before edit
   allBars : {},

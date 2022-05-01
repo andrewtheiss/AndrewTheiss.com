@@ -21,14 +21,22 @@ class TastingPreview extends React.Component {
     async componentDidUpdate(prevProps) {
       if (this.props !== prevProps) {
         let latestTastingState = {};
-        latestTastingState = this.props.tasting;
-        this.setState({latestTastingState});
+        if (this.props.tasting) {
+          latestTastingState = this.props.tasting;
+          this.setState({latestTastingState});
+        } else if (this.props.tastingId) {
+          
+          let tastingId = this.props.tastingId;
+          this.setState({tastingId});
+        }
+          
       }
     }
 
   // Render Preview by type (side-by-side, geography, ..survey?)
   render() {
-    if (this.state.latestTastingState.comparison === 'Geographic') {
+    console.log(this.state.latestTastingState);
+    if (this.state.latestTastingState && (this.state.latestTastingState.comparison === 'Geographic')) {
       return (
         <div>
         Geographic Preview
@@ -42,6 +50,7 @@ class TastingPreview extends React.Component {
             <TastingSideBySide
               firebase={firebase}
               tasting={this.state.latestTastingState}
+              tastingId={this.state.tastingId}
             />
           }
       </FirebaseContext.Consumer>
