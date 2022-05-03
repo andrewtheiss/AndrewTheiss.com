@@ -1,8 +1,12 @@
 import React from 'react';
 import { FirebaseContext } from '../../../Firebase';
 import World from "@svg-maps/world";
-import { SVGMap } from "react-svg-map";
+import { CheckboxSVGMap } from "react-svg-map";
 import "react-svg-map/lib/index.css";
+import {getLocationName} from "./utils.js"
+
+// https://www.npmjs.com/package/react-svg-map#maps
+// borrowed things from https://github.com/VictorCazanave/react-svg-map/blob/master/examples/src/components/checkbox-map.jsx
 
 class TastingGeographic extends React.Component {
   constructor(props) {
@@ -11,9 +15,44 @@ class TastingGeographic extends React.Component {
     this.state = {
       tasting : {},
       ingredientsList : {},
-      showAnswers : false
+      showAnswers : false,
+			pointedLocation: null,
+			focusedLocation: null,
+			selectedLocations: []
     }
-  }
+
+		this.handleLocationMouseOver = this.handleLocationMouseOver.bind(this);
+		this.handleLocationMouseOut = this.handleLocationMouseOut.bind(this);
+		this.handleLocationFocus = this.handleLocationFocus.bind(this);
+		this.handleLocationBlur = this.handleLocationBlur.bind(this);
+		this.handleOnChange = this.handleOnChange.bind(this);
+	}
+
+	handleLocationMouseOver(event) {
+		const pointedLocation = getLocationName(event);
+		this.setState({ pointedLocation: pointedLocation });
+	}
+
+	handleLocationMouseOut() {
+		this.setState({ pointedLocation: null });
+	}
+
+	handleLocationFocus(event) {
+		const focusedLocation = getLocationName(event);
+		this.setState({ focusedLocation: focusedLocation });
+	}
+
+	handleLocationBlur() {
+		this.setState({ focusedLocation: null });
+	}
+
+	handleOnChange(selectedNodes) {
+		this.setState(prevState => {
+			return {
+				selectedLocations: selectedNodes.map(node => node.attributes.name.value)
+			};
+		});
+	}
 
   async componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
@@ -69,7 +108,21 @@ class TastingGeographic extends React.Component {
     return (
       <div>
         Whaddup
-        <SVGMap map={World} />;
+        
+					<div className="examples__block__info__item">
+						Pointed location: {this.state.pointedLocation}
+					</div>
+					<div className="examples__block__info__item">
+						Focused location: {this.state.focusedLocation}
+					</div>
+        <CheckboxSVGMap 
+          map={World}
+          onLocationMouseOver={this.handleLocationMouseOver}
+          onLocationMouseOut={this.handleLocationMouseOut}
+          onLocationFocus={this.handleLocationFocus}
+          onLocationBlur={this.handleLocationBlur}
+          onChange={this.handleOnChange} 
+            />;
       </div>
     );
   }
