@@ -11,14 +11,17 @@ import {getLocationName} from "./utils.js"
 class TastingGeographic extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       tasting : {},
       ingredientsList : {},
       showAnswers : false,
+      locations : ['Greenland'],
+
+      // These variables use the svgmap
 			pointedLocation: null,
 			focusedLocation: null,
-			selectedLocations: []
+			selectedLocations: ['Greenland']
     }
 
 		this.handleLocationMouseOver = this.handleLocationMouseOver.bind(this);
@@ -47,6 +50,7 @@ class TastingGeographic extends React.Component {
 	}
 
 	handleOnChange(selectedNodes) {
+    console.log(selectedNodes);
 		this.setState(prevState => {
 			return {
 				selectedLocations: selectedNodes.map(node => node.attributes.name.value)
@@ -77,6 +81,22 @@ class TastingGeographic extends React.Component {
   async componentDidMount() {
     let self = this;
 
+    // Render the correct locations as selectedLocations
+    // Can set all aria-checked attributes as true
+    // aria-checked $('#gl').setAttribute('aria-checked', false)
+    if (this.state.locations.length != this.state.selectedLocations.length) {
+      console.log('component mounted and we need to select locations');
+      let selectedNodes = [];
+      for(let locationIndex in this.state.locations) {
+        let element = document.getElementsByName(this.state.locations[locationIndex]);
+        selectedNodes.push(element[0]);
+        console.log(element[0]);
+      }
+      this.handleOnChange(selectedNodes);
+      let selectedLocations = ['Greenland'];
+      this.setState({selectedLocations});
+    }
+
     // Get ingredients list
     const collectioRef = this.props.firebase.db.collection("ingredients");
     await collectioRef.get().then(function(collectionDocs) {
@@ -105,23 +125,24 @@ class TastingGeographic extends React.Component {
   }
 
   render() {
+    console.log(this.state.selectedLocations);
     return (
       <div>
         Whaddup
-        
+
 					<div className="examples__block__info__item">
 						Pointed location: {this.state.pointedLocation}
 					</div>
 					<div className="examples__block__info__item">
 						Focused location: {this.state.focusedLocation}
 					</div>
-        <CheckboxSVGMap 
+        <CheckboxSVGMap
           map={World}
           onLocationMouseOver={this.handleLocationMouseOver}
           onLocationMouseOut={this.handleLocationMouseOut}
           onLocationFocus={this.handleLocationFocus}
           onLocationBlur={this.handleLocationBlur}
-          onChange={this.handleOnChange} 
+          onChange={this.handleOnChange}
             />;
       </div>
     );
