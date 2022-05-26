@@ -110,6 +110,16 @@ class AddEditTasting extends React.Component {
     await publicCollectionRef.doc(documentToEdit).set(tastingToWrite).then(() => {
       console.log('set public tasting');
     });
+    const publicChocolateCollectionRef = this.props.firebase.writeOnlyChocolateDb.collection("tastingPublic");
+    await publicChocolateCollectionRef.get().then(function(collectionDocs) {
+         console.log(collectionDocs);
+         collectionDocs.forEach(function(doc) {
+           console.log(doc.data());
+         });
+       })
+   await publicChocolateCollectionRef.doc(documentToEdit).set(tastingToWrite).then(() => {
+      console.log('set public tasting for chocolate site');
+    });
 
     let state = CONSTS.TASTING_DEFAULT_PROPS;
     this.setStateAndUpdateParent(state);
