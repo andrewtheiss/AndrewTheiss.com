@@ -110,7 +110,9 @@ class AddEditTasting extends React.Component {
     await publicCollectionRef.doc(documentToEdit).set(tastingToWrite).then(() => {
       console.log('set public tasting');
     });
-    const publicChocolateCollectionRef = this.props.firebase.writeOnlyChocolateDb.collection("tastingPublic");
+
+    // For other website we want all tastings to be in a single namespace
+    const publicChocolateCollectionRef = this.props.firebase.writeOnlyChocolateDb.collection("tastings");
     await publicChocolateCollectionRef.get().then(function(collectionDocs) {
          console.log(collectionDocs);
          collectionDocs.forEach(function(doc) {
