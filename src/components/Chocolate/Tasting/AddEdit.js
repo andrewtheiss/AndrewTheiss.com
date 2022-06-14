@@ -106,6 +106,14 @@ class AddEditTasting extends React.Component {
     delete tastingToWrite['difficultySelection'];
     delete tastingToWrite['allBarsSelectionOptions'];
 
+    // Delete all bean image data
+    Object.keys(tastingToWrite.bars).forEach(function(barId) {
+      let beans = tastingToWrite.bars[barId].beans;
+      Object.keys(beans).forEach(function(beanId) {
+        delete tastingToWrite.bars[barId].beans[beanId]['imageBase64'];
+      });
+    });
+
     const publicCollectionRef = this.props.firebase.db.collection("tastingPublic");
     await publicCollectionRef.doc(documentToEdit).set(tastingToWrite).then(() => {
       console.log('set public tasting');
