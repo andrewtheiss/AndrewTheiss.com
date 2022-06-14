@@ -1,6 +1,7 @@
 import React from 'react';
 import * as CONSTS from './constants.js'
 import MultiSelect from "react-multi-select-component";
+import ImageUploadStorage from "../../Utils/ImageUploadStorage.js"
 
 /**
  *  AddEditTasting
@@ -120,13 +121,7 @@ class AddEditTasting extends React.Component {
     });
 
     // For other website we want all tastings to be in a single namespace
-    const publicChocolateCollectionRef = this.props.firebase.writeOnlyChocolateDb.collection("tastings");
-    await publicChocolateCollectionRef.get().then(function(collectionDocs) {
-         console.log(collectionDocs);
-         collectionDocs.forEach(function(doc) {
-           console.log(doc.data());
-         });
-       })
+   const publicChocolateCollectionRef = this.props.firebase.writeOnlyChocolateDb.collection("tastings");
    await publicChocolateCollectionRef.doc(documentToEdit).set(tastingToWrite).then(() => {
       console.log('set public tasting for chocolate site');
     });
@@ -203,6 +198,10 @@ class AddEditTasting extends React.Component {
     }
   }
 
+  updateImage() {
+    console.log('image updated');
+  }
+
   render() {
     return (
       <div>
@@ -240,6 +239,7 @@ class AddEditTasting extends React.Component {
           hasSelectAll={false}
         />
       </div>
+      <ImageUploadStorage onUpdate={this.updateImage} image={this.state.label} />
       <button onClick={this.setTasting}>Update Tasting</button>
       </div>
     );
