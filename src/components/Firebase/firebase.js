@@ -13,14 +13,14 @@ const prodConfig = {
     appId: "1:300886092746:web:8ad9128065ef7ff22e7d33"
 };
 
-const chocolateConfig = {
-    apiKey: "AIzaSyCvYVGRkPANXQrs0bGKOMgKHylFkJ6MaAE",
-    authDomain: "chocolate-party.firebaseapp.com",
-    projectId: "chocolate-party",
-    storageBucket: "chocolate-party.appspot.com",
-    messagingSenderId: "878396758642",
-    appId: "1:878396758642:web:e2727d2b1f6ebb68d4c0eb",
-    measurementId: "G-Y7LGFTXYVY",
+const cConfig = {
+    apiKey: atob('QUl6YVN5Q3ZZVkdSa1BBTlhRcnMwYkdLT01nS0h5bEZrSjZNYUFF'),
+    authDomain: atob('Y2hvY29sYXRlLXBhcnR5LmZpcmViYXNlYXBwLmNvbQ=='),
+    projectId: atob('Y2hvY29sYXRlLXBhcnR5'),
+    storageBucket: atob('Y2hvY29sYXRlLXBhcnR5LmFwcHNwb3QuY29t'),
+    messagingSenderId: atob('ODc4Mzk2NzU4NjQy'),
+    appId: atob('MTo4NzgzOTY3NTg2NDI6d2ViOmUyNzI3ZDJiMWY2ZWJiNjhkNGMwZWI='),
+    measurementId: atob('Ry1ZN0xHRlRYWVZZ'),
   };
 
 
@@ -35,7 +35,7 @@ class Firebase {
     this.storage = firebase.storage();
 
     // Create read-only db access for other db url
-    this.writeOnlyChocolateApp = firebase.initializeApp(chocolateConfig, 'chocolateApp');
+    this.writeOnlyChocolateApp = firebase.initializeApp(cConfig, 'chocolateApp');
     this.writeOnlyChocolateDb = firebase.firestore(this.writeOnlyChocolateApp);
 
     this.auth = firebase.auth();
