@@ -1,6 +1,7 @@
 import React from 'react';
 import * as CONSTS from './constants.js'
 import MultiSelect from "react-multi-select-component";
+import ImageUploadStorage from "../../Utils/ImageUploadStorage.js"
 
 /**
  *  AddEditTasting
@@ -106,19 +107,21 @@ class AddEditTasting extends React.Component {
     delete tastingToWrite['difficultySelection'];
     delete tastingToWrite['allBarsSelectionOptions'];
 
+    // Delete all bean image data
+    Object.keys(tastingToWrite.bars).forEach(function(barId) {
+      let beans = tastingToWrite.bars[barId].beans;
+      Object.keys(beans).forEach(function(beanId) {
+        delete tastingToWrite.bars[barId].beans[beanId]['imageBase64'];
+      });
+    });
+
     const publicCollectionRef = this.props.firebase.db.collection("tastingPublic");
     await publicCollectionRef.doc(documentToEdit).set(tastingToWrite).then(() => {
       console.log('set public tasting');
     });
 
     // For other website we want all tastings to be in a single namespace
-    const publicChocolateCollectionRef = this.props.firebase.writeOnlyChocolateDb.collection("tastings");
-    await publicChocolateCollectionRef.get().then(function(collectionDocs) {
-         console.log(collectionDocs);
-         collectionDocs.forEach(function(doc) {
-           console.log(doc.data());
-         });
-       })
+   const publicChocolateCollectionRef = this.props.firebase.writeOnlyChocolateDb.collection("tastings");
    await publicChocolateCollectionRef.doc(documentToEdit).set(tastingToWrite).then(() => {
       console.log('set public tasting for chocolate site');
     });
@@ -195,6 +198,10 @@ class AddEditTasting extends React.Component {
     }
   }
 
+  updateImage() {
+    console.log('image updated');
+  }
+
   render() {
     return (
       <div>
@@ -232,6 +239,7 @@ class AddEditTasting extends React.Component {
           hasSelectAll={false}
         />
       </div>
+      <ImageUploadStorage firebase={this.props.firebase} onUpdate={this.updateImage} tastingLabel={this.state.label} />
       <button onClick={this.setTasting}>Update Tasting</button>
       </div>
     );

@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import "firebase/auth";
+import 'firebase/storage';
 
 const prodConfig = {
     apiKey: "AIzaSyCCmfrwzGLalOs4iEdep6FHw6VMranrjXY",
@@ -31,6 +32,7 @@ class Firebase {
     this.app = firebase.initializeApp(config);
     this.db = firebase.firestore();
     this.firebase = firebase;
+    this.storage = firebase.storage();
 
     // Create read-only db access for other db url
     this.writeOnlyChocolateApp = firebase.initializeApp(chocolateConfig, 'chocolateApp');
@@ -57,6 +59,22 @@ class Firebase {
     //firebase.firestore().disableNetwork();
   }
 
+  async uploadFile(file, container, filename) {
+    const storageRef = this.storage.ref();
+    const refLocation = container + '/' + filename;
+    const fileRef = storageRef.child(refLocation);
+    // 'file' comes from the Blob or File API
+    await fileRef.put(file).then((snapshot) => {
+      console.log('Uploaded a blob or file to' + refLocation);
+    });
+  }
+
+  async getFileUrl(container, filename) {
+    const storageRef = this.storage.ref();
+    const refLocation = container + '/' + filename;
+    let url = await storageRef.child(refLocation).getDownloadURL()
+    return url;
+  }
 
   // *** Auth API ***
   doCreateUserWithEmailAndPassword = (email, password) =>
