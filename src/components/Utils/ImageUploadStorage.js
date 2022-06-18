@@ -25,67 +25,57 @@ import React from 'react';
 class ImageUploadStorage extends React.Component {
   constructor(props) {
     super(props);
+
+    this.componentDidUpdate = this.componentDidUpdate.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+
     this.state = {
-      image : '',
-      error : ''
+      file : null,
+      setFile : null,
+      tastingLabel : this.props.tastingLabel
     };
 
-    this.allowedSize = 500000;
-    if (this.props.allowedSize && !isNaN(Number(this.props.allowedSize))) {
-      this.allowedSize = this.props.allowedSize;
-    }
   }
 
-  handleFileRead = async (event) => {
-    const file = event.target.files[0];
-    var error = '';
-    console.log(file, "file");
-    const image = await this.convertBase64(file);
-
-    // Validate image is correct size and dimensions
-    if (file.size > 500000) {
-      error += "File too large.  ";
-    } else if (!file.type.startsWith('image/')){
-      error += "File not an image.  File is " + file.type;
-    }
-
-    if (error === '') {
-      await this.setState({error});
-      await this.setState({image});
-      await this.props.onUpdate(this.state);
-    } else {
-      await this.setState({error});
+async componentDidUpdate(previousProps) {
+  if (previousProps.tastingLabel !== this.props.tastingLabel) {
+    if (this.props.tastingLabel) {
+      let tastingLabel = this.props.tastingLabel;
+      await this.setState({tastingLabel});
+      this.getFileUrl();
     }
   }
+}
 
-  convertBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file)
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      }
-      fileReader.onerror = (error) => {
-        reject(error);
-      }
-    })
-  }
+  // Handles input change event and updates state
+  async handleChange(event) {
+     this.setState({file:event.target.files[0]});
+     // convert filename
 
-  renderError(error) {
-     if (error === '') {
-       return (<div></div>);
+     if (this.state.tastingLabel === "") {
+       console.log('No Name for tasting');
+       return;
      }
-     return (<div className="error"><b>{error}</b></div>);
+     await this.props.firebase.uploadFile(event.target.files[0],'tastings',this.state.tastingLabel); // Image is the image name
+     this.getFileUrl();
+  }
+
+  async getFileUrl() {
+    let existingImage = await this.props.firebase.getFileUrl('tastings',this.state.tastingLabel);
+    console.log(existingImage);
+    await this.setState({imageUrl : existingImage});
   }
 
   render() {
-    let errorHidden = this.renderError(this.state.error);
+    let errorHidden = ''; //this.renderError(this.state.error);
     return (
       <div key="imageUpload">
         <div>Upload Image:   {errorHidden}</div>
-        <input id="inp" type="file"  onChange={e => this.handleFileRead(e)} ></input>
-        <p id="b64"></p>
-        <img id="img" height="150" alt="" src={this.props.image}/>
+        <div>
+            <input type="file" accept="image/*" onChange={this.handleChange}/>
+            <button>Upload to Firebase</button>
+        </div>
+        <img id="img" height="150" alt="" src={this.state.imageUrl}/>
       </div>
     );
   }

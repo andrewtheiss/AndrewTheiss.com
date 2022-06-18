@@ -239,7 +239,7 @@ class AddEditTasting extends React.Component {
           hasSelectAll={false}
         />
       </div>
-      <ImageUploadStorage onUpdate={this.updateImage} image={this.state.label} />
+      <ImageUploadStorage firebase={this.props.firebase} onUpdate={this.updateImage} tastingLabel={this.state.label} />
       <button onClick={this.setTasting}>Update Tasting</button>
       </div>
     );
