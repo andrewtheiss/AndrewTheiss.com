@@ -57,6 +57,7 @@ async componentDidUpdate(previousProps) {
        return;
      }
      await this.props.firebase.uploadFile(event.target.files[0],'tastings',this.state.tastingLabel); // Image is the image name
+     await this.props.firebase.uploadFile(event.target.files[0],'tastings',this.state.tastingLabel, true);
      this.getFileUrl();
   }
 

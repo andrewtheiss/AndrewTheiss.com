@@ -37,6 +37,8 @@ class Firebase {
     // Create read-only db access for other db url
     this.writeOnlyChocolateApp = firebase.initializeApp(cConfig, 'chocolateApp');
     this.writeOnlyChocolateDb = firebase.firestore(this.writeOnlyChocolateApp);
+    this.writeOnlyChocolateStorage = firebase.storage(this.writeOnlyChocolateApp);
+    this.writeOnlyChocolateAuth = firebase.auth(this.writeOnlyChocolateApp);
 
     this.auth = firebase.auth();
     // Enable persistence
@@ -59,8 +61,11 @@ class Firebase {
     //firebase.firestore().disableNetwork();
   }
 
-  async uploadFile(file, container, filename) {
-    const storageRef = this.storage.ref();
+  async uploadFile(file, container, filename, writeToChocolateStorage = false) {
+    let storageRef = this.storage.ref();
+    if (writeToChocolateStorage) {
+      storageRef = this.writeOnlyChocolateStorage.ref();
+    }
     const refLocation = container + '/' + filename;
     const fileRef = storageRef.child(refLocation);
     // 'file' comes from the Blob or File API
