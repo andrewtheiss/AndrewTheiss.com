@@ -73,6 +73,7 @@ class AddEditBean extends React.Component {
       Label:  <input name="label"  onChange={this.onUpdateDetails} value={this.state.label} size="30" type="text"></input><br />
       Uniquie DB Value Label:  <input name="value"  onChange={this.onUpdateDetails} value={this.state.value} size="10" type="text"></input><br />
       Display Label:  <input name="displayLabel"  onChange={this.onUpdateDetails} value={this.state.displayLabel} size="20" type="text"></input><br />
+      Country:  <input name="country"  onChange={this.onUpdateDetails} value={this.state.country} size="20" type="text"></input><br />
       Price: <input name="price"  onChange={this.onUpdateDetails} value={this.state.price} size="6" type="text"></input><br />
       Purchase Lbs: <input name="purchaseLbs"  onChange={this.onUpdateDetails} value={this.state.purchaseLbs} size="6" type="text"></input><br />
       Notes: <textarea name="notes"  onChange={this.onUpdateDetails} value={this.state.notes} type="text"></textarea><br />

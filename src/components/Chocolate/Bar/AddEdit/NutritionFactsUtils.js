@@ -8,6 +8,7 @@ export const ExtractBeansFromIngredientList = function(beansDbList, batchesIngre
           value : beansDbList[potentialBeanIdx].value,
           displayLabel : beansDbList[potentialBeanIdx].displayLabel,
           flavorProfile : beansDbList[potentialBeanIdx].flavorProfile,
+          country : beansDbList[potentialBeanIdx].country,
           imageBase64 : beansDbList[potentialBeanIdx].imageBase64
         };
         beans[potentialBeanIdx] = JSON.parse(JSON.stringify(bean));
