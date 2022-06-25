@@ -61,6 +61,10 @@
   min-height: 50px;
 }
 
+.barAlphabeticalToTastingOrderMap {
+  width: 300px;
+}
+
 .tastingPreviewTitle {
   margin: auto;
   padding: 20px 0px 0px 0px;

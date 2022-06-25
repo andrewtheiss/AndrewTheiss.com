@@ -5,6 +5,12 @@ export const TASTING_DEFAULT_PROPS = {
   notes : '',
   notesMinor : '',
   difficulty : '',
+  barAlphabeticalToTastingOrderMap : [],
+  imageDimensions : {
+    x : 200,
+    y : 200
+  },
+
 
   // To be removed before edit
   allBars : {},

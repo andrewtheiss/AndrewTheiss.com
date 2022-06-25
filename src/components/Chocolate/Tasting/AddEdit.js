@@ -17,6 +17,7 @@ class AddEditTasting extends React.Component {
     this.setTastingTypeSelected = this.setTastingTypeSelected.bind(this);
     this.setDifficultySelected = this.setDifficultySelected.bind(this);
     this.formatTastingTypeAndBarSelections = this.formatTastingTypeAndBarSelections.bind(this);
+    this.onUpdateImageDimensions = this.onUpdateImageDimensions.bind(this);
 
     this.state = CONSTS.TASTING_DEFAULT_PROPS;
   }
@@ -78,6 +79,15 @@ class AddEditTasting extends React.Component {
     var state = this.state;
     state[event.target.name] = event.target.value;
     await this.setStateAndUpdateParent(state);
+  }
+
+  async onUpdateImageDimensions(event) {
+    var state = this.state;
+    let imageDimensions = state.imageDimensions;
+    if (imageDimensions) {
+      imageDimensions[event.target.name] = event.target.value;
+      await this.setStateAndUpdateParent(state);
+    }
   }
 
   /*  setStateAndUpdateParent
@@ -239,6 +249,10 @@ class AddEditTasting extends React.Component {
           hasSelectAll={false}
         />
       </div>
+      Tasting Order (Alphabetical to Selection) Map: <input placeholder="4,3,0,2,1" type="text" name="barAlphabeticalToTastingOrderMap" className="barAlphabeticalToTastingOrderMap" onChange={this.onUpdateDetails} value={this.state.barAlphabeticalToTastingOrderMap}/><br />
+      Image Dimensions  
+        X:<input type="text" name="x" className="imageDimensionsX" onChange={this.onUpdateImageDimensions} value={this.state.imageDimensions.x}/>
+        Y:<input type="text" name="y" className="imageDimensionsY" onChange={this.onUpdateImageDimensions} value={this.state.imageDimensions.y}/>
       <ImageUploadStorage firebase={this.props.firebase} onUpdate={this.updateImage} tastingLabel={this.state.label} />
       <button onClick={this.setTasting}>Update Tasting</button>
       </div>
