@@ -10,8 +10,6 @@ import { withAuthentication } from '../Session';
 import SignInPage from '../Session/SignInPage.js'
 import SignUpPage from '../Session/SignUpForm.js'
 
-import SplashPage from './SplashPage.js'
-
 // Chocolate Pages
 import IngredientPage from '../Chocolate/Ingredient/Pages/IngredientPage.js'
 import BarLookupPage from '../Chocolate/Bar/Pages/Lookup.js'
@@ -27,9 +25,6 @@ const App = () => (
     <Navigation />
 
     <div className="app-container">
-      <FirebaseContext.Consumer>
-            {firebase => <Route exact path={ROUTES.LANDING} component={SplashPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
       <FirebaseContext.Consumer>
           {firebase => <Route path={ROUTES.CHOCOLATE.BEAN} component={BeanMainPage} firebase={firebase} />}
       </FirebaseContext.Consumer>

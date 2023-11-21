@@ -5,8 +5,26 @@ import { Link } from 'react-router-dom'
 import * as ROUTES from '../../constants/routes.js'
 import SignOutButton from '../Session/SignOutButton.js';
 import { AuthUserContext } from '../Session';
+import SplashPage from '../Splash/SplashPage.js';
 
-const Navigation = () => (
+const Navigation = () => ( 
+  <div>
+  <AuthUserContext.Consumer>
+    {authUser => authUser['auth'] ? <NavigationPreLogin /> : <NaviationSplash />}
+  </AuthUserContext.Consumer>
+  </div>
+);
+
+
+const NaviationSplash = () => (
+  <div className="">
+    <NavigationLogin />
+    <SplashPage />
+    <div className="">
+    </div>
+  </div>
+);
+const NavigationPreLogin = () => ( 
   <div className="navigation-side-bar-spacing">
   <header className="navigation-header">
     <div className="navigation-top-bar">
