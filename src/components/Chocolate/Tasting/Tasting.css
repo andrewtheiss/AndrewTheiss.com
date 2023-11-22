@@ -263,6 +263,7 @@
   }
 
   .app-container {
+    z-index: 5;
     margin-top: 0px;
     width: 600px;
   }

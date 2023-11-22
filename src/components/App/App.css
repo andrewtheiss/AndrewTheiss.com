@@ -2,6 +2,8 @@
   margin-top: 55px;
   display: inline-block;
   width: calc(100% - 245px);
+  background-color: white;
+  margin-left: 203px;
 }
 
 @media (prefers-reduced-motion: no-preference) {

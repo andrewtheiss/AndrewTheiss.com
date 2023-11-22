@@ -5,9 +5,104 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: black;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+
+.hero-section {
+  color: #fff;
+  padding: 3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-content {
+  max-width: 50%;
+}
+
+.hero-content h2 {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+.hero-content p {
+  line-height: 1.6;
+  margin-bottom: 1em;
+}
+a {
+  font-weight: bold;
+  text-decoration: none;
+}
+.call-to-action {
+  background-color: #fff;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.75em 1.5em;
+  border-radius: 2em;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer
+}
+
+.call-to-action:hover {
+  background-color: #ddd;
+}
+
+.hero-image {
+  width: 40%;
+  /* Adjust image URL as needed */
+  background: url('https://andrewtheiss.com/me.png') no-repeat center center;
+  width: 400px;
+  height: 500px;
+  background-size: cover;
+}
+
+.sign-in-page-container {
+  display: flex; 
+  align-items: center;;
+  position: absolute;
+  bottom: 0px;
+  z-index: 5;
+}
+
+.dark-button {
+  background-color: #222;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.dark-button:hover {
+  background-color: #333;
+}
+
+.dark-button:active {
+  background-color: #111;
+}
+.dark-input {
+  max-width: 160px;
+  width: 160px;
+  margin: 3px;
+  background-color: #222;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s ease-in-out;
+  width: 100%;
+}
+
+.dark-input:focus {
+  background-color: #333;
+  outline: none;
 }

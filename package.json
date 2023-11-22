@@ -20,6 +20,7 @@
     "react-tweet-embed": "^2.0.0",
     "resolve": "^1.20.0",
     "set-value": "^3.0.2",
+    "slider-pro": "^1.6.2",
     "three": "^0.121.0",
     "update": "^0.4.2",
     "uuid": "^8.3.2",

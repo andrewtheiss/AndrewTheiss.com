@@ -6,6 +6,7 @@ import * as ROUTES from '../../constants/routes.js'
 import SignOutButton from '../Session/SignOutButton.js';
 import { AuthUserContext } from '../Session';
 import SplashPage from '../Splash/SplashPage.js';
+import SignInPage from '../Session/SignInPage.js';
 
 const Navigation = () => ( 
   <div>
@@ -18,10 +19,10 @@ const Navigation = () => (
 
 const NaviationSplash = () => (
   <div className="">
-    <NavigationLogin />
-    <SplashPage />
-    <div className="">
+    <div className="sign-in-page-container">
+      <SignInPage />
     </div>
+    <SplashPage />
   </div>
 );
 const NavigationPreLogin = () => ( 
@@ -109,6 +110,5 @@ const NavigationAdminAuth = () => (
     </ul>
   </ul>
 );
-
 
 export default Navigation;

@@ -6,7 +6,6 @@ import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
  <div>
-   <h1>SignIn</h1>
    <SignInForm />
  </div>
 );
@@ -68,8 +67,8 @@ class SignInFormBase extends React.Component {
         <div>
           <button
             onClick={this.handleGoogleLogin}
-            className="bg-red-500 hover:bg-red-600 w-full py-2 text-white">
-            Sign in with Google
+            className="dark-button">
+            SSO with Google
           </button>
         </div>
       </div>;
@@ -84,6 +83,7 @@ class SignInFormBase extends React.Component {
           onChange={this.onChange}
           type="text"
           placeholder="Email Address"
+          className="dark-input"
         />
         <input
           name="password"
@@ -91,8 +91,9 @@ class SignInFormBase extends React.Component {
           onChange={this.onChange}
           type="password"
           placeholder="Password"
+          className="dark-input"
         />
-        <button disabled={isInvalid} type="submit">
+        <button  className="dark-button" disabled={isInvalid} type="submit">
           Sign In
         </button>
 
