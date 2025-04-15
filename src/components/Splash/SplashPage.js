@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import CELLS from "vanta/dist/vanta.cells.min";
 import * as THREE from "three";
-import { Link } from 'react-router-dom'
-import * as ROUTES from '../../constants/routes.js'
-
+import './SplashPage.css';
 
 export const SplashPage = () => {
   const [vantaEffect, setVantaEffect] = useState(0);
@@ -20,8 +18,8 @@ export const SplashPage = () => {
           mouseControls: true,
           touchControls: true,
           gyroControls: false,
-          minHeight: 1500,
-          minWidth: 600.0,
+          minHeight: 800,
+          minWidth: 300.0,
           scale: 1.0,
           scaleMobile: 1.0,
           speed: 0.0,
@@ -59,23 +57,16 @@ export const SplashPage = () => {
 
 
   return (
-    <div ref={vantaRef}>
-      <div className="container">
+    <div ref={vantaRef} className="splash-container">
       <div className="hero-section">
         <div className="hero-content">
-            <h2>I'm Andrew Theiss, a coder, student and teacher in Studio City, California</h2>
-            <p>I've spent a majority of the past {timeString} pursuing technical interesets from full stack audio-visual or web3 programming, team management, teaching, cooking, ceramics.</p>
-            <p>These days my time is spent researching, desinging, prototyping and coding.  I help young students on their careers to becoming better Computer Scienctises</p>
-            <p>Outside school I'm following tech news especially developments in chip manufactoring, AI, and space exploration.</p>
-        
+          <h2>I'm Andrew Theiss, a coder, student and teacher in Studio City, California</h2>
+          <p>I've spent a majority of the past {timeString} pursuing technical interests from full stack audio-visual or web3 programming, team management, teaching, cooking, and ceramics.</p>
+          <p>These days my time is spent researching, designing, prototyping and coding. I help young students on their careers to becoming better Computer Scientists.</p>
+          <p>Outside school I'm following tech news especially developments in chip manufacturing, AI, and space exploration.</p>
         </div>
-        <div className="hero-image" style={{ 
-          backgroundImage: `url(${'./me.png'})` 
-        }}>
-        </div>
-    </div>
-     </div>
-       
+        <div className="hero-image" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/me.png)` }}></div>
+      </div>
     </div>
   );
 };

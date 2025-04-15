@@ -6,6 +6,29 @@
   margin-left: 203px;
 }
 
+/* Full width container for splash page */
+.splash-app-container {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
+@media (max-width: 992px) {
+  .app-container {
+    width: calc(100% - 200px);
+    margin-left: 160px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 50px;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

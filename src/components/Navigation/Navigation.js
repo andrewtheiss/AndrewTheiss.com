@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Navigation.css';
 import { Link } from 'react-router-dom'
 
@@ -19,34 +19,44 @@ const Navigation = () => (
 
 const NaviationSplash = () => (
   <div className="">
-    <div className="sign-in-page-container">
-      <SignInPage />
-    </div>
     <SplashPage />
   </div>
 );
-const NavigationPreLogin = () => ( 
-  <div className="navigation-side-bar-spacing">
-  <header className="navigation-header">
-    <div className="navigation-top-bar">
-      <div id="logo"></div>
-      <div id="navigation-wrap"></div>
-      <div className="navigation-session">
-      <AuthUserContext.Consumer>
-      {authUser =>
-          authUser['auth'] ? <NavigationLogout/> : <NavigationLogin />
-        }
-      </AuthUserContext.Consumer>
-      </div>
+const NavigationPreLogin = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+  
+  return (
+    <div className="navigation-side-bar-spacing">
+      <div className={`menu-overlay ${menuOpen ? 'active' : ''}`} onClick={toggleMenu}></div>
+      <header className="navigation-header">
+        <div className="navigation-top-bar">
+          <div id="logo"></div>
+          <div id="navigation-wrap" onClick={toggleMenu}>
+            <span className="hamburger-icon">☰</span>
+          </div>
+          <div className="navigation-session">
+            <AuthUserContext.Consumer>
+              {authUser =>
+                authUser['auth'] ? <NavigationLogout/> : <NavigationLogin />
+              }
+            </AuthUserContext.Consumer>
+          </div>
+        </div>
+        <AuthUserContext.Consumer>
+          {authUser =>
+            authUser['admin'] ? 
+              <NavigationAdminAuth menuOpen={menuOpen} /> : 
+              <NavigationAnyAuth menuOpen={menuOpen} />
+          }
+        </AuthUserContext.Consumer>
+      </header>
     </div>
-     <AuthUserContext.Consumer>
-      {authUser =>
-          authUser['admin'] ? <NavigationAdminAuth/> : <NavigationAnyAuth/>
-        }
-      </AuthUserContext.Consumer>
-  </header>
-  </div>
-);
+  );
+};
 
 const NavigationLogin = () => (
   <button>
@@ -57,56 +67,55 @@ const NavigationLogout = () => (
   <SignOutButton />
 )
 
-const NavigationAnyAuth = () => (
-  <ul className="navigation-side-bar">
-  <li>
-    <Link to={ROUTES.LANDING}>Home</Link>
-  </li>
-  <li>
-    <Link to={ROUTES.CHOCOLATE.LANDING}>Chocolate</Link>
-  </li>
-    <ul>
-      <li>
-        <Link to={ROUTES.CHOCOLATE.TASTING_ROOT}>Tasting</Link>
-      </li>
-    </ul>
-</ul>
-);
-
-const NavigationAdminAuth = () => (
-  <ul className="navigation-side-bar">
+const NavigationAnyAuth = ({ menuOpen }) => (
+  <ul className={`navigation-side-bar ${menuOpen ? 'active' : ''}`}>
     <li>
       <Link to={ROUTES.LANDING}>Home</Link>
     </li>
     <li>
       <Link to={ROUTES.CHOCOLATE.LANDING}>Chocolate</Link>
     </li>
-      <ul>
-        <li>
-          <Link to={ROUTES.CHOCOLATE.BAR}>Bars</Link>
-        </li>
-        <li>
-          <Link to={ROUTES.CHOCOLATE.BEAN}>Beans</Link>
-        </li>
-        <li>
-          <Link to={ROUTES.CHOCOLATE.INGREDIENT}>Ingredients</Link>
-        </li>
-        <li>
-          <Link to={ROUTES.CHOCOLATE.BATCH}>Batches</Link>
-        </li>
-        <li>
-          <Link to={ROUTES.CHOCOLATE.BAR_ADD_EDIT}>Bar Add Edit</Link>
-        </li>
-        <li>
-          <Link to={ROUTES.CHOCOLATE.BAR_DEPENDENCIES}>Bar Dependencies</Link>
-        </li>
-        <li>
-          <Link to={ROUTES.CHOCOLATE.TASTING_ROOT}>Tasting</Link>
-        </li>
-        <li>
-          <Link to={ROUTES.CHOCOLATE.TASTING_ADD_EDIT}>Tasting Add Edit</Link>
-        </li>
+    <ul>
+      <li>
+        <Link to={ROUTES.CHOCOLATE.TASTING_ROOT}>Tasting</Link>
+      </li>
+    </ul>
+  </ul>
+);
 
+const NavigationAdminAuth = ({ menuOpen }) => (
+  <ul className={`navigation-side-bar ${menuOpen ? 'active' : ''}`}>
+    <li>
+      <Link to={ROUTES.LANDING}>Home</Link>
+    </li>
+    <li>
+      <Link to={ROUTES.CHOCOLATE.LANDING}>Chocolate</Link>
+    </li>
+    <ul>
+      <li>
+        <Link to={ROUTES.CHOCOLATE.BAR}>Bars</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.CHOCOLATE.BEAN}>Beans</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.CHOCOLATE.INGREDIENT}>Ingredients</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.CHOCOLATE.BATCH}>Batches</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.CHOCOLATE.BAR_ADD_EDIT}>Bar Add Edit</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.CHOCOLATE.BAR_DEPENDENCIES}>Bar Dependencies</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.CHOCOLATE.TASTING_ROOT}>Tasting</Link>
+      </li>
+      <li>
+        <Link to={ROUTES.CHOCOLATE.TASTING_ADD_EDIT}>Tasting Add Edit</Link>
+      </li>
     </ul>
   </ul>
 );
