@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import Navigation from '../Navigation/Navigation.js';
 import './App.css';
 import { FirebaseContext } from '../Firebase';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes.js';
-import { withAuthentication } from '../Session';
+import { withAuthentication, AuthUserContext } from '../Session';
 
 // Import different pages to view based on routing
 import SignInPage from '../Session/SignInPage.js';
@@ -14,6 +14,7 @@ import SignUpPage from '../Session/SignUpForm.js';
 import MeditationPage from '../Meditation/MainPage.js';
 import UsagePage from '../Usage/UsagePage.js';
 import SplashPage from '../Splash/SplashPage.js';
+import LightCyclePage from '../LightCycle/LightCyclePage.js';
 
 const ShellLayout = () => (
     <div className="app-container">
@@ -28,16 +29,35 @@ const SignInWithFirebase = () => {
     return <SignInPage firebase={firebase} />;
 };
 
+const RequireAuth = ({ children }) => {
+    const authUser = useContext(AuthUserContext);
+    if (authUser?.loading) return null;
+    if (!authUser?.auth) {
+        return <Navigate to={ROUTES.SIGNIN} replace />;
+    }
+    return children;
+};
+
+const RedirectIfAuthed = ({ children }) => {
+    const authUser = useContext(AuthUserContext);
+    if (authUser?.loading) return null;
+    if (authUser?.auth) {
+        return <Navigate to={ROUTES.MEDITATION} replace />;
+    }
+    return children;
+};
+
 const App = () => (
     <Router>
         <Navigation />
         <Routes>
-            <Route path={ROUTES.LANDING} element={<SplashPage />} />
+            <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.MEDITATION} replace />} />
             <Route element={<ShellLayout />}>
-                <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
-                <Route path={ROUTES.SIGNIN} element={<SignInWithFirebase />} />
-                <Route path={ROUTES.USAGE} element={<UsagePage />} />
-                <Route path={ROUTES.MEDITATION} element={<MeditationPage />} />
+                <Route path={ROUTES.SIGNUP} element={<RedirectIfAuthed><SignUpPage /></RedirectIfAuthed>} />
+                <Route path={ROUTES.SIGNIN} element={<RedirectIfAuthed><SignInWithFirebase /></RedirectIfAuthed>} />
+                <Route path={ROUTES.USAGE} element={<RequireAuth><UsagePage /></RequireAuth>} />
+                <Route path={ROUTES.MEDITATION} element={<RequireAuth><MeditationPage /></RequireAuth>} />
+                <Route path={ROUTES.LIGHTCYCLE} element={<RequireAuth><LightCyclePage /></RequireAuth>} />
                 <Route path="*" element={<SplashPage />} />
             </Route>
         </Routes>

@@ -14,6 +14,7 @@ const withAuthentication = Component => {
           admin: false,
           auth: false,
           user: null,
+          loading: true,
         },
       };
     }
@@ -25,6 +26,7 @@ const withAuthentication = Component => {
               admin: false,
               auth: false,
               user: null,
+              loading: false,
             },
           });
           return;
@@ -36,6 +38,7 @@ const withAuthentication = Component => {
             admin: isAdmin,
             auth: true,
             user: authUser,
+            loading: false,
           },
         });
       });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
@@ -26,6 +26,20 @@ const SignInFormBase = ({ firebase, navigate }) => {
       setState((s) => ({ ...s, error }));
     }
   };
+
+  const handleGoogleRedirect = async () => {
+    try {
+      await firebase.doGoogleRedirect();
+      navigate(ROUTES.LANDING);
+    } catch (error) {
+      setState((s) => ({ ...s, error }));
+    }
+  };
+
+  React.useEffect(() => {
+    // Handle redirect result once; actual auth state is handled globally in withAuthentication
+    firebase.handleRedirectResult?.();
+  }, [firebase]);
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -58,6 +72,14 @@ const SignInFormBase = ({ firebase, navigate }) => {
           >
             Sign in with Google
           </button>
+          <button
+            onClick={handleGoogleRedirect}
+            className="dark-button"
+            type="button"
+            style={{ marginLeft: '8px' }}
+          >
+            Google (redirect)
+          </button>
         </div>
       </div>
       <div className="mt-4">or</div>
@@ -84,6 +106,11 @@ const SignInFormBase = ({ firebase, navigate }) => {
 
         {error && <p>{error.message}</p>}
       </form>
+      <div className="mt-4">
+        <Link to={ROUTES.MEDITATION} className="dark-button">
+          Go to Meditation
+        </Link>
+      </div>
     </div>
   );
 };

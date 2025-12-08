@@ -1,6 +1,8 @@
 import {
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
@@ -114,6 +116,14 @@ class Firebase {
     provider.addScope('email');
     return signInWithPopup(this.auth, provider);
   };
+
+  doGoogleRedirect = () => {
+    const provider = new GoogleAuthProvider();
+    provider.addScope('email');
+    return signInWithRedirect(this.auth, provider);
+  };
+
+  handleRedirectResult = () => getRedirectResult(this.auth);
 
   doSignOut = () => {
     signOut(this.auth);

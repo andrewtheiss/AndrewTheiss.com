@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.4",
+    "@tauri-apps/api": "^1.6.0",
     "@tauri-apps/cli": "^1.6.3",
     "vanta": "^0.5.24"
   }

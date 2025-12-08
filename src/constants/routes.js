@@ -9,3 +9,4 @@ export const SIGNUP = '/signup';
 export const USAGE = '/usage';
 
 export const MEDITATION = '/meditation';
+export const LIGHTCYCLE = '/light-cycle';
