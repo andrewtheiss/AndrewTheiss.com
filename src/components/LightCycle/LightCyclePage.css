@@ -218,11 +218,26 @@
   background: rgba(15, 23, 42, 0.7);
 }
 
-.overlay-title {
-  font-weight: 800;
+.overlay-win-box {
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(11, 18, 36, 0.7);
+  border-radius: 10px;
+  padding: 10px 12px;
   margin-bottom: 10px;
   text-align: center;
-  letter-spacing: 0.04em;
+}
+
+.overlay-title {
+  font-weight: 900;
+  margin: 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.overlay-restart {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #cbd5e1;
 }
 
 .overlay-leaderboard {
@@ -280,8 +295,68 @@
   padding: 8px 0;
 }
 
-.overlay-leaderboard .lb-rank {
-  font-weight: 700;
-  color: #94a3b8;
+.overlay-lb-title {
+  width: 100%;
   text-align: center;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #f7ff3a;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  animation: neonPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+  0% {
+    text-shadow: 0 0 6px rgba(247, 255, 58, 0.6), 0 0 12px rgba(247, 255, 58, 0.4);
+  }
+
+  50% {
+    text-shadow: 0 0 10px rgba(247, 255, 58, 0.85), 0 0 18px rgba(247, 255, 58, 0.65);
+  }
+
+  100% {
+    text-shadow: 0 0 6px rgba(247, 255, 58, 0.6), 0 0 12px rgba(247, 255, 58, 0.4);
+  }
+}
+
+/* Gradient from neon red to neon purple across top 10 */
+.rank-0 .lb-name {
+  color: #ff4d6d;
+}
+
+.rank-1 .lb-name {
+  color: #ff4d99;
+}
+
+.rank-2 .lb-name {
+  color: #ff4dc6;
+}
+
+.rank-3 .lb-name {
+  color: #f84dff;
+}
+
+.rank-4 .lb-name {
+  color: #d24dff;
+}
+
+.rank-5 .lb-name {
+  color: #ac4dff;
+}
+
+.rank-6 .lb-name {
+  color: #8a4dff;
+}
+
+.rank-7 .lb-name {
+  color: #6d4dff;
+}
+
+.rank-8 .lb-name {
+  color: #554dff;
+}
+
+.rank-9 .lb-name {
+  color: #434dff;
 }

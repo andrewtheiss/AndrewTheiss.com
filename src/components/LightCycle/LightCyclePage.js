@@ -8,6 +8,15 @@ const GRID_BASE_COLS = 200; // default columns; rows adapt to aspect ratio
 const TICK_MS = 30; // twice as fast as previous 60ms
 const COUNTDOWN_START = 3;
 
+const hashString = (value) => {
+  // Lightweight DJB2 hash to avoid async crypto usage.
+  let hash = 5381;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 33) ^ value.charCodeAt(i);
+  }
+  return (hash >>> 0).toString(16);
+};
+
 const startPositions = (cols, rows) => {
   const centerY = Math.max(0, Math.min(rows - 1, Math.floor(rows / 2)));
   const p1StartX = Math.floor(cols * 0.1);
@@ -554,11 +563,15 @@ const LightCyclePage = () => {
   }, [displayClockMs]);
 
   const overlayContent = useMemo(() => {
-    if (gameState === 'idle') return { text: 'Press Enter to Start', showBoard: false };
-    if (gameState === 'countdown') return { text: `Starting in ${countdown}…`, showBoard: false };
+    if (gameState === 'idle') return { text: 'Press Enter to Start', showBoard: false, showRestart: false };
+    if (gameState === 'countdown') return { text: `Starting in ${countdown}…`, showBoard: false, showRestart: false };
     if (gameState === 'ended') {
       const winnerLabel = winner === 'P1' ? p1Name : winner === 'P2' ? p2Name : winner;
-      return { text: winner ? `${winnerLabel || winner} wins! Press Enter to restart` : 'Game over. Press Enter to restart', showBoard: true };
+      return {
+        text: winner ? `${winnerLabel || winner} wins!` : 'Game over.',
+        showBoard: true,
+        showRestart: true,
+      };
     }
     return null;
   }, [countdown, gameState, p1Name, p2Name, winner]);
@@ -618,14 +631,17 @@ const LightCyclePage = () => {
               {overlayContent && (
                 <div className="light-cycle-overlay" role="status">
                   <div className="overlay-text">
-                    <div className="overlay-title">{overlayContent.text}</div>
+                    <div className="overlay-win-box">
+                      <div className="overlay-title">{overlayContent.text}</div>
+                      {overlayContent.showRestart && <div className="overlay-restart">Press Enter to restart</div>}
+                    </div>
                     {overlayContent.showBoard && (
                       <div className="overlay-leaderboard">
-                        <p className="eyebrow">Top 10 Leaderboard</p>
+                        <div className="overlay-lb-title">LEADERBOARD</div>
                         <ol>
                           {leaderboard.slice(0, 10).map((entry, index) => (
                             <li key={entry.id || index}>
-                              <span className="lb-name">{entry.winnerName || entry.winner || '—'}</span>
+                              <span className={`lb-name rank-${index}`}>{entry.winnerName || entry.winner || '—'}</span>
                               <span className="lb-time">
                                 {Math.round((entry.elapsedMs || 0) / 1000)}s
                                 {entry.submittedAt?.toDate && (

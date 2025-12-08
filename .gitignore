@@ -93,3 +93,4 @@ yarn-error.log*
 .npm-cache/
 
 src-tauri/target/
+public/desktop-auth.html

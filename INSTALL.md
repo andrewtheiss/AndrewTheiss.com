@@ -24,3 +24,17 @@ Build desktop:
 Mobile prep (Capacitor):
 - `npm run build && npm run cap:sync`
 - Then add/open platforms: `npm run cap:add:ios` or `npm run cap:add:android` (opens Xcode/Android Studio)
+
+
+=================++
+cp .env.example .env (or create .env manually with your REACT_APP_FIREBASE_* values)
+
+npm install
+
+npm run prepare:desktop-auth (generates public/desktop-auth.html from your env vars; automatically reruns before other builds, but it’s good to run once right after installing)
+
+npm run build (CRA web build; this also regenerates the desktop auth page via the prebuild hook)
+
+npm run tauri:build (desktop shell; pretauri:build regenerates the desktop auth page beforehand)
+
+firebase deploy

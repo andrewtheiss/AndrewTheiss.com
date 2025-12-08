@@ -17,6 +17,11 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
+    "prepare:desktop-auth": "node scripts/generateDesktopAuthPage.js",
+    "prestart": "npm run prepare:desktop-auth",
+    "prebuild": "npm run prepare:desktop-auth",
+    "pretauri:build": "npm run prepare:desktop-auth",
+    "pretauri:dev": "npm run prepare:desktop-auth",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -48,6 +53,7 @@
   "devDependencies": {
     "@capacitor/cli": "^7.4.4",
     "@tauri-apps/cli": "^1.6.3",
+    "dotenv": "^16.4.5",
     "vanta": "^0.5.24"
   }
 }
