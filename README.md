@@ -1,4 +1,4 @@
-# Usage Tracker — Web, Desktop (Tauri), Mobile (Capacitor)
+# LightCycle — Web, Desktop (Tauri), Mobile (Capacitor)
 
 This project now ships with Firebase-backed auth, a usage tracking page, and wrappers for both Tauri (desktop) and Capacitor (mobile) while keeping the existing web build.
 

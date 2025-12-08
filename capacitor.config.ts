@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.andrewtheiss.usage',
-  appName: 'UsageTracker',
+  appId: 'com.andrewtheiss.lightcycle',
+  appName: 'LightCycle',
   webDir: 'build',
   bundledWebRuntime: false,
   server: {
