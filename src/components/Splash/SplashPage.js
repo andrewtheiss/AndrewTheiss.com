@@ -70,8 +70,8 @@ export const SplashPage = () => {
         <div className="hero-image" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/me.png)` }}></div>
       </div>
       <div className="splash-cta-bar">
-        <Link to={ROUTES.MEDITATION} className="splash-cta-btn">
-          Meditation
+        <Link to={ROUTES.LIGHTCYCLE} className="splash-cta-btn">
+          Light Cycle
         </Link>
       </div>
     </div>

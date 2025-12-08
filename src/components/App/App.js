@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Navigation from '../Navigation/Navigation.js';
 import './App.css';
 import { FirebaseContext } from '../Firebase';
-import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes.js';
 import { withAuthentication, AuthUserContext } from '../Session';
 
@@ -17,13 +17,20 @@ import UsagePage from '../Usage/UsagePage.js';
 import SplashPage from '../Splash/SplashPage.js';
 import LightCyclePage from '../LightCycle/LightCyclePage.js';
 
-const ShellLayout = () => (
-    <div className="app-container">
-        <div className="page-shell">
-            <Outlet />
+const ShellLayout = () => {
+    const location = useLocation();
+    const isLightCycle = location.pathname.startsWith(ROUTES.LIGHTCYCLE);
+    const appContainerClass = `app-container${isLightCycle ? ' app-container--full' : ''}`;
+    const pageShellClass = `page-shell${isLightCycle ? ' page-shell--full' : ''}`;
+
+    return (
+        <div className={appContainerClass}>
+            <div className={pageShellClass}>
+                <Outlet />
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 const SignInWithFirebase = () => {
     const firebase = useContext(FirebaseContext);
@@ -43,7 +50,7 @@ const RedirectIfAuthed = ({ children }) => {
     const authUser = useContext(AuthUserContext);
     if (authUser?.loading) return null;
     if (authUser?.auth) {
-        return <Navigate to={ROUTES.MEDITATION} replace />;
+        return <Navigate to={ROUTES.LIGHTCYCLE} replace />;
     }
     return children;
 };
@@ -52,14 +59,14 @@ const App = () => (
     <Router>
         <Navigation />
         <Routes>
-            <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.MEDITATION} replace />} />
+            <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.LIGHTCYCLE} replace />} />
             <Route path={ROUTES.DESKTOP_AUTH} element={<DesktopAuthPage />} />
             <Route element={<ShellLayout />}>
                 <Route path={ROUTES.SIGNUP} element={<RedirectIfAuthed><SignUpPage /></RedirectIfAuthed>} />
                 <Route path={ROUTES.SIGNIN} element={<RedirectIfAuthed><SignInWithFirebase /></RedirectIfAuthed>} />
                 <Route path={ROUTES.USAGE} element={<RequireAuth><UsagePage /></RequireAuth>} />
                 <Route path={ROUTES.MEDITATION} element={<MeditationPage />} />
-                <Route path={ROUTES.LIGHTCYCLE} element={<RequireAuth><LightCyclePage /></RequireAuth>} />
+                <Route path={ROUTES.LIGHTCYCLE} element={<LightCyclePage />} />
                 <Route path="*" element={<SplashPage />} />
             </Route>
         </Routes>

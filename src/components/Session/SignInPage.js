@@ -117,8 +117,8 @@ const SignInFormBase = ({ firebase, navigate }) => {
         {error && <p>{error.message}</p>}
       </form>
       <div className="mt-4">
-        <Link to={ROUTES.MEDITATION} className="dark-button">
-          Go to Meditation
+        <Link to={ROUTES.LIGHTCYCLE} className="dark-button">
+          Go to Light Cycle
         </Link>
       </div>
     </div>

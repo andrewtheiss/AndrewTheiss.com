@@ -271,6 +271,13 @@ const LightCyclePage = () => {
     return () => window.removeEventListener('resize', resizeCanvas);
   }, [resizeCanvas]);
 
+  useEffect(() => {
+    document.body.classList.add('lightcycle-full');
+    return () => {
+      document.body.classList.remove('lightcycle-full');
+    };
+  }, []);
+
   const drawFrame = useCallback(
     (state) => {
       const canvas = canvasRef.current;
@@ -286,26 +293,6 @@ const LightCyclePage = () => {
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = COLORS.background;
       ctx.fillRect(0, 0, width, height);
-
-      // light grid lines every ~10 cells along larger dimension
-      ctx.strokeStyle = COLORS.gridLine;
-      ctx.lineWidth = 1;
-      const step = Math.max(5, Math.round(cols / 20));
-      for (let c = 0; c <= cols; c += step) {
-        const x = Math.round(c * cellW) + 0.5;
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-        ctx.stroke();
-      }
-      const rowStep = Math.max(5, Math.round(rows / 20));
-      for (let r = 0; r <= rows; r += rowStep) {
-        const y = Math.round(r * cellH) + 0.5;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
-      }
 
       const drawTrail = (player, color) => {
         ctx.fillStyle = color;
@@ -585,12 +572,12 @@ const LightCyclePage = () => {
               <div className="board-segment">
                 <button
                   type="button"
-                  className="name-display"
+                  className="name-display p1"
                   onClick={() => setEditingName('p1')}
                 >
                   {editingName === 'p1' ? (
                     <input
-                      className="name-input inline"
+                      className="name-input inline p1"
                       value={p1Name}
                       onChange={(e) => handleNameChange('p1', e.target.value)}
                       onBlur={finishNameEdit}
@@ -608,12 +595,12 @@ const LightCyclePage = () => {
               <div className="board-segment">
                 <button
                   type="button"
-                  className="name-display"
+                  className="name-display p2"
                   onClick={() => setEditingName('p2')}
                 >
                   {editingName === 'p2' ? (
                     <input
-                      className="name-input inline"
+                      className="name-input inline p2"
                       value={p2Name}
                       onChange={(e) => handleNameChange('p2', e.target.value)}
                       onBlur={finishNameEdit}
