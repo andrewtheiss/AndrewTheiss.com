@@ -72,6 +72,7 @@ const LightCyclePage = () => {
   const [editingName, setEditingName] = useState(null); // 'p1' | 'p2' | null
   const [displayClockMs, setDisplayClockMs] = useState(0);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [highlightId, setHighlightId] = useState(null);
 
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -114,6 +115,7 @@ const LightCyclePage = () => {
     setSaving(false);
     setEditingName(null);
     setDisplayClockMs(0);
+    setHighlightId(null);
     accumulatorRef.current = 0;
     lastTimeRef.current = 0;
     startTimeRef.current = 0;
@@ -315,6 +317,21 @@ const LightCyclePage = () => {
     [],
   );
 
+  const loadLeaderboard = useCallback(async () => {
+    try {
+      const q = query(
+        collection(firestore, 'lightcycleLeaderboard'),
+        orderBy('elapsedMs', 'desc'),
+        fsLimit(10),
+      );
+      const snap = await getDocs(q);
+      const entries = snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() })).slice(0, 10);
+      setLeaderboard(entries);
+    } catch (err) {
+      // best-effort; ignore
+    }
+  }, []);
+
   const maybeAutoSubmitLeaderboard = useCallback(
     async (winnerKey, winnerLabel, elapsed) => {
       if (!winnerKey || winnerKey === 'draw') return;
@@ -334,7 +351,7 @@ const LightCyclePage = () => {
         if (!shouldInsert) {
           return;
         }
-        await addDoc(collection(firestore, 'lightcycleLeaderboard'), {
+        const docRef = await addDoc(collection(firestore, 'lightcycleLeaderboard'), {
           winner: winnerKey.toUpperCase(),
           winnerName: winnerLabel || winnerKey.toUpperCase(),
           elapsedMs: elapsed,
@@ -349,27 +366,14 @@ const LightCyclePage = () => {
             autoSubmitted: true,
           },
         });
+        setHighlightId(docRef.id);
+        await loadLeaderboard();
       } catch (err) {
         // best-effort; ignore errors
       }
     },
-    [gridSize.cols, gridSize.rows, moveCount],
+    [gridSize.cols, gridSize.rows, loadLeaderboard, moveCount],
   );
-
-  const loadLeaderboard = useCallback(async () => {
-    try {
-      const q = query(
-        collection(firestore, 'lightcycleLeaderboard'),
-        orderBy('elapsedMs', 'desc'),
-        fsLimit(10),
-      );
-      const snap = await getDocs(q);
-      const entries = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })).slice(0, 10);
-      setLeaderboard(entries);
-    } catch (err) {
-      // best-effort; ignore
-    }
-  }, []);
 
   useEffect(() => {
     if (gameState !== 'running') {
@@ -626,17 +630,20 @@ const LightCyclePage = () => {
                       <div className="overlay-leaderboard">
                         <div className="overlay-lb-title">LEADERBOARD</div>
                         <ol>
-                          {leaderboard.slice(0, 10).map((entry, index) => (
-                            <li key={entry.id || index}>
-                              <span className={`lb-name rank-${index}`}>{entry.winnerName || entry.winner || '—'}</span>
-                              <span className="lb-time">
-                                {Math.round((entry.elapsedMs || 0) / 1000)}s
-                                {entry.submittedAt?.toDate && (
-                                  <span className="lb-date"> • {entry.submittedAt.toDate().toLocaleDateString()}</span>
-                                )}
-                              </span>
-                            </li>
-                          ))}
+                          {leaderboard.slice(0, 10).map((entry, index) => {
+                            const isHighlight = highlightId && entry.id === highlightId;
+                            return (
+                              <li key={entry.id || index} className={isHighlight ? 'lb-highlight' : ''}>
+                                <span className={`lb-name rank-${index}`}>{entry.winnerName || entry.winner || '—'}</span>
+                                <span className="lb-time">
+                                  {Math.round((entry.elapsedMs || 0) / 1000)}s
+                                  {entry.submittedAt?.toDate && (
+                                    <span className="lb-date"> • {entry.submittedAt.toDate().toLocaleDateString()}</span>
+                                  )}
+                                </span>
+                              </li>
+                            );
+                          })}
                           {leaderboard.length === 0 && <li className="lb-empty">No scores yet.</li>}
                         </ol>
                       </div>

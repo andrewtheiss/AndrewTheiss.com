@@ -38,3 +38,23 @@ npm run build (CRA web build; this also regenerates the desktop auth page via th
 npm run tauri:build (desktop shell; pretauri:build regenerates the desktop auth page beforehand)
 
 firebase deploy
+
+
+======================
+Windows OS EXE
+Recommend building on Windows (or GitHub Actions) with:
+Node+npm
+Rust (rustup target add x86_64-pc-windows-msvc)
+Visual Studio Build Tools (Desktop C++)
+WebView2 runtime (users need it; installer can bootstrap it)
+  npm install
+  npm run prepare:desktop-auth
+  CI=false npm run build
+  CI=false npm run tauri:build
+
+=====================
+MaxOS DMG
+  npm install
+  npm run prepare:desktop-auth
+  CI=false npm run build           # until lint warnings are fixed
+  CI=false npm run tauri:build

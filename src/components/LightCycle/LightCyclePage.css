@@ -331,6 +331,12 @@
   border-radius: 6px;
 }
 
+.overlay-leaderboard li.lb-highlight {
+  border: 1px solid #f97316;
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.35);
+  background: rgba(249, 115, 22, 0.12);
+}
+
 .overlay-leaderboard .lb-name {
   font-weight: 600;
   font-size: 12px;
