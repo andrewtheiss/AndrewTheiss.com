@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@tauri-apps/api": "^1.6.0",
     "@capacitor/core": "^7.4.4",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.2",
@@ -46,7 +47,6 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.4",
-    "@tauri-apps/api": "^1.6.0",
     "@tauri-apps/cli": "^1.6.3",
     "vanta": "^0.5.24"
   }

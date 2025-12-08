@@ -17,10 +17,15 @@ const INITIAL_STATE = {
 
 const SignInFormBase = ({ firebase, navigate }) => {
   const [state, setState] = useState({ ...INITIAL_STATE });
+  const isDesktopShell = firebase?.isDesktopShell?.() || false;
 
   const handleGoogleLogin = async () => {
     try {
-      await firebase.doGoogleSignIn();
+      if (isDesktopShell && firebase.doDesktopOAuth) {
+        await firebase.doDesktopOAuth();
+      } else {
+        await firebase.doGoogleSignIn();
+      }
       navigate(ROUTES.LANDING);
     } catch (error) {
       setState((s) => ({ ...s, error }));
@@ -29,7 +34,11 @@ const SignInFormBase = ({ firebase, navigate }) => {
 
   const handleGoogleRedirect = async () => {
     try {
-      await firebase.doGoogleRedirect();
+      if (isDesktopShell && firebase.doDesktopOAuth) {
+        await firebase.doDesktopOAuth();
+      } else {
+        await firebase.doGoogleRedirect();
+      }
       navigate(ROUTES.LANDING);
     } catch (error) {
       setState((s) => ({ ...s, error }));
@@ -70,13 +79,14 @@ const SignInFormBase = ({ firebase, navigate }) => {
             className="dark-button"
             type="button"
           >
-            Sign in with Google
+            {isDesktopShell ? 'Sign in with Google (desktop)' : 'Sign in with Google'}
           </button>
           <button
             onClick={handleGoogleRedirect}
             className="dark-button"
             type="button"
             style={{ marginLeft: '8px' }}
+            disabled={isDesktopShell}
           >
             Google (redirect)
           </button>

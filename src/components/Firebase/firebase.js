@@ -9,6 +9,7 @@ import {
   sendPasswordResetEmail,
   updatePassword,
   onAuthStateChanged,
+  signInWithCredential,
   useDeviceLanguage as setAuthDeviceLanguage,
 } from 'firebase/auth';
 import {
@@ -89,6 +90,102 @@ class Firebase {
         return this.auth.languageCode;
       }
     };
+  }
+
+  isDesktopShell() {
+    return typeof window !== 'undefined' && Boolean(window.__TAURI_IPC__);
+  }
+
+  async doDesktopOAuth() {
+    if (!this.isDesktopShell()) {
+      return this.doGoogleSignIn();
+    }
+
+    const [{ invoke }, { listen }, { open }] = await Promise.all([
+      import('@tauri-apps/api/tauri'),
+      import('@tauri-apps/api/event'),
+      import('@tauri-apps/api/shell'),
+    ]);
+
+    const state =
+      (typeof crypto !== 'undefined' && crypto.randomUUID && crypto.randomUUID()) ||
+      Math.random().toString(36).slice(2);
+
+    const cleanup = [];
+    let timeoutId;
+
+    try {
+      const port = await invoke('plugin:oauth|start');
+      const desktopOrigin =
+        process.env.REACT_APP_DESKTOP_AUTH_ORIGIN || 'https://andrewtheiss.com';
+      const targetUrl = new URL(
+        `${desktopOrigin.replace(/\/$/, '')}/desktop-auth`,
+      );
+      targetUrl.searchParams.set('port', String(port));
+      targetUrl.searchParams.set('state', state);
+      targetUrl.searchParams.set('provider', 'google');
+
+      const authPromise = new Promise((resolve, reject) => {
+        const finish = (data, err) => {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          cleanup.splice(0).forEach((fn) => {
+            try {
+              fn();
+            } catch (cleanupErr) {
+              console.warn('Failed to cleanup oauth listener', cleanupErr);
+            }
+          });
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data);
+          }
+        };
+
+        listen('oauth://url', (event) => {
+          try {
+            const receivedUrl = new URL(event.payload);
+            const hash = receivedUrl.hash?.startsWith('#') ? receivedUrl.hash.slice(1) : '';
+            if (!hash.startsWith('desktop=')) {
+              return;
+            }
+            const encoded = hash.slice('desktop='.length);
+            const decoded = JSON.parse(atob(decodeURIComponent(encoded)));
+            if (decoded.state !== state) {
+              finish(null, new Error('Desktop auth state mismatch.'));
+              return;
+            }
+            finish(decoded);
+          } catch (err) {
+            finish(null, err);
+          }
+        }).then((unlisten) => cleanup.push(unlisten));
+
+        timeoutId = window.setTimeout(() => {
+          finish(null, new Error('Desktop auth timed out. Try again.'));
+        }, 5 * 60 * 1000);
+      });
+
+      await open(targetUrl.toString());
+      const payload = await authPromise;
+      await invoke('plugin:oauth|cancel', { port }).catch(() => {
+        // plugin cancel is best-effort
+      });
+
+      if (!payload?.idToken && !payload?.accessToken) {
+        throw new Error('Desktop auth flow returned no Google credentials.');
+      }
+
+      const credential = GoogleAuthProvider.credential(
+        payload.idToken || undefined,
+        payload.accessToken || undefined,
+      );
+      return signInWithCredential(this.auth, credential);
+    } catch (err) {
+      throw err;
+    }
   }
 
   async uploadFile(file, container, filename) {

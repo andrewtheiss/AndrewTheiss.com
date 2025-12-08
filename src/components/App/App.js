@@ -9,6 +9,7 @@ import { withAuthentication, AuthUserContext } from '../Session';
 // Import different pages to view based on routing
 import SignInPage from '../Session/SignInPage.js';
 import SignUpPage from '../Session/SignUpForm.js';
+import DesktopAuthPage from '../Session/DesktopAuthPage.js';
 
 // Remaining pages
 import MeditationPage from '../Meditation/MainPage.js';
@@ -52,11 +53,12 @@ const App = () => (
         <Navigation />
         <Routes>
             <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.MEDITATION} replace />} />
+            <Route path={ROUTES.DESKTOP_AUTH} element={<DesktopAuthPage />} />
             <Route element={<ShellLayout />}>
                 <Route path={ROUTES.SIGNUP} element={<RedirectIfAuthed><SignUpPage /></RedirectIfAuthed>} />
                 <Route path={ROUTES.SIGNIN} element={<RedirectIfAuthed><SignInWithFirebase /></RedirectIfAuthed>} />
                 <Route path={ROUTES.USAGE} element={<RequireAuth><UsagePage /></RequireAuth>} />
-                <Route path={ROUTES.MEDITATION} element={<RequireAuth><MeditationPage /></RequireAuth>} />
+                <Route path={ROUTES.MEDITATION} element={<MeditationPage />} />
                 <Route path={ROUTES.LIGHTCYCLE} element={<RequireAuth><LightCyclePage /></RequireAuth>} />
                 <Route path="*" element={<SplashPage />} />
             </Route>

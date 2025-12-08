@@ -8,6 +8,14 @@
     "cleanUrls": true,
     "rewrites": [
       {
+        "source": "/desktop-auth",
+        "destination": "/desktop-auth.html"
+      },
+      {
+        "source": "/desktop-auth/**",
+        "destination": "/desktop-auth.html"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

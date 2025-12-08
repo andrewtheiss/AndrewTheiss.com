@@ -25,7 +25,16 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "dangerousRemoteDomainIpcAccess": [
+        {
+          "domain": "andrewtheiss-6336c.firebaseapp.com",
+          "windows": [
+            "main"
+          ],
+          "enableTauriAPI": true
+        }
+      ]
     },
     "allowlist": {
       "all": false,
