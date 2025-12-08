@@ -19,7 +19,7 @@
 }
 
 .hero-content {
-  max-height:370px;
+  max-height: 370px;
   flex: 1;
   max-width: 600px;
   padding: 1rem;
@@ -48,12 +48,52 @@
   margin: 1rem;
 }
 
+.splash-cta-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(12, 18, 30, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10;
+}
+
+.splash-cta-btn {
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.12);
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.splash-cta-btn:hover,
+.splash-cta-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.splash-cta-btn:active {
+  transform: translateY(0);
+}
+
 /* Media queries for responsive design */
 @media (max-width: 992px) {
   .hero-section {
     padding: 1.5rem;
   }
-  
+
   .hero-content h2 {
     font-size: 1.8rem;
   }
@@ -64,36 +104,50 @@
     flex-direction: column;
     text-align: center;
   }
-  
-  .hero-content, .hero-image {
+
+  .hero-content,
+  .hero-image {
     max-width: 100%;
   }
-  
+
   .hero-content h2 {
     font-size: 1.6rem;
   }
-  
+
   .hero-content p {
     font-size: 1rem;
   }
-  
+
   .hero-image {
-    height: 400px;
+    height: 300px;
     width: 100%;
     max-width: 400px;
+  }
+
+  .splash-cta-bar {
+    width: calc(100% - 32px);
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px 12px;
+  }
+
+  .splash-cta-btn {
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
   }
 }
 
 @media (max-width: 480px) {
   .hero-section {
-    padding: 1rem;
+    padding: 1.25rem;
   }
-  
+
   .hero-content h2 {
     font-size: 1.4rem;
   }
-  
+
   .hero-image {
-    height: 300px;
+    height: 240px;
   }
-} 
+}

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import CELLS from "vanta/dist/vanta.cells.min";
 import * as THREE from "three";
+import * as ROUTES from "../../constants/routes";
 import './SplashPage.css';
 
 export const SplashPage = () => {
@@ -66,6 +68,14 @@ export const SplashPage = () => {
           <p>Outside school I'm following tech news especially developments in chip manufacturing, AI, and space exploration.</p>
         </div>
         <div className="hero-image" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/me.png)` }}></div>
+      </div>
+      <div className="splash-cta-bar">
+        <Link to={ROUTES.MEDITATION} className="splash-cta-btn">
+          Meditation
+        </Link>
+        <Link to={ROUTES.CHOCOLATE.LANDING} className="splash-cta-btn">
+          Chocolate (coming soon)
+        </Link>
       </div>
     </div>
   );

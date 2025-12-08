@@ -1,0 +1,56 @@
+.meditation-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem 3rem;
+  background: linear-gradient(135deg, rgba(0, 96, 128, 0.12), rgba(0, 0, 0, 0.4));
+  color: #f5f5f5;
+}
+
+.meditation-card {
+  max-width: 720px;
+  width: 100%;
+  padding: 2rem 1.75rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.meditation-card h1 {
+  margin: 0.2rem 0 0.8rem;
+  font-size: 1.9rem;
+  letter-spacing: -0.4px;
+}
+
+.meditation-card .eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.meditation-card .body {
+  margin: 0;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.meditation-link {
+  color: #b8e5ff;
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .meditation-card {
+    padding: 1.75rem 1.5rem;
+  }
+
+  .meditation-card h1 {
+    font-size: 1.6rem;
+  }
+}

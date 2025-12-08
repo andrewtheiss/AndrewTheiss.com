@@ -1,102 +1,145 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-import 'firebase/compat/auth';
-import 'firebase/compat/storage';
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail,
+  updatePassword,
+  onAuthStateChanged,
+  useDeviceLanguage as setAuthDeviceLanguage,
+} from 'firebase/auth';
+import {
+  addDoc,
+  collection as fsCollection,
+  deleteDoc,
+  doc,
+  documentId,
+  getDoc,
+  getDocs,
+  query as fsQuery,
+  setDoc,
+  updateDoc,
+  where as fsWhere,
+} from 'firebase/firestore';
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
+import {
+  app,
+  auth,
+  firestore,
+  storage,
+  secondaryApp,
+  secondaryAuth,
+  secondaryFirestore,
+  secondaryStorage,
+} from './firebaseClient';
 
-const prodConfig = {
-    apiKey: "AIzaSyCCmfrwzGLalOs4iEdep6FHw6VMranrjXY",
-    authDomain: "andrewtheiss-6336c.firebaseapp.com",
-    databaseURL: "https://andrewtheiss-6336c.firebaseio.com",
-    projectId: "andrewtheiss-6336c",
-    storageBucket: "andrewtheiss-6336c.appspot.com",
-    messagingSenderId: "300886092746",
-    appId: "1:300886092746:web:8ad9128065ef7ff22e7d33"
-};
+const secondaryDb = secondaryFirestore;
 
-const cConfig = {
-    apiKey: atob('QUl6YVN5Q3ZZVkdSa1BBTlhRcnMwYkdLT01nS0h5bEZrSjZNYUFF'),
-    authDomain: atob('Y2hvY29sYXRlLXBhcnR5LmZpcmViYXNlYXBwLmNvbQ=='),
-    projectId: atob('Y2hvY29sYXRlLXBhcnR5'),
-    storageBucket: atob('Y2hvY29sYXRlLXBhcnR5LmFwcHNwb3QuY29t'),
-    messagingSenderId: atob('ODc4Mzk2NzU4NjQy'),
-    appId: atob('MTo4NzgzOTY3NTg2NDI6d2ViOmUyNzI3ZDJiMWY2ZWJiNjhkNGMwZWI='),
-    measurementId: atob('Ry1ZN0xHRlRYWVZZ'),
-  };
+const buildDocWrapper = (docRef) => ({
+  ref: docRef,
+  id: docRef.id,
+  get: () => getDoc(docRef),
+  set: (data, options) => setDoc(docRef, data, options),
+  update: (data) => updateDoc(docRef, data),
+  delete: () => deleteDoc(docRef),
+});
 
+const buildQueryWrapper = (queryRef) => ({
+  ref: queryRef,
+  get: () => getDocs(queryRef),
+  where: (...args) => buildQueryWrapper(fsQuery(queryRef, fsWhere(...args))),
+});
 
-const config = prodConfig;
-  //process.env.NODE_ENV === 'production' ? prodConfig : devConfig;
+const buildCollectionWrapper = (colRef) => ({
+  ref: colRef,
+  get: () => getDocs(colRef),
+  add: (data) => addDoc(colRef, data),
+  doc: (id) => buildDocWrapper(id ? doc(colRef, id) : doc(colRef)),
+  where: (...args) => buildQueryWrapper(fsQuery(colRef, fsWhere(...args))),
+});
+
+const buildFirestoreCompat = (dbInstance) => ({
+  collection: (path) => buildCollectionWrapper(fsCollection(dbInstance, path)),
+  FieldPath: { documentId },
+  _raw: dbInstance,
+});
 
 class Firebase {
   constructor() {
-    this.app = firebase.initializeApp(config);
-    this.db = firebase.firestore();
-    this.firebase = firebase;
-    this.storage = firebase.storage();
+    this.app = app;
+    this.db = buildFirestoreCompat(firestore);
+    this.storage = storage;
+    this.auth = auth;
+    this.firebase = {
+      auth: { GoogleAuthProvider },
+      firestore: { FieldPath: { documentId } },
+    };
 
-    // Create read-only db access for other db url
-    this.writeOnlyChocolateApp = firebase.initializeApp(cConfig, 'chocolateApp');
-    this.writeOnlyChocolateDb = firebase.firestore(this.writeOnlyChocolateApp);
-    this.writeOnlyChocolateStorage = firebase.storage(this.writeOnlyChocolateApp);
-    this.writeOnlyChocolateAuth = firebase.auth(this.writeOnlyChocolateApp);
+    if (secondaryApp) {
+      this.writeOnlyChocolateApp = secondaryApp;
+      this.writeOnlyChocolateDb = buildFirestoreCompat(secondaryDb);
+      this.writeOnlyChocolateStorage = secondaryStorage;
+      this.writeOnlyChocolateAuth = secondaryAuth;
+    }
 
-    this.auth = firebase.auth();
-    // Enable persistence
-    firebase.firestore().settings({
-        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-        merge: true
-    });
-    firebase.firestore().enablePersistence().catch((err) => {
-      if (err.code === 'failed-precondition') {
-          // Multiple tabs open, persistence can only be enabled
-          // in one tab at a a time.
-          // ...
-      } else if (err.code === 'unimplemented') {
-          // The current browser does not support all of the
-          // features required to enable persistence
-          // ...
+    this.auth.signInWithPopup = (provider) => signInWithPopup(this.auth, provider);
+    this.auth.signInWithEmailAndPassword = (email, password) =>
+      signInWithEmailAndPassword(this.auth, email, password);
+    this.auth.createUserWithEmailAndPassword = (email, password) =>
+      createUserWithEmailAndPassword(this.auth, email, password);
+    this.auth.useDeviceLanguage = () => {
+      try {
+        return setAuthDeviceLanguage(this.auth);
+      } catch (err) {
+        this.auth.languageCode = navigator.language;
+        return this.auth.languageCode;
       }
-
-    });
-    //firebase.firestore().disableNetwork();
+    };
   }
 
   async uploadFile(file, container, filename, writeToChocolateStorage = false) {
-    let storageRef = this.storage.ref();
-    if (writeToChocolateStorage) {
-      storageRef = this.writeOnlyChocolateStorage.ref();
-    }
-    const refLocation = container + '/' + filename;
-    const fileRef = storageRef.child(refLocation);
-    // 'file' comes from the Blob or File API
-    await fileRef.put(file).then((snapshot) => {
-      console.log('Uploaded a blob or file to' + refLocation);
-    });
+    const targetStorage = writeToChocolateStorage && this.writeOnlyChocolateStorage
+      ? this.writeOnlyChocolateStorage
+      : this.storage;
+    const storageRef = ref(targetStorage, `${container}/${filename}`);
+    await uploadBytes(storageRef, file);
   }
 
   async getFileUrl(container, filename) {
-    const storageRef = this.storage.ref();
-    const refLocation = container + '/' + filename;
-    let url = await storageRef.child(refLocation).getDownloadURL()
-    return url;
+    const storageRef = ref(this.storage, `${container}/${filename}`);
+    return getDownloadURL(storageRef);
   }
 
-  // *** Auth API ***
+  onAuthStateChanged(callback) {
+    return onAuthStateChanged(this.auth, callback);
+  }
+
   doCreateUserWithEmailAndPassword = (email, password) =>
-    this.auth.createUserWithEmailAndPassword(email, password);
+    createUserWithEmailAndPassword(this.auth, email, password);
 
   doSignInWithEmailAndPassword = (email, password) =>
-    this.auth.signInWithEmailAndPassword(email, password);
+    signInWithEmailAndPassword(this.auth, email, password);
+
+  doGoogleSignIn = () => {
+    const provider = new GoogleAuthProvider();
+    provider.addScope('email');
+    return signInWithPopup(this.auth, provider);
+  };
 
   doSignOut = () => {
-    this.auth.signOut();
+    signOut(this.auth);
     window.location.href = '/';
   };
 
-  doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
+  doPasswordReset = (email) => sendPasswordResetEmail(this.auth, email);
 
-  doPasswordUpdate = password =>
-    this.auth.currentUser.updatePassword(password);
+  doPasswordUpdate = (password) =>
+    this.auth.currentUser ? updatePassword(this.auth.currentUser, password) : Promise.reject(new Error('No authenticated user'));
 }
 
 export default Firebase;
