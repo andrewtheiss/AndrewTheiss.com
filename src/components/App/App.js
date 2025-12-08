@@ -1,69 +1,69 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Navigation from '../Navigation/Navigation.js';
 import './App.css';
 import { FirebaseContext } from '../Firebase';
-import { BrowserRouter as Router, Route} from 'react-router-dom';
-import * as ROUTES from '../../constants/routes.js'
-import { withAuthentication } from '../Session';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import * as ROUTES from '../../constants/routes.js';
+import { withAuthentication, AuthUserContext } from '../Session';
 
 // Import different pages to view based on routing
-import SignInPage from '../Session/SignInPage.js'
-import SignUpPage from '../Session/SignUpForm.js'
+import SignInPage from '../Session/SignInPage.js';
+import SignUpPage from '../Session/SignUpForm.js';
+import DesktopAuthPage from '../Session/DesktopAuthPage.js';
 
-// Chocolate Pages
-import IngredientPage from '../Chocolate/Ingredient/Pages/IngredientPage.js'
-import BarLookupPage from '../Chocolate/Bar/Pages/Lookup.js'
-import BarAddEditPage from '../Chocolate/Bar/Pages/AddEdit.js'
-import BarConfigurePage from '../Chocolate/Bar/Pages/ConfigurePage.js'
-import BeanMainPage from '../Chocolate/Bean/Pages/Main.js'
-import AddEditChocolateBatchPage from '../Chocolate/Batch/Pages/AddEdit.js'
-import TastingMainPage from '../Chocolate/Tasting/Pages/MainPage.js'
-import TastingLookupPage from '../Chocolate/Tasting/Pages/Lookup.js'
+// Remaining pages
+import MeditationPage from '../Meditation/MainPage.js';
+import UsagePage from '../Usage/UsagePage.js';
+import SplashPage from '../Splash/SplashPage.js';
+import LightCyclePage from '../LightCycle/LightCyclePage.js';
+
+const ShellLayout = () => (
+    <div className="app-container">
+        <div className="page-shell">
+            <Outlet />
+        </div>
+    </div>
+);
+
+const SignInWithFirebase = () => {
+    const firebase = useContext(FirebaseContext);
+    return <SignInPage firebase={firebase} />;
+};
+
+const RequireAuth = ({ children }) => {
+    const authUser = useContext(AuthUserContext);
+    if (authUser?.loading) return null;
+    if (!authUser?.auth) {
+        return <Navigate to={ROUTES.SIGNIN} replace />;
+    }
+    return children;
+};
+
+const RedirectIfAuthed = ({ children }) => {
+    const authUser = useContext(AuthUserContext);
+    if (authUser?.loading) return null;
+    if (authUser?.auth) {
+        return <Navigate to={ROUTES.MEDITATION} replace />;
+    }
+    return children;
+};
 
 const App = () => (
-  <Router>
-    <Navigation />
-
-    <div className="app-container">
-      <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.BEAN} component={BeanMainPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.INGREDIENT} component={IngredientPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.INTENTION} component={IngredientPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.BATCH} component={AddEditChocolateBatchPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route exact path={ROUTES.CHOCOLATE.BAR} component={BarLookupPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route exact path={ROUTES.CHOCOLATE.BAR_LOOKUP} component={BarLookupPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route exact path={ROUTES.CHOCOLATE.BAR_ADD_EDIT} component={BarAddEditPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route exact path={ROUTES.CHOCOLATE.BAR_DEPENDENCIES} component={BarConfigurePage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route path={ROUTES.CHOCOLATE.TASTING} component={TastingLookupPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route exact path={ROUTES.CHOCOLATE.TASTING_ROOT} component={TastingLookupPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <FirebaseContext.Consumer>
-          {firebase => <Route exact path={ROUTES.CHOCOLATE.TASTING_ADD_EDIT} component={TastingMainPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-      <Route path={ROUTES.SIGNUP} component={SignUpPage} />
-      <FirebaseContext.Consumer>
-        {firebase => <Route path={ROUTES.SIGNIN} component={SignInPage} firebase={firebase} />}
-      </FirebaseContext.Consumer>
-    </div>
-  </Router>
+    <Router>
+        <Navigation />
+        <Routes>
+            <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.MEDITATION} replace />} />
+            <Route path={ROUTES.DESKTOP_AUTH} element={<DesktopAuthPage />} />
+            <Route element={<ShellLayout />}>
+                <Route path={ROUTES.SIGNUP} element={<RedirectIfAuthed><SignUpPage /></RedirectIfAuthed>} />
+                <Route path={ROUTES.SIGNIN} element={<RedirectIfAuthed><SignInWithFirebase /></RedirectIfAuthed>} />
+                <Route path={ROUTES.USAGE} element={<RequireAuth><UsagePage /></RequireAuth>} />
+                <Route path={ROUTES.MEDITATION} element={<MeditationPage />} />
+                <Route path={ROUTES.LIGHTCYCLE} element={<RequireAuth><LightCyclePage /></RequireAuth>} />
+                <Route path="*" element={<SplashPage />} />
+            </Route>
+        </Routes>
+    </Router>
 );
 export default withAuthentication(App);
 /*

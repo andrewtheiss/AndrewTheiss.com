@@ -1,102 +1,236 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import "firebase/auth";
-import 'firebase/storage';
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail,
+  updatePassword,
+  onAuthStateChanged,
+  signInWithCredential,
+  useDeviceLanguage as setAuthDeviceLanguage,
+} from 'firebase/auth';
+import {
+  addDoc,
+  collection as fsCollection,
+  deleteDoc,
+  doc,
+  documentId,
+  getDoc,
+  getDocs,
+  query as fsQuery,
+  setDoc,
+  updateDoc,
+  where as fsWhere,
+} from 'firebase/firestore';
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
+import {
+  app,
+  auth,
+  firestore,
+  storage,
+} from './firebaseClient';
 
-const prodConfig = {
-    apiKey: "AIzaSyCCmfrwzGLalOs4iEdep6FHw6VMranrjXY",
-    authDomain: "andrewtheiss-6336c.firebaseapp.com",
-    databaseURL: "https://andrewtheiss-6336c.firebaseio.com",
-    projectId: "andrewtheiss-6336c",
-    storageBucket: "andrewtheiss-6336c.appspot.com",
-    messagingSenderId: "300886092746",
-    appId: "1:300886092746:web:8ad9128065ef7ff22e7d33"
-};
+const buildDocWrapper = (docRef) => ({
+  ref: docRef,
+  id: docRef.id,
+  get: () => getDoc(docRef),
+  set: (data, options) => setDoc(docRef, data, options),
+  update: (data) => updateDoc(docRef, data),
+  delete: () => deleteDoc(docRef),
+});
 
-const cConfig = {
-    apiKey: atob('QUl6YVN5Q3ZZVkdSa1BBTlhRcnMwYkdLT01nS0h5bEZrSjZNYUFF'),
-    authDomain: atob('Y2hvY29sYXRlLXBhcnR5LmZpcmViYXNlYXBwLmNvbQ=='),
-    projectId: atob('Y2hvY29sYXRlLXBhcnR5'),
-    storageBucket: atob('Y2hvY29sYXRlLXBhcnR5LmFwcHNwb3QuY29t'),
-    messagingSenderId: atob('ODc4Mzk2NzU4NjQy'),
-    appId: atob('MTo4NzgzOTY3NTg2NDI6d2ViOmUyNzI3ZDJiMWY2ZWJiNjhkNGMwZWI='),
-    measurementId: atob('Ry1ZN0xHRlRYWVZZ'),
-  };
+const buildQueryWrapper = (queryRef) => ({
+  ref: queryRef,
+  get: () => getDocs(queryRef),
+  where: (...args) => buildQueryWrapper(fsQuery(queryRef, fsWhere(...args))),
+});
 
+const buildCollectionWrapper = (colRef) => ({
+  ref: colRef,
+  get: () => getDocs(colRef),
+  add: (data) => addDoc(colRef, data),
+  doc: (id) => buildDocWrapper(id ? doc(colRef, id) : doc(colRef)),
+  where: (...args) => buildQueryWrapper(fsQuery(colRef, fsWhere(...args))),
+});
 
-const config = prodConfig;
-  //process.env.NODE_ENV === 'production' ? prodConfig : devConfig;
+const buildFirestoreCompat = (dbInstance) => ({
+  collection: (path) => buildCollectionWrapper(fsCollection(dbInstance, path)),
+  FieldPath: { documentId },
+  _raw: dbInstance,
+});
 
 class Firebase {
   constructor() {
-    this.app = firebase.initializeApp(config);
-    this.db = firebase.firestore();
-    this.firebase = firebase;
-    this.storage = firebase.storage();
+    this.app = app;
+    this.db = buildFirestoreCompat(firestore);
+    this.storage = storage;
+    this.auth = auth;
+    this.firebase = {
+      auth: { GoogleAuthProvider },
+      firestore: { FieldPath: { documentId } },
+    };
 
-    // Create read-only db access for other db url
-    this.writeOnlyChocolateApp = firebase.initializeApp(cConfig, 'chocolateApp');
-    this.writeOnlyChocolateDb = firebase.firestore(this.writeOnlyChocolateApp);
-    this.writeOnlyChocolateStorage = firebase.storage(this.writeOnlyChocolateApp);
-    this.writeOnlyChocolateAuth = firebase.auth(this.writeOnlyChocolateApp);
-
-    this.auth = firebase.auth();
-    // Enable persistence
-    firebase.firestore().settings({
-        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-        merge: true
-    });
-    firebase.firestore().enablePersistence().catch((err) => {
-      if (err.code === 'failed-precondition') {
-          // Multiple tabs open, persistence can only be enabled
-          // in one tab at a a time.
-          // ...
-      } else if (err.code === 'unimplemented') {
-          // The current browser does not support all of the
-          // features required to enable persistence
-          // ...
+    this.auth.signInWithPopup = (provider) => signInWithPopup(this.auth, provider);
+    this.auth.signInWithEmailAndPassword = (email, password) =>
+      signInWithEmailAndPassword(this.auth, email, password);
+    this.auth.createUserWithEmailAndPassword = (email, password) =>
+      createUserWithEmailAndPassword(this.auth, email, password);
+    this.auth.useDeviceLanguage = () => {
+      try {
+        return setAuthDeviceLanguage(this.auth);
+      } catch (err) {
+        this.auth.languageCode = navigator.language;
+        return this.auth.languageCode;
       }
-
-    });
-    //firebase.firestore().disableNetwork();
+    };
   }
 
-  async uploadFile(file, container, filename, writeToChocolateStorage = false) {
-    let storageRef = this.storage.ref();
-    if (writeToChocolateStorage) {
-      storageRef = this.writeOnlyChocolateStorage.ref();
+  isDesktopShell() {
+    return typeof window !== 'undefined' && Boolean(window.__TAURI_IPC__);
+  }
+
+  async doDesktopOAuth() {
+    if (!this.isDesktopShell()) {
+      return this.doGoogleSignIn();
     }
-    const refLocation = container + '/' + filename;
-    const fileRef = storageRef.child(refLocation);
-    // 'file' comes from the Blob or File API
-    await fileRef.put(file).then((snapshot) => {
-      console.log('Uploaded a blob or file to' + refLocation);
-    });
+
+    const [{ invoke }, { listen }, { open }] = await Promise.all([
+      import('@tauri-apps/api/tauri'),
+      import('@tauri-apps/api/event'),
+      import('@tauri-apps/api/shell'),
+    ]);
+
+    const state =
+      (typeof crypto !== 'undefined' && crypto.randomUUID && crypto.randomUUID()) ||
+      Math.random().toString(36).slice(2);
+
+    const cleanup = [];
+    let timeoutId;
+
+    try {
+      const port = await invoke('plugin:oauth|start');
+      const desktopOrigin =
+        process.env.REACT_APP_DESKTOP_AUTH_ORIGIN || 'https://andrewtheiss.com';
+      const targetUrl = new URL(
+        `${desktopOrigin.replace(/\/$/, '')}/desktop-auth`,
+      );
+      targetUrl.searchParams.set('port', String(port));
+      targetUrl.searchParams.set('state', state);
+      targetUrl.searchParams.set('provider', 'google');
+
+      const authPromise = new Promise((resolve, reject) => {
+        const finish = (data, err) => {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          cleanup.splice(0).forEach((fn) => {
+            try {
+              fn();
+            } catch (cleanupErr) {
+              console.warn('Failed to cleanup oauth listener', cleanupErr);
+            }
+          });
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data);
+          }
+        };
+
+        listen('oauth://url', (event) => {
+          try {
+            const receivedUrl = new URL(event.payload);
+            const hash = receivedUrl.hash?.startsWith('#') ? receivedUrl.hash.slice(1) : '';
+            if (!hash.startsWith('desktop=')) {
+              return;
+            }
+            const encoded = hash.slice('desktop='.length);
+            const decoded = JSON.parse(atob(decodeURIComponent(encoded)));
+            if (decoded.state !== state) {
+              finish(null, new Error('Desktop auth state mismatch.'));
+              return;
+            }
+            finish(decoded);
+          } catch (err) {
+            finish(null, err);
+          }
+        }).then((unlisten) => cleanup.push(unlisten));
+
+        timeoutId = window.setTimeout(() => {
+          finish(null, new Error('Desktop auth timed out. Try again.'));
+        }, 5 * 60 * 1000);
+      });
+
+      await open(targetUrl.toString());
+      const payload = await authPromise;
+      await invoke('plugin:oauth|cancel', { port }).catch(() => {
+        // plugin cancel is best-effort
+      });
+
+      if (!payload?.idToken && !payload?.accessToken) {
+        throw new Error('Desktop auth flow returned no Google credentials.');
+      }
+
+      const credential = GoogleAuthProvider.credential(
+        payload.idToken || undefined,
+        payload.accessToken || undefined,
+      );
+      return signInWithCredential(this.auth, credential);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async uploadFile(file, container, filename) {
+    const storageRef = ref(this.storage, `${container}/${filename}`);
+    await uploadBytes(storageRef, file);
   }
 
   async getFileUrl(container, filename) {
-    const storageRef = this.storage.ref();
-    const refLocation = container + '/' + filename;
-    let url = await storageRef.child(refLocation).getDownloadURL()
-    return url;
+    const storageRef = ref(this.storage, `${container}/${filename}`);
+    return getDownloadURL(storageRef);
   }
 
-  // *** Auth API ***
+  onAuthStateChanged(callback) {
+    return onAuthStateChanged(this.auth, callback);
+  }
+
   doCreateUserWithEmailAndPassword = (email, password) =>
-    this.auth.createUserWithEmailAndPassword(email, password);
+    createUserWithEmailAndPassword(this.auth, email, password);
 
   doSignInWithEmailAndPassword = (email, password) =>
-    this.auth.signInWithEmailAndPassword(email, password);
+    signInWithEmailAndPassword(this.auth, email, password);
+
+  doGoogleSignIn = () => {
+    const provider = new GoogleAuthProvider();
+    provider.addScope('email');
+    return signInWithPopup(this.auth, provider);
+  };
+
+  doGoogleRedirect = () => {
+    const provider = new GoogleAuthProvider();
+    provider.addScope('email');
+    return signInWithRedirect(this.auth, provider);
+  };
+
+  handleRedirectResult = () => getRedirectResult(this.auth);
 
   doSignOut = () => {
-    this.auth.signOut();
+    signOut(this.auth);
     window.location.href = '/';
   };
 
-  doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
+  doPasswordReset = (email) => sendPasswordResetEmail(this.auth, email);
 
-  doPasswordUpdate = password =>
-    this.auth.currentUser.updatePassword(password);
+  doPasswordUpdate = (password) =>
+    this.auth.currentUser ? updatePassword(this.auth.currentUser, password) : Promise.reject(new Error('No authenticated user'));
 }
 
 export default Firebase;

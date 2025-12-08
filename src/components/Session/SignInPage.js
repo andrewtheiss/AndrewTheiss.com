@@ -1,13 +1,12 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-//import { SignUpLink } from './SignUpForm';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
- <div>
-   <SignInForm />
- </div>
+  <div>
+    <SignInForm />
+  </div>
 );
 
 const INITIAL_STATE = {
@@ -16,71 +15,89 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class SignInFormBase extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { INITIAL_STATE };
-    this.handleGoogleLogin = this.handleGoogleLogin.bind(this);
-  }
-  handleGoogleLogin() {
-    var provider = new this.props.firebase.firebase.auth.GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-    this.props.firebase.auth.useDeviceLanguage();
-    this.props.firebase.auth.signInWithPopup(provider)
-    .then((result) => {
-        /** @type {firebase.auth.OAuthCredential} */
-        //var credential = result.credential;
+const SignInFormBase = ({ firebase, navigate }) => {
+  const [state, setState] = useState({ ...INITIAL_STATE });
+  const isDesktopShell = firebase?.isDesktopShell?.() || false;
 
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        //var token = credential.accessToken;
-        // The signed-in user info.
-        var user = result.user;
+  const handleGoogleLogin = async () => {
+    try {
+      if (isDesktopShell && firebase.doDesktopOAuth) {
+        await firebase.doDesktopOAuth();
+      } else {
+        await firebase.doGoogleSignIn();
+      }
+      navigate(ROUTES.LANDING);
+    } catch (error) {
+      setState((s) => ({ ...s, error }));
+    }
+  };
 
-        var providerData = user.providerData[0];
-        if (providerData.displayName === "Andrew Theiss" && providerData.email === "andrew.theiss@gmail.com") {
-          //this.props.session.user = providerData.uid;
-        //  this.props.session.isLoggedIn = true;
-          this.setState({isLoggedIn: true});
-          this.props.history.push(ROUTES.LANDING);
+  const handleGoogleRedirect = async () => {
+    try {
+      if (isDesktopShell && firebase.doDesktopOAuth) {
+        await firebase.doDesktopOAuth();
+      } else {
+        await firebase.doGoogleRedirect();
+      }
+      navigate(ROUTES.LANDING);
+    } catch (error) {
+      setState((s) => ({ ...s, error }));
+    }
+  };
 
-        } else {
-          this.props.history.push(ROUTES.LANDING);
-        }
-    }).catch((error) => {
+  React.useEffect(() => {
+    // Handle redirect result once; actual auth state is handled globally in withAuthentication
+    firebase.handleRedirectResult?.();
+  }, [firebase]);
 
-        this.props.history.push(ROUTES.LANDING);
-        // Handle Errors here.
-      //  var errorCode = error.code;
-        //var errorMessage = error.message;
-        // The email of the user's account used.
-      //  var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-      //  var credential = error.credential;
-        // ...
-    });
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    const { email, password } = state;
+    try {
+      await firebase.doSignInWithEmailAndPassword(email, password);
+      setState({ ...INITIAL_STATE });
+      navigate(ROUTES.LANDING);
+    } catch (error) {
+      setState((s) => ({ ...s, error }));
+    }
+  };
 
-  }
-  render() {
-    const { email, password, error } = this.state;
-    const isInvalid = password === '' || email === '';
-    let signIn = <div className="mt-8">
+  const onChange = (event) => {
+    const { name, value } = event.target;
+    setState((s) => ({ ...s, [name]: value }));
+  };
+
+  const { email, password, error } = state;
+  const isInvalid = password === '' || email === '';
+
+  return (
+    <div>
+      <div className="mt-8">
         <div>
           <button
-            onClick={this.handleGoogleLogin}
-            className="dark-button">
-            SSO with Google
+            onClick={handleGoogleLogin}
+            className="dark-button"
+            type="button"
+          >
+            {isDesktopShell ? 'Sign in with Google (desktop)' : 'Sign in with Google'}
+          </button>
+          <button
+            onClick={handleGoogleRedirect}
+            className="dark-button"
+            type="button"
+            style={{ marginLeft: '8px' }}
+            disabled={isDesktopShell}
+          >
+            Google (redirect)
           </button>
         </div>
-      </div>;
-    return (
-      <div>
-      {signIn}
-      or
-      <form onSubmit={this.onSubmit}>
+      </div>
+      <div className="mt-4">or</div>
+      <form onSubmit={onSubmit}>
         <input
           name="email"
           value={email}
-          onChange={this.onChange}
+          onChange={onChange}
           type="text"
           placeholder="Email Address"
           className="dark-input"
@@ -88,23 +105,30 @@ class SignInFormBase extends React.Component {
         <input
           name="password"
           value={password}
-          onChange={this.onChange}
+          onChange={onChange}
           type="password"
           placeholder="Password"
           className="dark-input"
         />
-        <button  className="dark-button" disabled={isInvalid} type="submit">
+        <button className="dark-button" disabled={isInvalid} type="submit">
           Sign In
         </button>
 
         {error && <p>{error.message}</p>}
       </form>
+      <div className="mt-4">
+        <Link to={ROUTES.MEDITATION} className="dark-button">
+          Go to Meditation
+        </Link>
       </div>
-    )
-  }
+    </div>
+  );
 };
 
-const SignInForm = withRouter(withFirebase(SignInFormBase));
+const SignInForm = withFirebase((props) => {
+  const navigate = useNavigate();
+  return <SignInFormBase {...props} navigate={navigate} />;
+});
 
 export default SignInPage;
 

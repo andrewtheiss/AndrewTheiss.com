@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAndrew() {
+      return request.auth != null &&
+        request.auth.token.email == 'andrew.theiss@gmail.com';
+    }
+
+    match /meditations/{docId} {
+      allow read: if true;
+      allow write: if isAndrew();
+    }
+
+    match /meditationMonthlyTotals/{docId} {
+      allow read: if true;
+      allow write: if isAndrew();
+    }
+
+    match /meditationCounters/{docId} {
+      allow read: if true;
+      allow write: if isAndrew();
+    }
+
+    match /{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

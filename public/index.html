@@ -13,6 +13,86 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <script>
+    (function () {
+      if (typeof Document === 'undefined') return;
+      var docProto = Document.prototype;
+      if (!docProto || docProto.__bodyQueryPatched) return;
+      var originalQuerySelector = docProto.querySelector;
+      if (typeof originalQuerySelector !== 'function') return;
+
+      var pendingListeners = [];
+      var observer = null;
+
+      function attachPendingListeners() {
+        var body = originalQuerySelector.call(document, 'body');
+        if (!body) {
+          return false;
+        }
+        while (pendingListeners.length) {
+          var args = pendingListeners.shift();
+          body.addEventListener.apply(body, args);
+        }
+        if (observer) {
+          observer.disconnect();
+          observer = null;
+        }
+        return true;
+      }
+
+      function ensureObserver() {
+        if (attachPendingListeners()) {
+          return;
+        }
+        if (observer) {
+          return;
+        }
+        observer = new MutationObserver(function () {
+          if (attachPendingListeners()) {
+            if (observer) {
+              observer.disconnect();
+              observer = null;
+            }
+          }
+        });
+        observer.observe(document.documentElement || document, {
+          childList: true,
+          subtree: true,
+        });
+      }
+
+      var bodyShim = {
+        addEventListener: function () {
+          var body = originalQuerySelector.call(document, 'body');
+          if (body) {
+            body.addEventListener.apply(body, arguments);
+            return;
+          }
+          pendingListeners.push(arguments);
+          ensureObserver();
+        },
+        removeEventListener: function () { },
+        dispatchEvent: function () { return false; },
+      };
+
+      docProto.querySelector = function (selectors) {
+        if (selectors === 'body') {
+          var existingBody = originalQuerySelector.call(this, selectors);
+          if (existingBody) {
+            if (pendingListeners.length) {
+              attachPendingListeners();
+            }
+            return existingBody;
+          }
+          ensureObserver();
+          return bodyShim;
+        }
+        return originalQuerySelector.apply(this, arguments);
+      };
+
+      docProto.__bodyQueryPatched = true;
+    })();
+  </script>
   <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.

@@ -1,0 +1,416 @@
+.meditation-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.25rem;
+  padding: 2rem 1.5rem 3rem;
+  background: linear-gradient(135deg, #0b2233, #0a1a29);
+  color: #f5f5f5;
+}
+
+.meditation-card {
+  max-width: 960px;
+  width: 100%;
+  padding: 2rem 1.75rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.meditation-card h1 {
+  margin: 0.2rem 0 0.8rem;
+  font-size: 1.9rem;
+  letter-spacing: -0.4px;
+}
+
+.meditation-card .eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.meditation-card .body {
+  margin: 0;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.meditation-link {
+  color: #b8e5ff;
+  text-decoration: underline;
+}
+
+.meditation-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+
+.meditation-control label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.meditation-control input,
+.meditation-control select {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f5f5;
+  outline: none;
+}
+
+.meditation-control input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.timer-shell {
+  margin-top: 0.5rem;
+  padding: 1.1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.timer-display {
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  padding: 0.6rem 0;
+}
+
+.timer-status {
+  margin: 0.25rem 0 0.75rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.timer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.meditation-button {
+  background: linear-gradient(120deg, #72d6ff, #7be8ff);
+  color: #0b2233;
+  padding: 0.75rem 1.3rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+}
+
+.meditation-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.meditation-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.meditation-button.secondary {
+  background: transparent;
+  color: #f5f5f5;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.save-panel {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.save-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.save-details {
+  margin: 0.1rem 0 0;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.save-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.error-text {
+  color: #ffb4b4;
+  margin-top: 0.75rem;
+}
+
+.success-text {
+  color: #b8e5ff;
+  margin-top: 0.5rem;
+}
+
+.body.small {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.78);
+  margin: 0;
+}
+
+.import-panel {}
+
+.import-actions {}
+
+.file-button {}
+
+.file-button input {}
+
+.import-status {}
+
+.import-hover-zone {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  background: transparent;
+  z-index: 10;
+}
+
+.import-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 0.35rem 0.9rem 0.5rem;
+  background: rgba(11, 34, 51, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none;
+  z-index: 11;
+}
+
+.import-footer-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-height: 28px;
+}
+
+.import-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.file-button {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f5f5f5;
+  padding: 0.4rem 0.85rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.file-button input {
+  display: none;
+}
+
+.import-status {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.9rem;
+}
+
+.line-button {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5f5f5;
+  padding: 0.35rem 0.85rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.line-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.import-footer-inner p {
+  margin: 0;
+}
+
+.import-hover-zone:hover+.import-footer,
+.import-footer:hover {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.stats-wrapper {
+  margin: 1.5rem auto 0;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stats-card {
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  width: 100%;
+}
+
+.stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bar-graph {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 70px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bar-label {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.bar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  height: 10px;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(120deg, #72d6ff, #7be8ff);
+  border-radius: 999px;
+}
+
+.bar-value {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.86);
+  text-align: right;
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.session-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.session-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.session-meta {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.session-date {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+
+.line-chart {
+  width: 100%;
+  max-width: 100%;
+}
+
+.line-chart svg {
+  width: 100%;
+  height: 160px;
+}
+
+.line-chart-labels,
+.line-chart-legend {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.line-chart-legend {
+  margin-top: 0.15rem;
+}
+
+.axis-label {
+  fill: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+}
+
+@media (max-width: 640px) {
+  .meditation-card {
+    padding: 1.75rem 1.5rem;
+  }
+
+  .meditation-card h1 {
+    font-size: 1.6rem;
+  }
+}

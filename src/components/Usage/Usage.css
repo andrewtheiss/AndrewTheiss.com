@@ -1,0 +1,42 @@
+.usage-page {
+  padding: 16px;
+}
+
+.usage-form {
+  display: grid;
+  gap: 8px;
+  max-width: 480px;
+  margin-bottom: 16px;
+}
+
+.usage-form input {
+  padding: 8px;
+}
+
+.usage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.usage-list-item {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fdfdfd;
+}
+
+.usage-list-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.usage-list-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.error-text {
+  color: #c00;
+}

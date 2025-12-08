@@ -1,170 +1,62 @@
-.navigation-top-bar {
-  height: 50px;
-  background-color: rgb(255, 255, 255);
-  border-bottom-color: rgb(97, 97, 97);
-  border-bottom-style: none;
-  border-bottom-width: 0px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 5px 0px;
-  box-sizing: border-box;
-  color: rgb(97, 97, 97);
-  display: block;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 23px;
-  margin: 0px;
-  overflow-x: visible;
-  overflow-y: visible;
-  padding: 0px;
-  position: fixed;
-  top: 0px;
-  width: 100%;
-  z-index: 999;
-}
-
-@media only screen and (max-width: 991px) and (min-width: 769px) {
-  /* CSS that should be displayed if width is equal to or less than 991px and larger
-  than 768px goes here */
-}
-
-@media only screen and (max-width: 991px) {
-  /* CSS that should be displayed if width is equal to or less than 991px goes here */
-}
-
-.navigation-top-bar div {
-  display: inline-block;
-  margin: 5px;
-  padding: 5px;
-}
-
-.navigation-side-bar {
-  height: calc(100% - 66px);
-  position: fixed;
-  padding-top: 20px;
-  top: 50px;
-  display: inline-block;
-  border-right: 2px solid rgba(133, 133, 133, 0.1);
-  width: 200px;
-  padding-left: 0px;
-  background-color: white;
-  overflow-y: auto;
-  z-index: 990;
-  transition: transform 0.3s ease;
-}
-
-.navigation-side-bar-spacing {
-  display: inline-block;
-  width: 245px;
-}
-
-.navigation-side-bar li {
-  display: block;
-  padding-left: 15px;
-  line-height: 30px;
-}
-
-.navigation-side-bar li:hover {
-  background-color: #dddddd;
-}
-
-.navigation-side-bar a {
-  display: block;
-  color: #333;
-  text-decoration: none;
-}
-
-/* Mobile navigation styles */
-@media only screen and (max-width: 768px) {
-  .navigation-side-bar {
-    transform: translateX(-100%);
-    width: 80%;
-    max-width: 300px;
-  }
-  
-  .navigation-side-bar.active {
-    transform: translateX(0);
-  }
-  
-  .navigation-side-bar-spacing {
-    width: 0;
-  }
-  
-  .navigation-top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  #navigation-wrap {
-    display: block;
-    cursor: pointer;
-  }
-  
-  .hamburger-icon {
-    display: block;
-  }
-}
-
-#logo {
-  display: none;
-}
-
-#navigation-wrap {
-  display: none;
-}
-
-.hamburger-icon {
-  font-size: 24px;
-  color: #333;
-  cursor: pointer;
-  display: none;
-}
-
-.menu-overlay {
+.nav-bar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 980;
-  display: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  right: 0;
+  height: 56px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(8, 12, 18, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 1000;
 }
 
-.menu-overlay.active {
-  display: block;
-  opacity: 1;
+.nav-links {
+  display: flex;
+  gap: 14px;
+  align-items: center;
 }
 
-/* This maintains existing media query content */
-@media only screen and (max-width: 768px) {
-  .hamburger-icon {
-    display: block;
+.nav-links a {
+  color: #e9f4ff;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.nav-auth a,
+.nav-auth button {
+  color: #e9f4ff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  padding: 8px 12px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav-auth button {
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .nav-bar {
+    flex-direction: column;
+    height: auto;
+    gap: 8px;
+    align-items: flex-start;
   }
-  
-  .navigation-side-bar {
-    transform: translateX(-100%);
-    width: 80%;
-    max-width: 300px;
-  }
-  
-  .navigation-side-bar.active {
-    transform: translateX(0);
-  }
-  
-  .navigation-side-bar-spacing {
-    width: 0;
-  }
-  
-  .navigation-top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  #navigation-wrap {
-    display: block;
-    cursor: pointer;
+
+  .nav-links {
+    flex-wrap: wrap;
+    gap: 10px;
   }
 }

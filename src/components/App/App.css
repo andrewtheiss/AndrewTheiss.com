@@ -1,46 +1,41 @@
 .app-container {
-  margin-top: 55px;
-  display: inline-block;
-  width: calc(100% - 245px);
-  background-color: white;
-  margin-left: 203px;
+  margin-top: 0;
+  width: 100%;
+  min-height: 100vh;
+  background: #04070d;
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px 64px;
+  box-sizing: border-box;
 }
 
-/* Full width container for splash page */
+.page-shell {
+  width: 100%;
+  max-width: 1300px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 20px 18px;
+  color: #e9f4ff;
+}
+
 .splash-app-container {
   width: 100%;
   padding: 0;
   margin: 0;
-  background-color: transparent;
-}
-
-@media (max-width: 992px) {
-  .app-container {
-    width: calc(100% - 200px);
-    margin-left: 160px;
-  }
+  background: transparent;
 }
 
 @media (max-width: 768px) {
   .app-container {
-    width: 100%;
-    margin-left: 0;
-    margin-top: 50px;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+    padding: 32px 12px 56px;
   }
 
-  to {
-    transform: rotate(360deg);
+  .page-shell {
+    padding: 16px 14px;
+    border-radius: 14px;
   }
 }

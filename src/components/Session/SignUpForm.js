@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 
 import * as ROUTES from '../../constants/routes';
@@ -16,88 +16,81 @@ const INITIAL_STATE = {
   passwordOne: '',
   passwordTwo: '',
   error: null,
-  ip : ''
+  ip: ''
 };
 
-class SignUpFormBase extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { INITIAL_STATE };
-  }
+const SignUpFormBase = ({ firebase, navigate }) => {
+  const [state, setState] = React.useState({ ...INITIAL_STATE });
 
-  onSubmit = event => {
-    //const { username, email, passwordOne } = this.state;
-/*
-        this.props.firebase
-          .doCreateUserWithEmailAndPassword(email, passwordOne)
-          .then(authUser => {
-            this.setState({ ...INITIAL_STATE });
-          })
-          .catch(error => {
-            this.setState({ error });
-          });
-*/
-        event.preventDefault();
+  const onSubmit = event => {
+    event.preventDefault();
+    const { email, passwordOne } = state;
 
-        // Eventually put this after success or error
-        this.props.history.push(ROUTES.LANDING);
-  }
-
-  onChange = event => {
-    this.setState({value: event.target.value});
+    firebase
+      .doCreateUserWithEmailAndPassword(email, passwordOne)
+      .then(() => {
+        setState({ ...INITIAL_STATE });
+        navigate(ROUTES.LANDING);
+      })
+      .catch(error => {
+        setState((s) => ({ ...s, error }));
+      });
   };
 
-  render() {
-    const {
-      username,
-      email,
-      passwordOne,
-      passwordTwo,
-      error,
-    } = this.state;
+  const onChange = event => {
+    const { name, value } = event.target;
+    setState((s) => ({ ...s, [name]: value }));
+  };
 
-    const isInvalid =
-      passwordOne !== passwordTwo ||
-      passwordOne === '' ||
-      email === '' ||
-      username === '';
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input
-         name="username"
-         value={this.username}
-         onChange={this.onChange}
-         type="text"
-         placeholder="Full Name"
-       />
-       <input
-         name="email"
-         value={email}
-         onChange={this.onChange}
-         type="text"
-         placeholder="Email Address"
-       />
-       <input
-         name="passwordOne"
-         value={passwordOne}
-         onChange={this.onChange}
-         type="password"
-         placeholder="Password"
-       />
-       <input
-         name="passwordTwo"
-         value={passwordTwo}
-         onChange={this.onChange}
-         type="password"
-         placeholder="Confirm Password"
-       />
-       <button disabled={isInvalid} type="submit">Sign Up</button>
+  const {
+    username,
+    email,
+    passwordOne,
+    passwordTwo,
+    error,
+  } = state;
 
-       {error && <p>{error.message}</p>}
-      </form>
-    );
-  }
-}
+  const isInvalid =
+    passwordOne !== passwordTwo ||
+    passwordOne === '' ||
+    email === '' ||
+    username === '';
+  return (
+    <form onSubmit={onSubmit}>
+      <input
+        name="username"
+        value={username}
+        onChange={onChange}
+        type="text"
+        placeholder="Full Name"
+      />
+      <input
+        name="email"
+        value={email}
+        onChange={onChange}
+        type="text"
+        placeholder="Email Address"
+      />
+      <input
+        name="passwordOne"
+        value={passwordOne}
+        onChange={onChange}
+        type="password"
+        placeholder="Password"
+      />
+      <input
+        name="passwordTwo"
+        value={passwordTwo}
+        onChange={onChange}
+        type="password"
+        placeholder="Confirm Password"
+      />
+      <button disabled={isInvalid} type="submit">Sign Up</button>
+
+      {error && <p>{error.message}</p>}
+    </form>
+  );
+};
 
 const SignUpLink = () => (
   <p>
@@ -105,7 +98,10 @@ const SignUpLink = () => (
   </p>
 );
 
-const SignUpForm = withRouter(withFirebase(SignUpFormBase));
+const SignUpForm = withFirebase((props) => {
+  const navigate = useNavigate();
+  return <SignUpFormBase {...props} navigate={navigate} />;
+});
 
 export default SignUpPage;
 

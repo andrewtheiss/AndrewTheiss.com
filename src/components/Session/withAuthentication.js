@@ -2,50 +2,51 @@ import React from 'react';
 import AuthUserContext from './context';
 import { withFirebase } from '../Firebase';
 
+const ADMIN_EMAILS = ['andrew.theiss@gmail.com'];
+
 const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
     constructor(props) {
       super(props);
 
       this.state = {
-        authUser : {
+        authUser: {
           admin: false,
-          auth : false
-        }
+          auth: false,
+          user: null,
+          loading: true,
+        },
       };
     }
     componentDidMount() {
-      this.props.firebase.auth.onAuthStateChanged(authUser => {
-
+      this.listener = this.props.firebase.onAuthStateChanged((authUser) => {
         if (!authUser) {
           this.setState({
-            authUser : {
+            authUser: {
               admin: false,
-              auth : false
-            }
+              auth: false,
+              user: null,
+              loading: false,
+            },
           });
-        } else {
-          var providerData = authUser.providerData[0];
-          if (providerData.displayName === "Andrew Theiss" && providerData.email === "andrew.theiss@gmail.com") {
-            this.setState({
-              authUser : {
-                admin: true,
-                auth : true
-              }
-            });
-          } else {
-            this.setState({
-              authUser : {
-                admin: false,
-                auth : true
-              }
-            });
-          }
+          return;
         }
+
+        const isAdmin = ADMIN_EMAILS.includes(authUser.email);
+        this.setState({
+          authUser: {
+            admin: isAdmin,
+            auth: true,
+            user: authUser,
+            loading: false,
+          },
+        });
       });
     }
     componentWillUnmount() {
-      this.listener();
+      if (this.listener) {
+        this.listener();
+      }
     }
     render() {
       return (
@@ -56,7 +57,7 @@ const withAuthentication = Component => {
     }
   }
 
-    return withFirebase(WithAuthentication);
+  return withFirebase(WithAuthentication);
 };
 
 export default withAuthentication;
