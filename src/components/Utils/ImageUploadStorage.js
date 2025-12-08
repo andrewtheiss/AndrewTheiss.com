@@ -30,41 +30,40 @@ class ImageUploadStorage extends React.Component {
     this.handleChange = this.handleChange.bind(this);
 
     this.state = {
-      file : null,
-      setFile : null,
-      tastingLabel : this.props.tastingLabel
+      file: null,
+      setFile: null,
+      tastingLabel: this.props.tastingLabel
     };
 
   }
 
-async componentDidUpdate(previousProps) {
-  if (previousProps.tastingLabel !== this.props.tastingLabel) {
-    if (this.props.tastingLabel) {
-      let tastingLabel = this.props.tastingLabel;
-      await this.setState({tastingLabel});
-      this.getFileUrl();
+  async componentDidUpdate(previousProps) {
+    if (previousProps.tastingLabel !== this.props.tastingLabel) {
+      if (this.props.tastingLabel) {
+        let tastingLabel = this.props.tastingLabel;
+        await this.setState({ tastingLabel });
+        this.getFileUrl();
+      }
     }
   }
-}
 
   // Handles input change event and updates state
   async handleChange(event) {
-     this.setState({file:event.target.files[0]});
-     // convert filename
+    this.setState({ file: event.target.files[0] });
+    // convert filename
 
-     if (this.state.tastingLabel === "") {
-       console.log('No Name for tasting');
-       return;
-     }
-     await this.props.firebase.uploadFile(event.target.files[0],'tastings',this.state.tastingLabel); // Image is the image name
-     await this.props.firebase.uploadFile(event.target.files[0],'tastings',this.state.tastingLabel, true);
-     this.getFileUrl();
+    if (this.state.tastingLabel === "") {
+      console.log('No Name for tasting');
+      return;
+    }
+    await this.props.firebase.uploadFile(event.target.files[0], 'tastings', this.state.tastingLabel); // Image is the image name
+    this.getFileUrl();
   }
 
   async getFileUrl() {
-    let existingImage = await this.props.firebase.getFileUrl('tastings',this.state.tastingLabel);
+    let existingImage = await this.props.firebase.getFileUrl('tastings', this.state.tastingLabel);
     console.log(existingImage);
-    await this.setState({imageUrl : existingImage});
+    await this.setState({ imageUrl: existingImage });
   }
 
   render() {
@@ -73,12 +72,12 @@ async componentDidUpdate(previousProps) {
       <div key="imageUpload">
         <div>Upload Image:   {errorHidden}</div>
         <div>
-            <input type="file" accept="image/*" onChange={this.handleChange}/>
-            <button>Upload to Firebase</button>
+          <input type="file" accept="image/*" onChange={this.handleChange} />
+          <button>Upload to Firebase</button>
         </div>
-        <img id="img" height="150" alt="" src={this.state.imageUrl}/>
+        <img id="img" height="150" alt="" src={this.state.imageUrl} />
       </div>
     );
   }
 }
- export default ImageUploadStorage;
+export default ImageUploadStorage;

@@ -1,6 +1,5 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-//import { SignUpLink } from './SignUpForm';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
@@ -16,84 +15,83 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class SignInFormBase extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
+const SignInFormBase = ({ firebase, navigate }) => {
+  const [state, setState] = useState({ ...INITIAL_STATE });
 
-  handleGoogleLogin = async () => {
+  const handleGoogleLogin = async () => {
     try {
-      await this.props.firebase.doGoogleSignIn();
-      this.props.history.push(ROUTES.LANDING);
+      await firebase.doGoogleSignIn();
+      navigate(ROUTES.LANDING);
     } catch (error) {
-      this.setState({ error });
+      setState((s) => ({ ...s, error }));
     }
   };
 
-  onSubmit = async (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
-    const { email, password } = this.state;
+    const { email, password } = state;
     try {
-      await this.props.firebase.doSignInWithEmailAndPassword(email, password);
-      this.setState({ ...INITIAL_STATE });
-      this.props.history.push(ROUTES.LANDING);
+      await firebase.doSignInWithEmailAndPassword(email, password);
+      setState({ ...INITIAL_STATE });
+      navigate(ROUTES.LANDING);
     } catch (error) {
-      this.setState({ error });
+      setState((s) => ({ ...s, error }));
     }
   };
 
-  onChange = (event) => {
+  const onChange = (event) => {
     const { name, value } = event.target;
-    this.setState({ [name]: value });
+    setState((s) => ({ ...s, [name]: value }));
   };
 
-  render() {
-    const { email, password, error } = this.state;
-    const isInvalid = password === '' || email === '';
-    return (
-      <div>
-        <div className="mt-8">
-          <div>
-            <button
-              onClick={this.handleGoogleLogin}
-              className="dark-button"
-              type="button"
-            >
-              Sign in with Google
-            </button>
-          </div>
-        </div>
-        <div className="mt-4">or</div>
-        <form onSubmit={this.onSubmit}>
-          <input
-            name="email"
-            value={email}
-            onChange={this.onChange}
-            type="text"
-            placeholder="Email Address"
-            className="dark-input"
-          />
-          <input
-            name="password"
-            value={password}
-            onChange={this.onChange}
-            type="password"
-            placeholder="Password"
-            className="dark-input"
-          />
-          <button className="dark-button" disabled={isInvalid} type="submit">
-            Sign In
-          </button>
+  const { email, password, error } = state;
+  const isInvalid = password === '' || email === '';
 
-          {error && <p>{error.message}</p>}
-        </form>
+  return (
+    <div>
+      <div className="mt-8">
+        <div>
+          <button
+            onClick={handleGoogleLogin}
+            className="dark-button"
+            type="button"
+          >
+            Sign in with Google
+          </button>
+        </div>
       </div>
-    )
-  }
+      <div className="mt-4">or</div>
+      <form onSubmit={onSubmit}>
+        <input
+          name="email"
+          value={email}
+          onChange={onChange}
+          type="text"
+          placeholder="Email Address"
+          className="dark-input"
+        />
+        <input
+          name="password"
+          value={password}
+          onChange={onChange}
+          type="password"
+          placeholder="Password"
+          className="dark-input"
+        />
+        <button className="dark-button" disabled={isInvalid} type="submit">
+          Sign In
+        </button>
+
+        {error && <p>{error.message}</p>}
+      </form>
+    </div>
+  );
 };
 
-const SignInForm = withRouter(withFirebase(SignInFormBase));
+const SignInForm = withFirebase((props) => {
+  const navigate = useNavigate();
+  return <SignInFormBase {...props} navigate={navigate} />;
+});
 
 export default SignInPage;
 

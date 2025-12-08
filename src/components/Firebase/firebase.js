@@ -32,13 +32,7 @@ import {
   auth,
   firestore,
   storage,
-  secondaryApp,
-  secondaryAuth,
-  secondaryFirestore,
-  secondaryStorage,
 } from './firebaseClient';
-
-const secondaryDb = secondaryFirestore;
 
 const buildDocWrapper = (docRef) => ({
   ref: docRef,
@@ -80,13 +74,6 @@ class Firebase {
       firestore: { FieldPath: { documentId } },
     };
 
-    if (secondaryApp) {
-      this.writeOnlyChocolateApp = secondaryApp;
-      this.writeOnlyChocolateDb = buildFirestoreCompat(secondaryDb);
-      this.writeOnlyChocolateStorage = secondaryStorage;
-      this.writeOnlyChocolateAuth = secondaryAuth;
-    }
-
     this.auth.signInWithPopup = (provider) => signInWithPopup(this.auth, provider);
     this.auth.signInWithEmailAndPassword = (email, password) =>
       signInWithEmailAndPassword(this.auth, email, password);
@@ -102,11 +89,8 @@ class Firebase {
     };
   }
 
-  async uploadFile(file, container, filename, writeToChocolateStorage = false) {
-    const targetStorage = writeToChocolateStorage && this.writeOnlyChocolateStorage
-      ? this.writeOnlyChocolateStorage
-      : this.storage;
-    const storageRef = ref(targetStorage, `${container}/${filename}`);
+  async uploadFile(file, container, filename) {
+    const storageRef = ref(this.storage, `${container}/${filename}`);
     await uploadBytes(storageRef, file);
   }
 

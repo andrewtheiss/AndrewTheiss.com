@@ -5,6 +5,7 @@ import * as ROUTES from '../../constants/routes';
 import './MainPage.css';
 
 const MeditationMainPage = () => {
+  console.log('[Meditation] render');
   return (
     <AuthUserContext.Consumer>
       {authUser => (

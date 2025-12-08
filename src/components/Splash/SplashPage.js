@@ -73,9 +73,6 @@ export const SplashPage = () => {
         <Link to={ROUTES.MEDITATION} className="splash-cta-btn">
           Meditation
         </Link>
-        <Link to={ROUTES.CHOCOLATE.LANDING} className="splash-cta-btn">
-          Chocolate (coming soon)
-        </Link>
       </div>
     </div>
   );
