@@ -17,7 +17,13 @@ import {
 } from '../Firebase/meditationService';
 import './MainPage.css';
 
-const durationOptions = [5, 10, 15, 20, 30, 45, 60];
+const wheelValues = Array.from({ length: 60 }, (_, i) => i); // 0..59 inclusive
+const wheelHours = wheelValues;
+const wheelMinutes = wheelValues;
+const wheelSeconds = wheelValues;
+const defaultDuration = { hours: 1, minutes: 0, seconds: 0 };
+const defaultDurationSeconds =
+  defaultDuration.hours * 3600 + defaultDuration.minutes * 60 + defaultDuration.seconds;
 
 const formatSeconds = (totalSeconds) => {
   const safeTotal = Math.max(0, Math.round(totalSeconds || 0));
@@ -39,6 +45,148 @@ const TimerDisplay = React.memo(({ seconds }) => (
   </div>
 ));
 TimerDisplay.displayName = 'TimerDisplay';
+
+const WheelColumn = React.memo(({
+  label,
+  values,
+  value,
+  onChange,
+}) => {
+  const REPEAT_COUNT = 7; // odd number so we can "recenter" invisibly
+  const scrollerRef = useRef(null);
+  const rafRef = useRef(0);
+  const scrollStopRef = useRef(null);
+  const didInitRef = useRef(false);
+  const [metrics, setMetrics] = useState({ itemHeight: 38, pad: 76 });
+  const [centerAbsIndex, setCenterAbsIndex] = useState(0);
+
+  const baseLen = values.length;
+  const middleRepeat = Math.floor(REPEAT_COUNT / 2);
+  const baseStartIndex = middleRepeat * baseLen;
+
+  const scrollToIndex = useCallback((index, behavior = 'auto') => {
+    const node = scrollerRef.current;
+    if (!node) return;
+    node.scrollTo({
+      top: index * metrics.itemHeight,
+      behavior,
+    });
+  }, [metrics.itemHeight]);
+
+  const computeMetrics = useCallback(() => {
+    const node = scrollerRef.current;
+    if (!node) return;
+    const firstItem = node.querySelector('.wheel-item');
+    const itemHeight = firstItem?.getBoundingClientRect()?.height || 38;
+    const viewportHeight = node.clientHeight || 190;
+    const pad = Math.max(0, (viewportHeight - itemHeight) / 2);
+    setMetrics({ itemHeight, pad });
+  }, []);
+
+  useEffect(() => {
+    computeMetrics();
+    const node = scrollerRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver(() => computeMetrics());
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [computeMetrics]);
+
+  useEffect(() => {
+    if (didInitRef.current) return;
+    didInitRef.current = true;
+    const index = Math.max(0, values.indexOf(value));
+    const target = baseStartIndex + index;
+    setCenterAbsIndex(target);
+    scrollToIndex(target, 'auto');
+  }, [baseStartIndex, scrollToIndex, value, values]);
+
+  const repeatedValues = useMemo(
+    () => Array.from({ length: baseLen * REPEAT_COUNT }, (_, i) => values[i % baseLen]),
+    [baseLen, values],
+  );
+
+  const recenterToValueIndex = useCallback((valueIndex, behavior = 'auto') => {
+    const target = baseStartIndex + valueIndex;
+    setCenterAbsIndex(target);
+    scrollToIndex(target, behavior);
+  }, [baseStartIndex, scrollToIndex]);
+
+  const handleScroll = useCallback(() => {
+    const node = scrollerRef.current;
+    if (!node) return;
+
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const rawIndex = Math.round(node.scrollTop / metrics.itemHeight);
+      const modIndex = ((rawIndex % baseLen) + baseLen) % baseLen;
+      const next = values[modIndex];
+      setCenterAbsIndex(rawIndex);
+      if (next !== value) onChange(next);
+
+      // If we scroll near either end of the repeated list, jump back to the middle
+      // to preserve the illusion of infinite scrolling. (Not visible because items repeat.)
+      const minIndex = baseLen; // first repeat "buffer"
+      const maxIndex = baseLen * (REPEAT_COUNT - 1); // last repeat "buffer"
+      if (rawIndex < minIndex || rawIndex > maxIndex) {
+        const jumped = baseStartIndex + modIndex;
+        node.scrollTop = jumped * metrics.itemHeight;
+        setCenterAbsIndex(jumped);
+      }
+    });
+
+    if (scrollStopRef.current) clearTimeout(scrollStopRef.current);
+    scrollStopRef.current = setTimeout(() => {
+      const rawIndex = Math.round(node.scrollTop / metrics.itemHeight);
+      const modIndex = ((rawIndex % baseLen) + baseLen) % baseLen;
+      // Snap + recenter (same visible items; keeps the wheel "infinite").
+      recenterToValueIndex(modIndex, 'auto');
+    }, 120);
+  }, [baseLen, baseStartIndex, metrics.itemHeight, onChange, recenterToValueIndex, value, values]);
+
+  useEffect(() => () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (scrollStopRef.current) clearTimeout(scrollStopRef.current);
+  }, []);
+
+  return (
+    <div className="wheel-column">
+      <div className="wheel-label">{label}</div>
+      <div className="wheel-window">
+        <div
+          className="wheel-scroller"
+          ref={scrollerRef}
+          onScroll={handleScroll}
+          role="listbox"
+          aria-label={label}
+          style={{ paddingTop: metrics.pad, paddingBottom: metrics.pad }}
+        >
+          {repeatedValues.map((v, idx) => {
+            const isSelected = idx === centerAbsIndex;
+            return (
+              <button
+                key={`${label}-${idx}`}
+                type="button"
+                className={`wheel-item${isSelected ? ' selected' : ''}`}
+                onClick={() => {
+                  scrollToIndex(idx, 'smooth');
+                }}
+                role="option"
+                aria-selected={isSelected}
+              >
+                {String(v).padStart(2, '0')}
+              </button>
+            );
+          })}
+        </div>
+        <div className="wheel-fade top" aria-hidden />
+        <div className="wheel-fade bottom" aria-hidden />
+        <div className="wheel-highlight" aria-hidden />
+      </div>
+    </div>
+  );
+});
+WheelColumn.displayName = 'WheelColumn';
 
 const MonthlyBarGraph = ({ data }) => {
   if (!data?.length) {
@@ -133,10 +281,12 @@ const CumulativeLineChart = ({ data }) => {
 
 const MeditationMainPage = () => {
   const authUser = useContext(AuthUserContext);
-  const [durationMinutes, setDurationMinutes] = useState(10);
+  const [durationHours, setDurationHours] = useState(defaultDuration.hours);
+  const [durationMinutes, setDurationMinutes] = useState(defaultDuration.minutes);
+  const [durationSecs, setDurationSecs] = useState(defaultDuration.seconds);
   const [preset, setPreset] = useState('');
   const [isRunning, setIsRunning] = useState(false);
-  const [remainingSeconds, setRemainingSeconds] = useState(durationMinutes * 60);
+  const [remainingSeconds, setRemainingSeconds] = useState(defaultDurationSeconds);
   const [startedAt, setStartedAt] = useState(null);
   const [finishedAt, setFinishedAt] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -158,14 +308,19 @@ const MeditationMainPage = () => {
   const timerRef = useRef(null);
   const audioCtxRef = useRef(null);
 
-  const clearTimer = () => {
+  const durationSeconds = useMemo(
+    () => Math.max(1, durationHours * 3600 + durationMinutes * 60 + durationSecs),
+    [durationHours, durationMinutes, durationSecs],
+  );
+
+  const clearTimer = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-  };
+  }, []);
 
-  const playBell = () => {
+  const playBell = useCallback(() => {
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (!audioCtxRef.current) {
@@ -197,9 +352,9 @@ const MeditationMainPage = () => {
       // Playback can fail if autoplay is blocked; swallow quietly.
       console.warn('Bell playback failed', err);
     }
-  };
+  }, []);
 
-  const finishSession = () => {
+  const finishSession = useCallback(() => {
     clearTimer();
     setIsRunning(false);
     setRemainingSeconds(0);
@@ -207,7 +362,7 @@ const MeditationMainPage = () => {
     setFinishedAt(completedTime);
     setStatusMessage('Session complete. Save to your log.');
     playBell();
-  };
+  }, [clearTimer, playBell]);
 
   useEffect(() => {
     if (!isRunning) return undefined;
@@ -223,13 +378,13 @@ const MeditationMainPage = () => {
     }, 1000);
 
     return clearTimer;
-  }, [isRunning]);
+  }, [clearTimer, finishSession, isRunning]);
 
   useEffect(() => {
     if (!isRunning) {
-      setRemainingSeconds(durationMinutes * 60);
+      setRemainingSeconds(durationSeconds);
     }
-  }, [durationMinutes, isRunning]);
+  }, [durationSeconds, isRunning]);
 
   useEffect(() => () => {
     clearTimer();
@@ -237,7 +392,7 @@ const MeditationMainPage = () => {
       audioCtxRef.current.close().catch(() => { });
       audioCtxRef.current = null;
     }
-  }, []);
+  }, [clearTimer]);
 
   const handleStart = () => {
     if (!authUser?.auth) {
@@ -249,7 +404,7 @@ const MeditationMainPage = () => {
     const now = new Date();
     setStartedAt(now);
     setFinishedAt(null);
-    setRemainingSeconds(durationMinutes * 60);
+    setRemainingSeconds(durationSeconds);
     setStatusMessage('Meditation in progress…');
     setIsRunning(true);
   };
@@ -257,7 +412,7 @@ const MeditationMainPage = () => {
   const handleCancel = () => {
     clearTimer();
     setIsRunning(false);
-    setRemainingSeconds(durationMinutes * 60);
+    setRemainingSeconds(durationSeconds);
     setStartedAt(null);
     setFinishedAt(null);
     setStatusMessage('Meditation cancelled.');
@@ -273,11 +428,11 @@ const MeditationMainPage = () => {
       return Math.max(1, Math.round((finishedAt.getTime() - startedAt.getTime()) / 1000));
     }
     if (startedAt) {
-      const elapsed = durationMinutes * 60 - remainingSeconds;
+      const elapsed = durationSeconds - remainingSeconds;
       return Math.max(1, elapsed);
     }
-    return durationMinutes * 60;
-  }, [durationMinutes, finishedAt, remainingSeconds, startedAt]);
+    return durationSeconds;
+  }, [durationSeconds, finishedAt, remainingSeconds, startedAt]);
 
   const handleSave = async () => {
     if (!authUser?.user) {
@@ -302,7 +457,7 @@ const MeditationMainPage = () => {
       setStatusMessage('Meditation saved.');
       setStartedAt(null);
       setFinishedAt(null);
-      setRemainingSeconds(durationMinutes * 60);
+      setRemainingSeconds(durationSeconds);
       loadData();
     } catch (err) {
       setError(err);
@@ -496,19 +651,28 @@ const MeditationMainPage = () => {
 
             <div className="meditation-controls">
               <div className="meditation-control">
-                <label htmlFor="duration">Duration (minutes)</label>
-                <select
-                  id="duration"
-                  value={durationMinutes}
-                  onChange={(e) => setDurationMinutes(Number(e.target.value))}
-                  disabled={isRunning}
-                >
-                  {durationOptions.map((value) => (
-                    <option key={value} value={value}>
-                      {value} minutes
-                    </option>
-                  ))}
-                </select>
+                <label>Duration</label>
+                <div className={`duration-wheels${isRunning ? ' disabled' : ''}`} aria-label="Duration wheels">
+                  <WheelColumn
+                    label="Hours"
+                    values={wheelHours}
+                    value={durationHours}
+                    onChange={setDurationHours}
+                  />
+                  <WheelColumn
+                    label="Minutes"
+                    values={wheelMinutes}
+                    value={durationMinutes}
+                    onChange={setDurationMinutes}
+                  />
+                  <WheelColumn
+                    label="Seconds"
+                    values={wheelSeconds}
+                    value={durationSecs}
+                    onChange={setDurationSecs}
+                  />
+                </div>
+                <p className="duration-subtitle">Total • {formatSeconds(durationSeconds)}</p>
               </div>
 
               <div className="meditation-control">

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@tauri-apps/api": "^1.6.0",
+    "@capacitor/android": "^7.4.4",
     "@capacitor/core": "^7.4.4",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.2",

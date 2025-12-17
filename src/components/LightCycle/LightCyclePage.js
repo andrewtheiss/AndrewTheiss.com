@@ -1,21 +1,11 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { addDoc, collection, serverTimestamp, getDocs, query, orderBy, limit as fsLimit, deleteDoc, doc } from 'firebase/firestore';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { addDoc, collection, serverTimestamp, getDocs, query, orderBy, limit as fsLimit } from 'firebase/firestore';
 import { firestore } from '../Firebase/firebaseClient';
-import { AuthUserContext } from '../Session';
 import './LightCyclePage.css';
 
 const GRID_BASE_COLS = 200; // default columns; rows adapt to aspect ratio
 const TICK_MS = 30; // twice as fast as previous 60ms
 const COUNTDOWN_START = 3;
-
-const hashString = (value) => {
-  // Lightweight DJB2 hash to avoid async crypto usage.
-  let hash = 5381;
-  for (let i = 0; i < value.length; i += 1) {
-    hash = (hash * 33) ^ value.charCodeAt(i);
-  }
-  return (hash >>> 0).toString(16);
-};
 
 const startPositions = (cols, rows) => {
   const centerY = Math.max(0, Math.min(rows - 1, Math.floor(rows / 2)));
@@ -63,9 +53,9 @@ const LightCyclePage = () => {
   const [moveCount, setMoveCount] = useState(0);
   const [winner, setWinner] = useState(null);
   const [elapsedMs, setElapsedMs] = useState(0);
-  const [saveStatus, setSaveStatus] = useState('');
-  const [saveError, setSaveError] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [, setSaveStatus] = useState('');
+  const [, setSaveError] = useState('');
+  const [, setSaving] = useState(false);
   const [p1Name, setP1Name] = useState('Player 1');
   const [p2Name, setP2Name] = useState('Player 2');
   const [gridSize, setGridSize] = useState({ cols: GRID_BASE_COLS, rows: GRID_BASE_COLS });
@@ -84,29 +74,52 @@ const LightCyclePage = () => {
   const moveLogRef = useRef([]);
   const gridRef = useRef({ cols: GRID_BASE_COLS, rows: GRID_BASE_COLS });
   const autoSubmittedRef = useRef(false);
+  const playersRef = useRef(players);
+  const moveCountRef = useRef(moveCount);
+
+  useEffect(() => {
+    playersRef.current = players;
+  }, [players]);
 
   const reset = useCallback(() => {
     const { cols, rows } = gridRef.current;
     const { p1, p2 } = startPositions(cols, rows);
-    setPlayers({
+
+    let nextP1Name = p1Name;
+    let nextP2Name = p2Name;
+    if (typeof window !== 'undefined') {
+      const storedP1 = window.localStorage.getItem('lightcycle_p1_name');
+      const storedP2 = window.localStorage.getItem('lightcycle_p2_name');
+      if (storedP1) nextP1Name = storedP1;
+      if (storedP2) nextP2Name = storedP2;
+    }
+
+    setP1Name(nextP1Name);
+    setP2Name(nextP2Name);
+
+    const nextPlayers = {
       p1: {
         id: 'p1',
-        name: p1Name,
+        name: nextP1Name,
         pos: p1,
         dir: { x: 1, y: 0 },
         trail: [p1],
       },
       p2: {
         id: 'p2',
-        name: p2Name,
+        name: nextP2Name,
         pos: p2,
         dir: { x: -1, y: 0 },
         trail: [p2],
       },
-    });
+    };
+
+    playersRef.current = nextPlayers;
+    setPlayers(nextPlayers);
     setGameState('idle');
     setCountdown(COUNTDOWN_START);
     setMoveCount(0);
+    moveCountRef.current = 0;
     setWinner(null);
     setElapsedMs(0);
     setSaveStatus('');
@@ -121,13 +134,7 @@ const LightCyclePage = () => {
     keyLogRef.current = [];
     moveLogRef.current = [];
     autoSubmittedRef.current = false;
-    if (typeof window !== 'undefined') {
-      const storedP1 = window.localStorage.getItem('lightcycle_p1_name');
-      const storedP2 = window.localStorage.getItem('lightcycle_p2_name');
-      if (storedP1) setP1Name(storedP1);
-      if (storedP2) setP2Name(storedP2);
-    }
-  }, []);
+  }, [p1Name, p2Name]);
 
   const startCountdown = useCallback(() => {
     setCountdown(COUNTDOWN_START);
@@ -196,10 +203,11 @@ const LightCyclePage = () => {
           ...player,
           dir: move.dir,
         };
+        playersRef.current = current;
         return current;
       });
     },
-    [gameState, startCountdown],
+    [gameState, reset, startCountdown],
   );
 
   useEffect(() => {
@@ -248,22 +256,26 @@ const LightCyclePage = () => {
     // If we're idle (not running), reposition start points to remain centered for the new grid.
     if (gameState === 'idle') {
       const { p1, p2 } = startPositions(cols, rows);
-      setPlayers((prev) => ({
-        p1: {
-          ...prev.p1,
-          pos: p1,
-          trail: [p1],
-          dir: { x: 1, y: 0 },
-        },
-        p2: {
-          ...prev.p2,
-          pos: p2,
-          trail: [p2],
-          dir: { x: -1, y: 0 },
-        },
-      }));
+      setPlayers((prev) => {
+        const next = {
+          p1: {
+            ...prev.p1,
+            pos: p1,
+            trail: [p1],
+            dir: { x: 1, y: 0 },
+          },
+          p2: {
+            ...prev.p2,
+            pos: p2,
+            trail: [p2],
+            dir: { x: -1, y: 0 },
+          },
+        };
+        playersRef.current = next;
+        return next;
+      });
     }
-  }, []);
+  }, [gameState]);
 
   useEffect(() => {
     resizeCanvas();
@@ -351,7 +363,7 @@ const LightCyclePage = () => {
           winner: winnerKey.toUpperCase(),
           winnerName: winnerLabel || winnerKey.toUpperCase(),
           elapsedMs: elapsed,
-          moves: moveCount,
+          moves: moveCountRef.current,
           loggedAt: serverTimestamp(),
           startedAt: startTimeRef.current ? new Date(Date.now() - elapsed) : serverTimestamp(),
           submittedAt: serverTimestamp(),
@@ -366,7 +378,7 @@ const LightCyclePage = () => {
         // best-effort; ignore errors
       }
     },
-    [gridSize.cols, gridSize.rows, moveCount],
+    [gridSize.cols, gridSize.rows],
   );
 
   const loadLeaderboard = useCallback(async () => {
@@ -401,7 +413,6 @@ const LightCyclePage = () => {
       lastTimeRef.current = timestamp;
       accumulatorRef.current += delta;
 
-      let nextState = null;
       while (accumulatorRef.current >= TICK_MS) {
         accumulatorRef.current -= TICK_MS;
         setPlayers((prev) => {
@@ -480,21 +491,23 @@ const LightCyclePage = () => {
               elapsedMs: elapsed,
               moves: moveLogRef.current,
               keypresses: keyLogRef.current,
-              moveCount,
+              moveCount: moveCountRef.current,
             });
           }
 
-          nextState = next;
+          playersRef.current = next;
           return next;
         });
-        setMoveCount((count) => count + 1);
+        setMoveCount((count) => {
+          const nextCount = count + 1;
+          moveCountRef.current = nextCount;
+          return nextCount;
+        });
       }
 
-      const snapshot = nextState || players;
-      drawFrame(snapshot);
+      drawFrame(playersRef.current);
       if (startTimeRef.current) {
-        const now = nextState ? performance.now() : timestamp;
-        setDisplayClockMs(Math.max(0, Math.round(now - startTimeRef.current)));
+        setDisplayClockMs(Math.max(0, Math.round(performance.now() - startTimeRef.current)));
       }
       rafRef.current = requestAnimationFrame(loop);
     };
@@ -503,7 +516,7 @@ const LightCyclePage = () => {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [drawFrame, gameState, players, maybeAutoSubmitLeaderboard, p1Name, p2Name]);
+  }, [drawFrame, gameState, maybeAutoSubmitLeaderboard, p1Name, p2Name]);
 
   // Draw when idle/countdown so the canvas always shows the latest state.
   useEffect(() => {
