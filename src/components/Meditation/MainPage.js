@@ -39,11 +39,13 @@ const formatMinutesShort = (seconds) => {
   return `${mins} min`;
 };
 
-const TimerDisplay = React.memo(({ seconds }) => (
-  <div className="timer-display">
-    {formatSeconds(seconds)}
-  </div>
-));
+const TimerDisplay = React.memo(({ remainingSeconds, overtimeSeconds }) => {
+  const isOvertime = Number(overtimeSeconds || 0) > 0;
+  const display = isOvertime
+    ? `+${formatSeconds(overtimeSeconds)}`
+    : formatSeconds(remainingSeconds);
+  return <div className="timer-display">{display}</div>;
+});
 TimerDisplay.displayName = 'TimerDisplay';
 
 const WheelColumn = React.memo(({
@@ -63,6 +65,13 @@ const WheelColumn = React.memo(({
   const baseLen = values.length;
   const middleRepeat = Math.floor(REPEAT_COUNT / 2);
   const baseStartIndex = middleRepeat * baseLen;
+
+  const getCenteredAbsIndex = useCallback((node) => {
+    if (!node) return 0;
+    const centerY = node.scrollTop + node.clientHeight / 2;
+    const offset = metrics.pad + metrics.itemHeight / 2;
+    return Math.round((centerY - offset) / metrics.itemHeight);
+  }, [metrics.itemHeight, metrics.pad]);
 
   const scrollToIndex = useCallback((index, behavior = 'auto') => {
     const node = scrollerRef.current;
@@ -118,17 +127,17 @@ const WheelColumn = React.memo(({
 
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
-      const rawIndex = Math.round(node.scrollTop / metrics.itemHeight);
-      const modIndex = ((rawIndex % baseLen) + baseLen) % baseLen;
+      const centeredIndex = getCenteredAbsIndex(node);
+      const modIndex = ((centeredIndex % baseLen) + baseLen) % baseLen;
       const next = values[modIndex];
-      setCenterAbsIndex(rawIndex);
+      setCenterAbsIndex(centeredIndex);
       if (next !== value) onChange(next);
 
       // If we scroll near either end of the repeated list, jump back to the middle
       // to preserve the illusion of infinite scrolling. (Not visible because items repeat.)
       const minIndex = baseLen; // first repeat "buffer"
       const maxIndex = baseLen * (REPEAT_COUNT - 1); // last repeat "buffer"
-      if (rawIndex < minIndex || rawIndex > maxIndex) {
+      if (centeredIndex < minIndex || centeredIndex > maxIndex) {
         const jumped = baseStartIndex + modIndex;
         node.scrollTop = jumped * metrics.itemHeight;
         setCenterAbsIndex(jumped);
@@ -137,12 +146,12 @@ const WheelColumn = React.memo(({
 
     if (scrollStopRef.current) clearTimeout(scrollStopRef.current);
     scrollStopRef.current = setTimeout(() => {
-      const rawIndex = Math.round(node.scrollTop / metrics.itemHeight);
-      const modIndex = ((rawIndex % baseLen) + baseLen) % baseLen;
+      const centeredIndex = getCenteredAbsIndex(node);
+      const modIndex = ((centeredIndex % baseLen) + baseLen) % baseLen;
       // Snap + recenter (same visible items; keeps the wheel "infinite").
       recenterToValueIndex(modIndex, 'auto');
     }, 120);
-  }, [baseLen, baseStartIndex, metrics.itemHeight, onChange, recenterToValueIndex, value, values]);
+  }, [baseLen, baseStartIndex, getCenteredAbsIndex, metrics.itemHeight, onChange, recenterToValueIndex, value, values]);
 
   useEffect(() => () => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -286,7 +295,8 @@ const MeditationMainPage = () => {
   const [durationSecs, setDurationSecs] = useState(defaultDuration.seconds);
   const [preset, setPreset] = useState('');
   const [isRunning, setIsRunning] = useState(false);
-  const [remainingSeconds, setRemainingSeconds] = useState(defaultDurationSeconds);
+  const [plannedDurationSeconds, setPlannedDurationSeconds] = useState(defaultDurationSeconds);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [startedAt, setStartedAt] = useState(null);
   const [finishedAt, setFinishedAt] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -307,6 +317,8 @@ const MeditationMainPage = () => {
 
   const timerRef = useRef(null);
   const audioCtxRef = useRef(null);
+  const startedAtMsRef = useRef(null);
+  const didBellRef = useRef(false);
 
   const durationSeconds = useMemo(
     () => Math.max(1, durationHours * 3600 + durationMinutes * 60 + durationSecs),
@@ -357,34 +369,33 @@ const MeditationMainPage = () => {
   const finishSession = useCallback(() => {
     clearTimer();
     setIsRunning(false);
-    setRemainingSeconds(0);
     const completedTime = new Date();
     setFinishedAt(completedTime);
     setStatusMessage('Session complete. Save to your log.');
-    playBell();
+    if (!didBellRef.current) {
+      didBellRef.current = true;
+      playBell();
+    }
   }, [clearTimer, playBell]);
 
   useEffect(() => {
     if (!isRunning) return undefined;
 
     timerRef.current = setInterval(() => {
-      setRemainingSeconds((prev) => {
-        if (prev <= 1) {
-          finishSession();
-          return 0;
-        }
-        return prev - 1;
-      });
+      const startMs = startedAtMsRef.current;
+      if (!startMs) return;
+      const nextElapsed = Math.max(0, Math.floor((Date.now() - startMs) / 1000));
+      setElapsedSeconds(nextElapsed);
+
+      if (!didBellRef.current && nextElapsed >= plannedDurationSeconds) {
+        didBellRef.current = true;
+        setStatusMessage('Time’s up — continuing to track additional time.');
+        playBell();
+      }
     }, 1000);
 
     return clearTimer;
-  }, [clearTimer, finishSession, isRunning]);
-
-  useEffect(() => {
-    if (!isRunning) {
-      setRemainingSeconds(durationSeconds);
-    }
-  }, [durationSeconds, isRunning]);
+  }, [clearTimer, isRunning, plannedDurationSeconds, playBell]);
 
   useEffect(() => () => {
     clearTimer();
@@ -402,9 +413,12 @@ const MeditationMainPage = () => {
     setError(null);
     setSaveMessage('');
     const now = new Date();
+    startedAtMsRef.current = now.getTime();
+    didBellRef.current = false;
     setStartedAt(now);
     setFinishedAt(null);
-    setRemainingSeconds(durationSeconds);
+    setElapsedSeconds(0);
+    setPlannedDurationSeconds(durationSeconds);
     setStatusMessage('Meditation in progress…');
     setIsRunning(true);
   };
@@ -412,7 +426,9 @@ const MeditationMainPage = () => {
   const handleCancel = () => {
     clearTimer();
     setIsRunning(false);
-    setRemainingSeconds(durationSeconds);
+    startedAtMsRef.current = null;
+    didBellRef.current = false;
+    setElapsedSeconds(0);
     setStartedAt(null);
     setFinishedAt(null);
     setStatusMessage('Meditation cancelled.');
@@ -423,18 +439,32 @@ const MeditationMainPage = () => {
     finishSession();
   };
 
-  const computedDurationSeconds = useMemo(() => {
+  const actualDurationSeconds = useMemo(() => {
     if (startedAt && finishedAt) {
       return Math.max(1, Math.round((finishedAt.getTime() - startedAt.getTime()) / 1000));
     }
     if (startedAt) {
-      const elapsed = durationSeconds - remainingSeconds;
-      return Math.max(1, elapsed);
+      return Math.max(1, Math.round(Number(elapsedSeconds) || 0));
     }
-    return durationSeconds;
-  }, [durationSeconds, finishedAt, remainingSeconds, startedAt]);
+    return plannedDurationSeconds;
+  }, [elapsedSeconds, finishedAt, plannedDurationSeconds, startedAt]);
 
-  const handleSave = async () => {
+  const additionalSeconds = useMemo(
+    () => Math.max(0, actualDurationSeconds - plannedDurationSeconds),
+    [actualDurationSeconds, plannedDurationSeconds],
+  );
+
+  const remainingSeconds = useMemo(
+    () => Math.max(0, plannedDurationSeconds - elapsedSeconds),
+    [elapsedSeconds, plannedDurationSeconds],
+  );
+
+  const overtimeSeconds = useMemo(
+    () => Math.max(0, elapsedSeconds - plannedDurationSeconds),
+    [elapsedSeconds, plannedDurationSeconds],
+  );
+
+  const handleSaveDuration = async (durationToSaveSeconds) => {
     if (!authUser?.user) {
       setError(new Error('Sign in to save your meditation.'));
       return;
@@ -450,14 +480,16 @@ const MeditationMainPage = () => {
       await addMeditationEntry({
         uid: authUser.user.uid,
         startedAt,
-        durationSeconds: computedDurationSeconds,
+        durationSeconds: Math.max(1, Math.round(Number(durationToSaveSeconds) || 0)),
         preset: preset.trim(),
       });
       setSaveMessage('Meditation saved to your log.');
       setStatusMessage('Meditation saved.');
+      startedAtMsRef.current = null;
+      didBellRef.current = false;
+      setElapsedSeconds(0);
       setStartedAt(null);
       setFinishedAt(null);
-      setRemainingSeconds(durationSeconds);
       loadData();
     } catch (err) {
       setError(err);
@@ -646,13 +678,13 @@ const MeditationMainPage = () => {
         {authUser?.auth && (
           <>
             <p className="body">
-              Start a timer, hear a bell when it ends, and save the session to Firestore.
+              Start a timer, hear a bell when the planned time ends, keep going if you want, then save the session to Firestore.
             </p>
 
             <div className="meditation-controls">
               <div className="meditation-control">
                 <label>Duration</label>
-                <div className={`duration-wheels${isRunning ? ' disabled' : ''}`} aria-label="Duration wheels">
+                <div className={`duration-wheels${isRunning || finishedAt ? ' disabled' : ''}`} aria-label="Duration wheels">
                   <WheelColumn
                     label="Hours"
                     values={wheelHours}
@@ -682,16 +714,16 @@ const MeditationMainPage = () => {
                   value={preset}
                   onChange={(e) => setPreset(e.target.value)}
                   placeholder="e.g. morning, breathwork"
-                  disabled={isRunning}
+                  disabled={isRunning || finishedAt}
                 />
               </div>
             </div>
 
             <div className="timer-shell">
-              <TimerDisplay seconds={remainingSeconds} />
+              <TimerDisplay remainingSeconds={remainingSeconds} overtimeSeconds={overtimeSeconds} />
               <p className="timer-status">{statusMessage}</p>
               <div className="timer-actions">
-                {!isRunning && (
+                {!isRunning && !finishedAt && (
                   <button
                     type="button"
                     onClick={handleStart}
@@ -727,17 +759,26 @@ const MeditationMainPage = () => {
                   <div>
                     <p className="eyebrow">Ready to save</p>
                     <p className="save-details">
-                      Started at {startedAt.toLocaleString()} • Duration {formatSeconds(computedDurationSeconds)} • Activity Meditation
+                      Started at {startedAt.toLocaleString()} • Planned {formatSeconds(plannedDurationSeconds)} • Total {formatSeconds(actualDurationSeconds)}
+                      {additionalSeconds > 0 ? ` (+${formatSeconds(additionalSeconds)})` : ''} • Activity Meditation
                     </p>
                   </div>
                   <div className="save-actions">
                     <button
                       type="button"
-                      onClick={handleSave}
+                      onClick={() => handleSaveDuration(Math.min(actualDurationSeconds, plannedDurationSeconds))}
                       className="meditation-button"
                       disabled={saving}
                     >
-                      {saving ? 'Saving…' : 'Save to Firestore'}
+                      {saving ? 'Saving…' : 'Add Meditation'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSaveDuration(actualDurationSeconds)}
+                      className="meditation-button"
+                      disabled={saving || additionalSeconds <= 0}
+                    >
+                      {saving ? 'Saving…' : 'Add with Additional Time'}
                     </button>
                     <button
                       type="button"
