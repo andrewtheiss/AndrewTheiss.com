@@ -75,8 +75,9 @@
 }
 
 .duration-subtitle {
-  margin: 0.45rem 0 0;
+  margin: 0.2rem 0 0.45rem;
   font-size: 0.95rem;
+  text-align: center;
   color: rgba(255, 255, 255, 0.72);
 }
 
@@ -84,7 +85,13 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.9rem;
-  margin: 0.15rem 0 0;
+  margin: 0 auto;
+  max-width: 320px;
+  /* Wheel sizing (kept as CSS vars so JS can measure reliably). */
+  --wheel-item-height: 28px;
+  --wheel-visible-items: 5; /* 2 above + 1 selected + 2 below */
+  --wheel-fade-items: 2; /* fade out beyond 2 items */
+  --wheel-font-size: 1.05rem;
 }
 
 .duration-wheels.disabled {
@@ -97,16 +104,16 @@
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(0, 0, 0, 0.22);
-  padding: 0.75rem 0.6rem;
+  padding: 0.5rem 0.5rem;
 }
 
 .wheel-label {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.72);
   text-align: center;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.35rem;
 }
 
 .wheel-window {
@@ -116,13 +123,15 @@
 }
 
 .wheel-scroller {
-  height: 190px;
+  height: calc(var(--wheel-item-height) * var(--wheel-visible-items));
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   padding: 0;
+  box-sizing: border-box;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 .wheel-scroller::-webkit-scrollbar {
@@ -131,13 +140,13 @@
 }
 
 .wheel-item {
-  height: 38px;
+  height: var(--wheel-item-height);
   width: 100%;
   padding: 0;
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.62);
-  font-size: 1.4rem;
+  font-size: var(--wheel-font-size);
   font-weight: 700;
   letter-spacing: 1px;
   display: flex;
@@ -153,11 +162,11 @@
 
 .wheel-highlight {
   position: absolute;
-  left: 0.6rem;
-  right: 0.6rem;
+  left: 0.45rem;
+  right: 0.45rem;
   top: 50%;
   transform: translateY(-50%);
-  height: 38px;
+  height: var(--wheel-item-height);
   border-radius: 12px;
   border: 1px solid rgba(123, 232, 255, 0.34);
   background: rgba(114, 214, 255, 0.08);
@@ -168,7 +177,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 88px;
+  height: calc(var(--wheel-item-height) * var(--wheel-fade-items));
   pointer-events: none;
 }
 
@@ -283,15 +292,7 @@
   margin: 0;
 }
 
-.import-panel {}
-
-.import-actions {}
-
-.file-button {}
-
-.file-button input {}
-
-.import-status {}
+.import-panel { display: contents; }
 
 .import-hover-zone {
   position: fixed;
@@ -469,6 +470,12 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.session-row.highlighted {
+  border-color: rgba(123, 232, 255, 0.7);
+  background: rgba(114, 214, 255, 0.12);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
 .session-main {
   display: flex;
   flex-direction: column;
@@ -524,9 +531,11 @@
 
   .duration-wheels {
     gap: 0.6rem;
+    --wheel-item-height: 26px;
+    --wheel-font-size: 1rem;
   }
 
   .wheel-item {
-    font-size: 1.2rem;
+    font-size: var(--wheel-font-size);
   }
 }

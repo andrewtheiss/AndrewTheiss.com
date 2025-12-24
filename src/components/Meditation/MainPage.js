@@ -60,7 +60,8 @@ const WheelColumn = React.memo(({
   const allowWheelScrollRef = useRef(false);
   const allowWheelScrollTimeoutRef = useRef(null);
   const didInitRef = useRef(false);
-  const [metrics, setMetrics] = useState({ itemHeight: 38, pad: 76 });
+  // Defaults match the CSS wheel sizing (5 visible items).
+  const [metrics, setMetrics] = useState({ itemHeight: 28, pad: 56 });
   const [centerAbsIndex, setCenterAbsIndex] = useState(0);
 
   const baseLen = values.length;
@@ -77,16 +78,16 @@ const WheelColumn = React.memo(({
   const scrollToIndex = useCallback((index, behavior = 'auto') => {
     const node = scrollerRef.current;
     if (!node) return;
-    // The wheel uses real paddingTop/paddingBottom to create the "window".
-    // To center an item, we must offset the scroll position by that padding.
-    const top = Math.round(index * metrics.itemHeight - metrics.pad);
+    // With `box-sizing: border-box` on the scroller, the padding is included in the
+    // element's height and the centered position is simply `index * itemHeight`.
+    const top = Math.round(index * metrics.itemHeight);
     if (behavior === 'smooth') {
       node.scrollTo({ top, behavior });
       return;
     }
     // Using scrollTop directly avoids some scroll-snap "micro-adjust" loops on Windows/zoom.
     node.scrollTop = top;
-  }, [metrics.itemHeight, metrics.pad]);
+  }, [metrics.itemHeight]);
 
   const computeMetrics = useCallback(() => {
     const node = scrollerRef.current;
@@ -338,12 +339,12 @@ const MeditationMainPage = () => {
   const [durationHours, setDurationHours] = useState(defaultDuration.hours);
   const [durationMinutes, setDurationMinutes] = useState(defaultDuration.minutes);
   const [durationSecs, setDurationSecs] = useState(defaultDuration.seconds);
-  const [preset, setPreset] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [plannedDurationSeconds, setPlannedDurationSeconds] = useState(defaultDurationSeconds);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [startedAt, setStartedAt] = useState(null);
   const [finishedAt, setFinishedAt] = useState(null);
+  const [plannedCompletedAt, setPlannedCompletedAt] = useState(null);
   const [saving, setSaving] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Pick a duration and press start.');
   const [saveMessage, setSaveMessage] = useState('');
@@ -359,11 +360,13 @@ const MeditationMainPage = () => {
   const [monthlyTotals, setMonthlyTotals] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState(null);
+  const [highlightSessionId, setHighlightSessionId] = useState(null);
 
   const timerRef = useRef(null);
   const audioCtxRef = useRef(null);
   const startedAtMsRef = useRef(null);
   const didBellRef = useRef(false);
+  const didPlannedCompleteRef = useRef(false);
 
   const durationSeconds = useMemo(
     () => Math.max(1, durationHours * 3600 + durationMinutes * 60 + durationSecs),
@@ -434,6 +437,10 @@ const MeditationMainPage = () => {
 
       if (!didBellRef.current && nextElapsed >= plannedDurationSeconds) {
         didBellRef.current = true;
+        if (!didPlannedCompleteRef.current) {
+          didPlannedCompleteRef.current = true;
+          setPlannedCompletedAt(new Date());
+        }
         setStatusMessage('Time’s up — continuing to track additional time.');
         playBell();
       }
@@ -460,8 +467,10 @@ const MeditationMainPage = () => {
     const now = new Date();
     startedAtMsRef.current = now.getTime();
     didBellRef.current = false;
+    didPlannedCompleteRef.current = false;
     setStartedAt(now);
     setFinishedAt(null);
+    setPlannedCompletedAt(null);
     setElapsedSeconds(0);
     setPlannedDurationSeconds(durationSeconds);
     setStatusMessage('Meditation in progress…');
@@ -473,9 +482,11 @@ const MeditationMainPage = () => {
     setIsRunning(false);
     startedAtMsRef.current = null;
     didBellRef.current = false;
+    didPlannedCompleteRef.current = false;
     setElapsedSeconds(0);
     setStartedAt(null);
     setFinishedAt(null);
+    setPlannedCompletedAt(null);
     setStatusMessage('Meditation cancelled.');
   };
 
@@ -499,15 +510,11 @@ const MeditationMainPage = () => {
     [actualDurationSeconds, plannedDurationSeconds],
   );
 
-  const remainingSeconds = useMemo(
-    () => Math.max(0, plannedDurationSeconds - elapsedSeconds),
-    [elapsedSeconds, plannedDurationSeconds],
-  );
-
-  const overtimeSeconds = useMemo(
-    () => Math.max(0, elapsedSeconds - plannedDurationSeconds),
-    [elapsedSeconds, plannedDurationSeconds],
-  );
+  const remainingSeconds = useMemo(() => {
+    // Before a session starts (or after reset/cancel/save), reflect the wheel selection.
+    if (!startedAt) return durationSeconds;
+    return Math.max(0, plannedDurationSeconds - elapsedSeconds);
+  }, [durationSeconds, elapsedSeconds, plannedDurationSeconds, startedAt]);
 
   const handleSaveDuration = async (durationToSaveSeconds) => {
     if (!authUser?.user) {
@@ -515,26 +522,31 @@ const MeditationMainPage = () => {
       return;
     }
     if (!startedAt) {
-      setError(new Error('Start and finish a meditation before saving.'));
+      setError(new Error('Start a meditation before saving.'));
       return;
     }
     setSaving(true);
     setError(null);
     setStatusMessage('Saving session…');
     try {
-      await addMeditationEntry({
+      const saved = await addMeditationEntry({
         uid: authUser.user.uid,
         startedAt,
         durationSeconds: Math.max(1, Math.round(Number(durationToSaveSeconds) || 0)),
-        preset: preset.trim(),
+        preset: '',
       });
+      if (saved?.id) setHighlightSessionId(saved.id);
       setSaveMessage('Meditation saved to your log.');
-      setStatusMessage('Meditation saved.');
+      setStatusMessage('Pick a duration and press start.');
+      clearTimer();
+      setIsRunning(false);
       startedAtMsRef.current = null;
       didBellRef.current = false;
+      didPlannedCompleteRef.current = false;
       setElapsedSeconds(0);
       setStartedAt(null);
       setFinishedAt(null);
+      setPlannedCompletedAt(null);
       loadData();
     } catch (err) {
       setError(err);
@@ -727,8 +739,9 @@ const MeditationMainPage = () => {
             </p>
 
             <div className="meditation-controls">
-              <div className="meditation-control">
+              <div className="meditation-control duration-control">
                 <label>Duration</label>
+                <p className="duration-subtitle">Total • {formatSeconds(durationSeconds)}</p>
                 <div className={`duration-wheels${isRunning || finishedAt ? ' disabled' : ''}`} aria-label="Duration wheels">
                   <WheelColumn
                     label="Hours"
@@ -749,23 +762,11 @@ const MeditationMainPage = () => {
                     onChange={setDurationSecs}
                   />
                 </div>
-                <p className="duration-subtitle">Total • {formatSeconds(durationSeconds)}</p>
-              </div>
-
-              <div className="meditation-control">
-                <label htmlFor="preset">Preset (optional)</label>
-                <input
-                  id="preset"
-                  value={preset}
-                  onChange={(e) => setPreset(e.target.value)}
-                  placeholder="e.g. morning, breathwork"
-                  disabled={isRunning || finishedAt}
-                />
               </div>
             </div>
 
             <div className="timer-shell">
-              <TimerDisplay remainingSeconds={remainingSeconds} overtimeSeconds={overtimeSeconds} />
+              <TimerDisplay remainingSeconds={remainingSeconds} overtimeSeconds={additionalSeconds} />
               <p className="timer-status">{statusMessage}</p>
               <div className="timer-actions">
                 {!isRunning && !finishedAt && (
@@ -777,7 +778,7 @@ const MeditationMainPage = () => {
                     Start meditation
                   </button>
                 )}
-                {isRunning && (
+                {isRunning && !plannedCompletedAt && (
                   <>
                     <button
                       type="button"
@@ -795,10 +796,19 @@ const MeditationMainPage = () => {
                     </button>
                   </>
                 )}
+                {isRunning && plannedCompletedAt && (
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="meditation-button secondary"
+                  >
+                    Reset
+                  </button>
+                )}
               </div>
             </div>
 
-            {finishedAt && startedAt && (
+            {startedAt && (finishedAt || plannedCompletedAt) && (
               <div className="save-panel">
                 <div className="save-row">
                   <div>
@@ -811,11 +821,11 @@ const MeditationMainPage = () => {
                   <div className="save-actions">
                     <button
                       type="button"
-                      onClick={() => handleSaveDuration(Math.min(actualDurationSeconds, plannedDurationSeconds))}
+                      onClick={() => handleSaveDuration(plannedCompletedAt ? plannedDurationSeconds : actualDurationSeconds)}
                       className="meditation-button"
                       disabled={saving}
                     >
-                      {saving ? 'Saving…' : 'Add Meditation'}
+                      {saving ? 'Saving…' : 'Save meditation'}
                     </button>
                     <button
                       type="button"
@@ -823,15 +833,7 @@ const MeditationMainPage = () => {
                       className="meditation-button"
                       disabled={saving || additionalSeconds <= 0}
                     >
-                      {saving ? 'Saving…' : 'Add with Additional Time'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCancel}
-                      className="meditation-button secondary"
-                      disabled={saving}
-                    >
-                      Reset
+                      {saving ? 'Saving…' : `Save +${formatSeconds(additionalSeconds)}`}
                     </button>
                   </div>
                 </div>
@@ -938,7 +940,10 @@ const MeditationMainPage = () => {
                 <p className="body small">No sessions yet.</p>
               )}
               {recentSessions.map((session) => (
-                <div className="session-row" key={session.id}>
+                <div
+                  className={`session-row${session.id === highlightSessionId ? ' highlighted' : ''}`}
+                  key={session.id}
+                >
                   <div className="session-main">
                     <strong>{formatMinutesShort(session.durationSeconds)}</strong>
                     <span className="session-meta">
