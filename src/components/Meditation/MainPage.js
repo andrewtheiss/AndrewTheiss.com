@@ -13,7 +13,7 @@ import {
   addMeditationEntry,
   listMonthlyTotals,
   listRecentMeditations,
-  updateMonthlyTotals,
+  recalculateMonthlyTotalsForLastNMonths,
 } from '../Firebase/meditationService';
 import './MainPage.css';
 
@@ -356,11 +356,18 @@ const MeditationMainPage = () => {
   const [updatingTotals, setUpdatingTotals] = useState(false);
   const [totalsMessage, setTotalsMessage] = useState('');
   const [totalsError, setTotalsError] = useState(null);
+  const [recalcMonthsCount, setRecalcMonthsCount] = useState(1);
   const [recentSessions, setRecentSessions] = useState([]);
   const [monthlyTotals, setMonthlyTotals] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState(null);
+  const [monthlyLoading, setMonthlyLoading] = useState(false);
+  const [monthlyLoadError, setMonthlyLoadError] = useState(null);
+  const [showMonthlyTotals, setShowMonthlyTotals] = useState(false);
   const [highlightSessionId, setHighlightSessionId] = useState(null);
+  const [showAllSessions, setShowAllSessions] = useState(false);
+
+  const isAdmin = Boolean(authUser?.admin);
 
   const timerRef = useRef(null);
   const audioCtxRef = useRef(null);
@@ -548,6 +555,9 @@ const MeditationMainPage = () => {
       setFinishedAt(null);
       setPlannedCompletedAt(null);
       loadData();
+      if (showMonthlyTotals) {
+        loadMonthlyTotalsData();
+      }
     } catch (err) {
       setError(err);
       setStatusMessage('Could not save. Try again.');
@@ -661,16 +671,30 @@ const MeditationMainPage = () => {
       setTotalsError(new Error('Sign in to update totals.'));
       return;
     }
+    if (!isAdmin) {
+      setTotalsError(new Error('Admin only.'));
+      setTotalsMessage('Admin only.');
+      return;
+    }
+
+    const n = Math.max(1, Math.min(60, Math.floor(Number(recalcMonthsCount) || 1)));
     setTotalsError(null);
-    setTotalsMessage('Updating monthly totals…');
+    setTotalsMessage(`Recalculating last ${n} month(s)…`);
     setUpdatingTotals(true);
     try {
-      const result = await updateMonthlyTotals(authUser.user.uid);
-      setTotalsMessage(`Monthly totals updated. Months: ${result.monthsUpdated}. Sessions processed: ${result.sessionsProcessed}.`);
+      const result = await recalculateMonthlyTotalsForLastNMonths(authUser.user.uid, n);
+      if (!result?.months?.length) {
+        setTotalsMessage('No meditations found to recalculate.');
+      } else {
+        const first = result.months[0]?.monthKey;
+        const last = result.months[result.months.length - 1]?.monthKey;
+        setTotalsMessage(`Recalculated ${result.months.length} month(s): ${last} → ${first}. Sessions: ${result.sessionsProcessed}.`);
+      }
       loadData();
+      loadMonthlyTotalsData();
     } catch (err) {
       setTotalsError(err);
-      setTotalsMessage('Failed to update monthly totals.');
+      setTotalsMessage('Failed to recalculate monthly totals.');
     } finally {
       setUpdatingTotals(false);
     }
@@ -680,22 +704,39 @@ const MeditationMainPage = () => {
     setDataLoading(true);
     setDataError(null);
     try {
-      const [sessions, totals] = await Promise.all([
-        listRecentMeditations(30),
-        listMonthlyTotals(36),
-      ]);
+      const max = showAllSessions ? 30 : 5;
+      const uid = authUser?.user?.uid || null;
+      const sessions = await listRecentMeditations(max, uid);
       setRecentSessions(sessions);
-      setMonthlyTotals(totals);
     } catch (err) {
       setDataError(err);
     } finally {
       setDataLoading(false);
     }
-  }, []);
+  }, [authUser?.user?.uid, showAllSessions]);
+
+  const loadMonthlyTotalsData = useCallback(async () => {
+    setMonthlyLoading(true);
+    setMonthlyLoadError(null);
+    try {
+      const uid = authUser?.user?.uid || null;
+      const totals = await listMonthlyTotals(36, uid);
+      setMonthlyTotals(totals);
+    } catch (err) {
+      setMonthlyLoadError(err);
+    } finally {
+      setMonthlyLoading(false);
+    }
+  }, [authUser?.user?.uid]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    // Load totals for the all-time cumulative chart.
+    loadMonthlyTotalsData();
+  }, [loadMonthlyTotalsData]);
 
   const formatDateTime = (value) => {
     if (!value) return '';
@@ -872,14 +913,31 @@ const MeditationMainPage = () => {
                   />
                   {importing ? 'Uploading…' : 'Choose CSV'}
                 </label>
-                <button
-                  type="button"
-                  className="line-button"
-                  onClick={handleUpdateTotals}
-                  disabled={updatingTotals}
-                >
-                  {updatingTotals ? 'Updating…' : 'Update monthly totals'}
-                </button>
+                {isAdmin && (
+                  <>
+                    <button
+                      type="button"
+                      className="line-button"
+                      onClick={handleUpdateTotals}
+                      disabled={updatingTotals}
+                    >
+                      {updatingTotals ? 'Recalculating…' : 'Recalculate monthly totals'}
+                    </button>
+                    <label className="import-status recalc-label">
+                      <span>Last</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="60"
+                        value={recalcMonthsCount}
+                        onChange={(e) => setRecalcMonthsCount(e.target.value)}
+                        className="recalc-months-input"
+                        disabled={updatingTotals}
+                      />
+                      <span>mo</span>
+                    </label>
+                  </>
+                )}
                 {importMessage && <span className="import-status">{importMessage}</span>}
                 {totalsMessage && <span className="import-status">{totalsMessage}</span>}
               </div>
@@ -907,29 +965,26 @@ const MeditationMainPage = () => {
         <section className="stats-card">
           <div className="stats-header">
             <p className="eyebrow">All-time cumulative</p>
-            {dataLoading && <span className="body small">Loading…</span>}
+            {monthlyLoading && <span className="body small">Loading…</span>}
           </div>
-          {dataError && (
-            <p className="error-text">{dataError.message || 'Could not load stats.'}</p>
+          {monthlyLoadError && (
+            <p className="error-text">{monthlyLoadError.message || 'Could not load stats.'}</p>
           )}
-          {!dataError && !dataLoading && <CumulativeLineChart data={cumulativeData} />}
+          {!monthlyLoadError && <CumulativeLineChart data={cumulativeData} />}
         </section>
 
         <section className="stats-card">
           <div className="stats-header">
-            <p className="eyebrow">Monthly totals</p>
+            <p className="eyebrow">{showAllSessions ? 'Last 30 sessions' : 'Last 5 sessions'}</p>
             {dataLoading && <span className="body small">Loading…</span>}
-          </div>
-          {dataError && (
-            <p className="error-text">{dataError.message || 'Could not load stats.'}</p>
-          )}
-          {!dataError && !dataLoading && <MonthlyBarGraph data={graphData} />}
-        </section>
-
-        <section className="stats-card">
-          <div className="stats-header">
-            <p className="eyebrow">Last 30 sessions</p>
-            {dataLoading && <span className="body small">Loading…</span>}
+            <button
+              type="button"
+              className="line-button"
+              onClick={() => setShowAllSessions((prev) => !prev)}
+              disabled={dataLoading}
+            >
+              {showAllSessions ? 'Show less' : 'Show more'}
+            </button>
           </div>
           {dataError && (
             <p className="error-text">{dataError.message || 'Could not load sessions.'}</p>
@@ -953,6 +1008,46 @@ const MeditationMainPage = () => {
                   <div className="session-date">{formatDateTime(session.startedAt || session.createdAt)}</div>
                 </div>
               ))}
+            </div>
+          )}
+        </section>
+
+        <section className="stats-card">
+          <div className="stats-header">
+            <p className="eyebrow">Monthly totals</p>
+            <button
+              type="button"
+              className="line-button"
+              onClick={() => setShowMonthlyTotals((prev) => !prev)}
+            >
+              {showMonthlyTotals ? 'Hide' : 'Show'}
+            </button>
+          </div>
+
+          {!showMonthlyTotals && (
+            <p className="body small">Click “Show” to render monthly totals.</p>
+          )}
+
+          {showMonthlyTotals && monthlyLoading && <p className="body small">Loading…</p>}
+          {showMonthlyTotals && monthlyLoadError && (
+            <p className="error-text">{monthlyLoadError.message || 'Could not load monthly totals.'}</p>
+          )}
+          {showMonthlyTotals && !monthlyLoading && !monthlyLoadError && <MonthlyBarGraph data={graphData} />}
+
+          {showMonthlyTotals && (
+            <div className="monthly-actions">
+              {isAdmin ? (
+                <button
+                  type="button"
+                  className="line-button"
+                  onClick={handleUpdateTotals}
+                  disabled={updatingTotals}
+                >
+                  {updatingTotals ? 'Recalculating…' : `Recalculate last ${Math.max(1, Math.min(60, Math.floor(Number(recalcMonthsCount) || 1)))} month(s)`}
+                </button>
+              ) : (
+                <p className="body small">Recalculation is admin-only.</p>
+              )}
             </div>
           )}
         </section>
