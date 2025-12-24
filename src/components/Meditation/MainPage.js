@@ -57,7 +57,8 @@ const WheelColumn = React.memo(({
   const REPEAT_COUNT = 7; // odd number so we can "recenter" invisibly
   const scrollerRef = useRef(null);
   const rafRef = useRef(0);
-  const scrollStopRef = useRef(null);
+  const allowWheelScrollRef = useRef(false);
+  const allowWheelScrollTimeoutRef = useRef(null);
   const didInitRef = useRef(false);
   const [metrics, setMetrics] = useState({ itemHeight: 38, pad: 76 });
   const [centerAbsIndex, setCenterAbsIndex] = useState(0);
@@ -76,20 +77,41 @@ const WheelColumn = React.memo(({
   const scrollToIndex = useCallback((index, behavior = 'auto') => {
     const node = scrollerRef.current;
     if (!node) return;
-    node.scrollTo({
-      top: index * metrics.itemHeight,
-      behavior,
-    });
-  }, [metrics.itemHeight]);
+    // The wheel uses real paddingTop/paddingBottom to create the "window".
+    // To center an item, we must offset the scroll position by that padding.
+    const top = Math.round(index * metrics.itemHeight - metrics.pad);
+    if (behavior === 'smooth') {
+      node.scrollTo({ top, behavior });
+      return;
+    }
+    // Using scrollTop directly avoids some scroll-snap "micro-adjust" loops on Windows/zoom.
+    node.scrollTop = top;
+  }, [metrics.itemHeight, metrics.pad]);
 
   const computeMetrics = useCallback(() => {
     const node = scrollerRef.current;
     if (!node) return;
     const firstItem = node.querySelector('.wheel-item');
-    const itemHeight = firstItem?.getBoundingClientRect()?.height || 38;
+    // Prefer integer layout metrics to avoid oscillation under browser zoom / fractional pixels.
+    const itemHeight = firstItem?.offsetHeight || 38;
     const viewportHeight = node.clientHeight || 190;
-    const pad = Math.max(0, (viewportHeight - itemHeight) / 2);
-    setMetrics({ itemHeight, pad });
+    const pad = Math.max(0, Math.floor((viewportHeight - itemHeight) / 2));
+    setMetrics((prev) => {
+      if (prev.itemHeight === itemHeight && prev.pad === pad) return prev;
+      return { itemHeight, pad };
+    });
+  }, []);
+
+  const activateWheelScroll = useCallback(() => {
+    allowWheelScrollRef.current = true;
+    if (allowWheelScrollTimeoutRef.current) {
+      clearTimeout(allowWheelScrollTimeoutRef.current);
+    }
+    // Auto-disable shortly after so normal page scrolling doesn't keep changing the wheel.
+    allowWheelScrollTimeoutRef.current = setTimeout(() => {
+      allowWheelScrollRef.current = false;
+      allowWheelScrollTimeoutRef.current = null;
+    }, 2500);
   }, []);
 
   useEffect(() => {
@@ -109,6 +131,30 @@ const WheelColumn = React.memo(({
     setCenterAbsIndex(target);
     scrollToIndex(target, 'auto');
   }, [baseStartIndex, scrollToIndex, value, values]);
+
+  // Prevent accidental mousewheel/trackpad scrolling changing the selected duration.
+  // Only allow wheel scrolling shortly after the user intentionally interacts with the wheel.
+  useEffect(() => {
+    const node = scrollerRef.current;
+    if (!node) return undefined;
+
+    const handleWheel = (event) => {
+      if (allowWheelScrollRef.current) return;
+      // React uses passive wheel listeners at the root; attach a non-passive listener here
+      // so we can redirect wheel scrolling to the page instead of the wheel.
+      event.preventDefault();
+      window.scrollBy({
+        top: event.deltaY,
+        left: event.deltaX,
+        behavior: 'auto',
+      });
+    };
+
+    node.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      node.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
 
   const repeatedValues = useMemo(
     () => Array.from({ length: baseLen * REPEAT_COUNT }, (_, i) => values[i % baseLen]),
@@ -139,23 +185,18 @@ const WheelColumn = React.memo(({
       const maxIndex = baseLen * (REPEAT_COUNT - 1); // last repeat "buffer"
       if (centeredIndex < minIndex || centeredIndex > maxIndex) {
         const jumped = baseStartIndex + modIndex;
-        node.scrollTop = jumped * metrics.itemHeight;
+        scrollToIndex(jumped, 'auto');
         setCenterAbsIndex(jumped);
       }
     });
-
-    if (scrollStopRef.current) clearTimeout(scrollStopRef.current);
-    scrollStopRef.current = setTimeout(() => {
-      const centeredIndex = getCenteredAbsIndex(node);
-      const modIndex = ((centeredIndex % baseLen) + baseLen) % baseLen;
-      // Snap + recenter (same visible items; keeps the wheel "infinite").
-      recenterToValueIndex(modIndex, 'auto');
-    }, 120);
-  }, [baseLen, baseStartIndex, getCenteredAbsIndex, metrics.itemHeight, onChange, recenterToValueIndex, value, values]);
+  }, [baseLen, baseStartIndex, getCenteredAbsIndex, metrics.itemHeight, onChange, scrollToIndex, value, values]);
 
   useEffect(() => () => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    if (scrollStopRef.current) clearTimeout(scrollStopRef.current);
+    if (allowWheelScrollTimeoutRef.current) {
+      clearTimeout(allowWheelScrollTimeoutRef.current);
+      allowWheelScrollTimeoutRef.current = null;
+    }
   }, []);
 
   return (
@@ -166,6 +207,10 @@ const WheelColumn = React.memo(({
           className="wheel-scroller"
           ref={scrollerRef}
           onScroll={handleScroll}
+          onPointerDown={activateWheelScroll}
+          onTouchStart={activateWheelScroll}
+          onFocus={activateWheelScroll}
+          onMouseLeave={() => { allowWheelScrollRef.current = false; }}
           role="listbox"
           aria-label={label}
           style={{ paddingTop: metrics.pad, paddingBottom: metrics.pad }}
