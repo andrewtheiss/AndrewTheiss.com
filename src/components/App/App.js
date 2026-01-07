@@ -52,15 +52,15 @@ const App = () => (
     <Router>
         <Navigation />
         <Routes>
-            <Route path={ROUTES.LANDING} element={<Navigate to={ROUTES.MEDITATION} replace />} />
             <Route path={ROUTES.DESKTOP_AUTH} element={<DesktopAuthPage />} />
             <Route element={<ShellLayout />}>
+                <Route path={ROUTES.LANDING} element={<SplashPage />} />
                 <Route path={ROUTES.SIGNUP} element={<RedirectIfAuthed><SignUpPage /></RedirectIfAuthed>} />
                 <Route path={ROUTES.SIGNIN} element={<RedirectIfAuthed><SignInWithFirebase /></RedirectIfAuthed>} />
                 <Route path={ROUTES.USAGE} element={<RequireAuth><UsagePage /></RequireAuth>} />
                 <Route path={ROUTES.MEDITATION} element={<MeditationPage />} />
                 <Route path={ROUTES.LIGHTCYCLE} element={<RequireAuth><LightCyclePage /></RequireAuth>} />
-                <Route path="*" element={<SplashPage />} />
+                <Route path="*" element={<Navigate to={ROUTES.LANDING} replace />} />
             </Route>
         </Routes>
     </Router>
