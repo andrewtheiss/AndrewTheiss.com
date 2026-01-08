@@ -3,12 +3,14 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit as limitDocs,
   limit,
   orderBy,
   query,
   runTransaction,
   serverTimestamp,
   setDoc,
+  writeBatch,
   where,
 } from 'firebase/firestore';
 import { firestore } from './firebaseClient';
@@ -148,6 +150,72 @@ const normalizeStartedAtToDate = (value) => {
   return Number.isNaN(d.getTime()) ? null : d;
 };
 
+const timestampToMillis = (value) => {
+  if (!value) return 0;
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (value instanceof Date) return value.getTime();
+  if (value?.toDate) {
+    const d = value.toDate();
+    return d instanceof Date ? d.getTime() : 0;
+  }
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? 0 : d.getTime();
+};
+
+const pickPreferredMonthlyDoc = (a, b) => {
+  if (!a) return b;
+  if (!b) return a;
+  const aMonth = a.month || a.id;
+  const bMonth = b.month || b.id;
+  // Prefer the canonical doc id that equals the month key (YYYY-MM).
+  if (aMonth && a.id === aMonth && !(bMonth && b.id === bMonth)) return a;
+  if (bMonth && b.id === bMonth && !(aMonth && a.id === aMonth)) return b;
+  // Otherwise prefer the most recently updated.
+  const aUpdated = Math.max(timestampToMillis(a.updatedAt), timestampToMillis(a.createdAt));
+  const bUpdated = Math.max(timestampToMillis(b.updatedAt), timestampToMillis(b.createdAt));
+  if (aUpdated !== bUpdated) return aUpdated > bUpdated ? a : b;
+  // Finally, prefer the one with a defined numeric total.
+  const aTotal = Number(a.totalDurationSeconds);
+  const bTotal = Number(b.totalDurationSeconds);
+  const aHas = Number.isFinite(aTotal);
+  const bHas = Number.isFinite(bTotal);
+  if (aHas !== bHas) return aHas ? a : b;
+  return a;
+};
+
+const dedupeMonthlyTotalsByMonth = (rows) => {
+  const byMonth = new Map();
+  (rows || []).forEach((row) => {
+    const key = row?.month || row?.id;
+    if (!key) return;
+    const prev = byMonth.get(key);
+    byMonth.set(key, pickPreferredMonthlyDoc(prev, row));
+  });
+  return Array.from(byMonth.values());
+};
+
+const deleteDuplicateMonthlyTotalDocsForMonth = async (uid, monthKey, canonicalDocId) => {
+  if (!uid || !monthKey) return { deleted: 0 };
+  // Avoid requiring a composite index by querying by uid only and filtering client-side.
+  const q = query(
+    monthlyTotalsCollection,
+    where('uid', '==', uid),
+    limitDocs(5000),
+  );
+  const snapshot = await getDocs(q);
+  const matches = snapshot.docs.filter((docSnap) => {
+    const data = docSnap.data();
+    return data?.month === monthKey && docSnap.id !== canonicalDocId;
+  });
+
+  if (!matches.length) return { deleted: 0 };
+
+  const batch = writeBatch(firestore);
+  matches.forEach((docSnap) => batch.delete(docSnap.ref));
+  await batch.commit();
+  return { deleted: matches.length };
+};
+
 export const updateMonthlyTotals = async (uid) => {
   if (!uid) throw new Error('Missing uid for totals update.');
   const sessions = await getUserMeditations(uid);
@@ -173,6 +241,9 @@ export const updateMonthlyTotals = async (uid) => {
   let writes = 0;
   for (const [monthKey, data] of buckets.entries()) {
     const ref = doc(monthlyTotalsCollection, monthKey);
+    // Clean up any legacy/duplicate docs for this uid+month before writing the canonical doc.
+    // eslint-disable-next-line no-await-in-loop
+    await deleteDuplicateMonthlyTotalDocsForMonth(uid, monthKey, monthKey);
     await setDoc(
       ref,
       {
@@ -225,6 +296,9 @@ export const recalculateMonthlyTotalsForMonth = async (uid, monthKey) => {
     return Number.isFinite(durationSeconds) ? Math.max(0, Math.round(durationSeconds)) : 0;
   });
   const totalSeconds = durations.reduce((sum, v) => sum + v, 0);
+
+  // Ensure we only have ONE monthly totals document per (uid, month) even if legacy docs exist.
+  await deleteDuplicateMonthlyTotalDocsForMonth(uid, monthKey, monthKey);
 
   const ref = doc(monthlyTotalsCollection, monthKey);
   await setDoc(
@@ -324,18 +398,26 @@ export const listRecentMeditations = async (max = 30, uid = null) => {
 };
 
 export const listMonthlyTotals = async (maxMonths = 36, uid = null) => {
+  const requested = Math.max(1, Math.min(500, Math.floor(Number(maxMonths) || 36)));
+  // Fetch extra docs so duplicates (legacy random IDs) don't crowd out real months.
+  const fetchCount = Math.min(500, Math.max(requested, requested * 3));
   const q = query(
     monthlyTotalsCollection,
     ...(uid ? [where('uid', '==', uid)] : []),
     orderBy('month', 'desc'),
-    limit(maxMonths),
+    limit(fetchCount),
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((docSnap) => ({
+  const rows = snapshot.docs.map((docSnap) => ({
     id: docSnap.id,
     ...docSnap.data(),
   }));
+  const deduped = dedupeMonthlyTotalsByMonth(rows)
+    .sort((a, b) => String(b.month || b.id || '').localeCompare(String(a.month || a.id || '')))
+    .slice(0, requested);
+  return deduped;
 };
+
 
 
 

@@ -39,6 +39,56 @@ const formatMinutesShort = (seconds) => {
   return `${mins} min`;
 };
 
+const monthToKey = (year, month) => `${year}-${String(month).padStart(2, '0')}`; // YYYY-MM
+
+const addMonths = (year, month, delta) => {
+  const d = new Date(year, month - 1, 1);
+  d.setMonth(d.getMonth() + delta);
+  return { year: d.getFullYear(), month: d.getMonth() + 1 };
+};
+
+const buildMonthKeysEndingAt = (endDate, count) => {
+  const safeCount = Math.max(1, Math.min(240, Math.floor(Number(count) || 1)));
+  const end = endDate instanceof Date ? endDate : new Date();
+  const endYear = end.getFullYear();
+  const endMonth = end.getMonth() + 1;
+  const keys = [];
+  for (let i = safeCount - 1; i >= 0; i -= 1) {
+    const v = addMonths(endYear, endMonth, -i);
+    keys.push(monthToKey(v.year, v.month));
+  }
+  return keys;
+};
+
+const parseMonthKey = (key) => {
+  const [yRaw, mRaw] = String(key || '').split('-');
+  const year = Number(yRaw);
+  const month = Number(mRaw);
+  if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) return null;
+  return { year, month };
+};
+
+const buildMonthKeysBetween = (startKey, endKeyInclusive) => {
+  const start = parseMonthKey(startKey);
+  const end = parseMonthKey(endKeyInclusive);
+  if (!start || !end) return [];
+
+  // Ensure start <= end lexicographically by month.
+  if (monthToKey(start.year, start.month).localeCompare(monthToKey(end.year, end.month)) > 0) return [];
+
+  const keys = [];
+  let cursor = { year: start.year, month: start.month };
+  const endNorm = monthToKey(end.year, end.month);
+  while (true) {
+    const k = monthToKey(cursor.year, cursor.month);
+    keys.push(k);
+    if (k === endNorm) break;
+    cursor = addMonths(cursor.year, cursor.month, 1);
+    if (keys.length > 240) break; // safety cap for UI
+  }
+  return keys;
+};
+
 const TimerDisplay = React.memo(({ remainingSeconds, overtimeSeconds }) => {
   const isOvertime = Number(overtimeSeconds || 0) > 0;
   const display = isOvertime
@@ -162,12 +212,6 @@ const WheelColumn = React.memo(({
     [baseLen, values],
   );
 
-  const recenterToValueIndex = useCallback((valueIndex, behavior = 'auto') => {
-    const target = baseStartIndex + valueIndex;
-    setCenterAbsIndex(target);
-    scrollToIndex(target, behavior);
-  }, [baseStartIndex, scrollToIndex]);
-
   const handleScroll = useCallback(() => {
     const node = scrollerRef.current;
     if (!node) return;
@@ -190,7 +234,7 @@ const WheelColumn = React.memo(({
         setCenterAbsIndex(jumped);
       }
     });
-  }, [baseLen, baseStartIndex, getCenteredAbsIndex, metrics.itemHeight, onChange, scrollToIndex, value, values]);
+  }, [baseLen, baseStartIndex, getCenteredAbsIndex, onChange, scrollToIndex, value, values]);
 
   useEffect(() => () => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -364,6 +408,7 @@ const MeditationMainPage = () => {
   const [monthlyLoading, setMonthlyLoading] = useState(false);
   const [monthlyLoadError, setMonthlyLoadError] = useState(null);
   const [showMonthlyTotals, setShowMonthlyTotals] = useState(false);
+  const [monthlyFetchCount, setMonthlyFetchCount] = useState(36);
   const [highlightSessionId, setHighlightSessionId] = useState(null);
   const [showAllSessions, setShowAllSessions] = useState(false);
 
@@ -720,14 +765,16 @@ const MeditationMainPage = () => {
     setMonthlyLoadError(null);
     try {
       const uid = authUser?.user?.uid || null;
-      const totals = await listMonthlyTotals(36, uid);
+      // Fetch enough to support the cumulative chart + "view older months" without paging.
+      const safeFetchCount = Math.max(12, Math.min(240, Math.floor(Number(monthlyFetchCount) || 36)));
+      const totals = await listMonthlyTotals(safeFetchCount, uid);
       setMonthlyTotals(totals);
     } catch (err) {
       setMonthlyLoadError(err);
     } finally {
       setMonthlyLoading(false);
     }
-  }, [authUser?.user?.uid]);
+  }, [authUser?.user?.uid, monthlyFetchCount]);
 
   useEffect(() => {
     loadData();
@@ -749,7 +796,30 @@ const MeditationMainPage = () => {
     [monthlyTotals],
   );
 
-  const graphData = useMemo(() => [...monthlySorted].reverse(), [monthlySorted]);
+  const monthlyBreakdownSeries = useMemo(() => {
+    if (!monthlySorted.length) return [];
+    const firstKey = monthlySorted[0]?.month || monthlySorted[0]?.id;
+    const now = new Date();
+    const endKey = monthToKey(now.getFullYear(), now.getMonth() + 1);
+    const keys = buildMonthKeysBetween(firstKey, endKey);
+    const byMonth = new Map();
+    monthlySorted.forEach((entry) => {
+      const key = entry.month || entry.id;
+      if (!key) return;
+      byMonth.set(key, entry);
+    });
+    return keys.map((key) => (
+      byMonth.get(key) || {
+        id: key,
+        month: key,
+        totalDurationSeconds: 0,
+        sessionCount: 0,
+        durationsSeconds: [],
+      }
+    ));
+  }, [monthlySorted]);
+
+  const graphData = useMemo(() => [...monthlyBreakdownSeries].reverse(), [monthlyBreakdownSeries]);
 
   const cumulativeData = useMemo(() => {
     let running = 0;
@@ -1036,6 +1106,23 @@ const MeditationMainPage = () => {
 
           {showMonthlyTotals && (
             <div className="monthly-actions">
+              <button
+                type="button"
+                className="line-button"
+                onClick={() => setMonthlyFetchCount((prev) => Math.min(240, prev + 36))}
+                disabled={monthlyFetchCount >= 240}
+              >
+                View older months
+              </button>
+              {monthlyFetchCount > 36 && (
+                <button
+                  type="button"
+                  className="line-button"
+                  onClick={() => setMonthlyFetchCount(36)}
+                >
+                  Show recent only
+                </button>
+              )}
               {isAdmin ? (
                 <button
                   type="button"
