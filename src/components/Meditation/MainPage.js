@@ -110,6 +110,7 @@ const WheelColumn = React.memo(({
   const allowWheelScrollRef = useRef(false);
   const allowWheelScrollTimeoutRef = useRef(null);
   const didInitRef = useRef(false);
+  const lastScrolledValueRef = useRef(value);
   // Defaults match the CSS wheel sizing (5 visible items).
   const [metrics, setMetrics] = useState({ itemHeight: 28, pad: 56 });
   const [centerAbsIndex, setCenterAbsIndex] = useState(0);
@@ -176,12 +177,30 @@ const WheelColumn = React.memo(({
 
   useEffect(() => {
     if (didInitRef.current) return;
+    const node = scrollerRef.current;
+    if (!node) return;
     didInitRef.current = true;
+    // Measure actual item height from the DOM to avoid stale default metrics
+    // (mobile CSS overrides --wheel-item-height to 26px but state defaults to 28).
+    const firstItem = node.querySelector('.wheel-item');
+    const actualItemHeight = firstItem?.offsetHeight || metrics.itemHeight;
     const index = Math.max(0, values.indexOf(value));
     const target = baseStartIndex + index;
     setCenterAbsIndex(target);
-    scrollToIndex(target, 'auto');
-  }, [baseStartIndex, scrollToIndex, value, values]);
+    node.scrollTop = Math.round(target * actualItemHeight);
+    lastScrolledValueRef.current = value;
+  }, [baseStartIndex, metrics.itemHeight, value, values]);
+
+  // Sync wheel position when value changes externally (e.g. preset buttons).
+  useEffect(() => {
+    if (!didInitRef.current) return;
+    if (value === lastScrolledValueRef.current) return;
+    lastScrolledValueRef.current = value;
+    const index = Math.max(0, values.indexOf(value));
+    const target = baseStartIndex + index;
+    setCenterAbsIndex(target);
+    scrollToIndex(target, 'smooth');
+  }, [value, baseStartIndex, scrollToIndex, values]);
 
   // Prevent accidental mousewheel/trackpad scrolling changing the selected duration.
   // Only allow wheel scrolling shortly after the user intentionally interacts with the wheel.
@@ -222,7 +241,10 @@ const WheelColumn = React.memo(({
       const modIndex = ((centeredIndex % baseLen) + baseLen) % baseLen;
       const next = values[modIndex];
       setCenterAbsIndex(centeredIndex);
-      if (next !== value) onChange(next);
+      if (next !== value) {
+        lastScrolledValueRef.current = next;
+        onChange(next);
+      }
 
       // If we scroll near either end of the repeated list, jump back to the middle
       // to preserve the illusion of infinite scrolling. (Not visible because items repeat.)
@@ -853,6 +875,12 @@ const MeditationMainPage = () => {
               <div className="meditation-control duration-control">
                 <label>Duration</label>
                 <p className="duration-subtitle">Total • {formatSeconds(durationSeconds)}</p>
+                <div className="duration-presets">
+                  <button type="button" className="preset-btn" disabled={isRunning || !!finishedAt}
+                    onClick={() => { setDurationHours(1); setDurationMinutes(0); setDurationSecs(0); }}>1h</button>
+                  <button type="button" className="preset-btn" disabled={isRunning || !!finishedAt}
+                    onClick={() => { setDurationHours(1); setDurationMinutes(15); setDurationSecs(0); }}>1h15</button>
+                </div>
                 <div className={`duration-wheels${isRunning || finishedAt ? ' disabled' : ''}`} aria-label="Duration wheels">
                   <WheelColumn
                     label="Hours"
