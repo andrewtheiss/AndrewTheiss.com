@@ -47,19 +47,6 @@ const addMonths = (year, month, delta) => {
   return { year: d.getFullYear(), month: d.getMonth() + 1 };
 };
 
-const buildMonthKeysEndingAt = (endDate, count) => {
-  const safeCount = Math.max(1, Math.min(240, Math.floor(Number(count) || 1)));
-  const end = endDate instanceof Date ? endDate : new Date();
-  const endYear = end.getFullYear();
-  const endMonth = end.getMonth() + 1;
-  const keys = [];
-  for (let i = safeCount - 1; i >= 0; i -= 1) {
-    const v = addMonths(endYear, endMonth, -i);
-    keys.push(monthToKey(v.year, v.month));
-  }
-  return keys;
-};
-
 const parseMonthKey = (key) => {
   const [yRaw, mRaw] = String(key || '').split('-');
   const year = Number(yRaw);

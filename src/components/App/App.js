@@ -16,6 +16,7 @@ import MeditationPage from '../Meditation/MainPage.js';
 import UsagePage from '../Usage/UsagePage.js';
 import SplashPage from '../Splash/SplashPage.js';
 import LightCyclePage from '../LightCycle/LightCyclePage.js';
+import EquityPage from '../Equity/EquityPage.js';
 
 const ShellLayout = () => (
     <div className="app-container">
@@ -60,6 +61,7 @@ const App = () => (
                 <Route path={ROUTES.USAGE} element={<RequireAuth><UsagePage /></RequireAuth>} />
                 <Route path={ROUTES.MEDITATION} element={<MeditationPage />} />
                 <Route path={ROUTES.LIGHTCYCLE} element={<RequireAuth><LightCyclePage /></RequireAuth>} />
+                <Route path={ROUTES.EQUITY} element={<RequireAuth><EquityPage /></RequireAuth>} />
                 <Route path="*" element={<Navigate to={ROUTES.LANDING} replace />} />
             </Route>
         </Routes>

@@ -10,4 +10,5 @@ export const USAGE = '/usage';
 
 export const MEDITATION = '/meditation';
 export const LIGHTCYCLE = '/light-cycle';
+export const EQUITY = '/equity';
 export const DESKTOP_AUTH = '/desktop-auth';
