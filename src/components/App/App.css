@@ -22,6 +22,21 @@
   color: #e9f4ff;
 }
 
+.route-loader {
+  min-height: calc(100vh - 220px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: rgba(233, 244, 255, 0.82);
+}
+
+.route-loader p {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
 .splash-app-container {
   width: 100%;
   padding: 0;
