@@ -73,6 +73,9 @@ export const SplashPage = () => {
         <Link to={ROUTES.MEDITATION} className="splash-cta-btn">
           Meditation
         </Link>
+        <Link to={ROUTES.EQUITY} className="splash-cta-btn">
+          Equity Calculator
+        </Link>
       </div>
     </div>
   );

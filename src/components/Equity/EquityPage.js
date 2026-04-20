@@ -539,17 +539,18 @@ const ComparisonGrid = ({ rentalTotal, rentalItems, columns, properties, onUpdat
 const EquityPage = () => {
   const authUser = useContext(AuthUserContext);
   const uid = authUser?.user?.uid;
+  const canPersist = Boolean(authUser?.financeAdmin && uid);
 
   const [lineItems, setLineItems] = useState(DEFAULT_ITEMS);
   const [properties, setProperties] = useState([]);
   const [scenario, setScenario] = useState(DEFAULT_SCENARIO);
   const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [lastSaved, setLastSaved] = useState(null);
 
   const loadProfile = useCallback(async () => {
-    if (!uid) return;
+    if (!canPersist) return;
     setLoading(true);
     try {
       const profile = await getEquityProfile(uid);
@@ -562,7 +563,7 @@ const EquityPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [uid]);
+  }, [canPersist, uid]);
 
   useEffect(() => {
     loadProfile();
@@ -591,6 +592,7 @@ const EquityPage = () => {
   const removeProperty = (index) => setProperties((prev) => prev.filter((_, i) => i !== index));
 
   const handleSave = async () => {
+    if (!canPersist) return;
     setSaving(true);
     setError(null);
     try {
@@ -602,10 +604,6 @@ const EquityPage = () => {
       setSaving(false);
     }
   };
-
-  if (!authUser?.auth) {
-    return <div className="equity-page">Please sign in to track equity.</div>;
-  }
 
   const rentalTotal = lineItems.reduce(
     (sum, item) => sum + (parseFloat(item.amount) || 0),
@@ -672,18 +670,20 @@ const EquityPage = () => {
             </button>
           </div>
 
-          {/* ---- Save ---- */}
-          <div className="equity-actions">
-            <button className="save-btn" onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving\u2026' : 'Save All'}
-            </button>
-            {error && <span className="equity-error">{error}</span>}
-            {lastSaved && (
-              <span className="equity-status-msg">
-                Saved {lastSaved.toLocaleTimeString()}
-              </span>
-            )}
-          </div>
+          {/* ---- Save (only for finance admins) ---- */}
+          {canPersist && (
+            <div className="equity-actions">
+              <button className="save-btn" onClick={handleSave} disabled={saving}>
+                {saving ? 'Saving\u2026' : 'Save All'}
+              </button>
+              {error && <span className="equity-error">{error}</span>}
+              {lastSaved && (
+                <span className="equity-status-msg">
+                  Saved {lastSaved.toLocaleTimeString()}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* ---- Comparison ---- */}
           <div className="equity-section">

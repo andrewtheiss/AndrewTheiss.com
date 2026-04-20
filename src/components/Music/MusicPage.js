@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './MusicPage.css';
+import GameCanvas from './GameCanvas';
 
 const STRUDEL_URL = 'https://strudel.cc';
 
@@ -23,6 +24,15 @@ const MusicPage = () => {
         >
           Open Strudel in a new tab
         </a>
+      </section>
+
+      <section className="music-game-shell">
+        <h2>Game canvas</h2>
+        <p className="music-copy">
+          Strudel runs natively here via <code>@strudel/web</code>. Click the canvas to start
+          or stop the music — the first click also unlocks audio.
+        </p>
+        <GameCanvas />
       </section>
 
       <section className="music-frame-shell" aria-busy={!isLoaded}>

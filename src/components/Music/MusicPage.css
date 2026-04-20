@@ -6,7 +6,8 @@
 }
 
 .music-hero,
-.music-frame-shell {
+.music-frame-shell,
+.music-game-shell {
   width: 100%;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -100,4 +101,25 @@
   .music-frame {
     min-height: 72vh;
   }
+}
+
+.music-game-shell h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.music-game {
+  margin-top: 1rem;
+}
+
+.music-game-status {
+  margin: 0.75rem 0 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+}
+
+.music-game-error {
+  margin: 0.5rem 0 0;
+  color: #ff8a8a;
+  font-size: 0.85rem;
 }

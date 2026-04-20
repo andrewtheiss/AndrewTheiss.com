@@ -6,6 +6,13 @@ service cloud.firestore {
         request.auth.token.email == 'andrew.theiss@gmail.com';
     }
 
+    function isFinanceAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == 'andrew.theiss@gmail.com' ||
+        request.auth.token.email == 'cnufable7@gmail.com'
+      );
+    }
+
     match /meditations/{docId} {
       allow read: if true;
       allow write: if isAndrew();
@@ -19,6 +26,10 @@ service cloud.firestore {
     match /meditationCounters/{docId} {
       allow read: if true;
       allow write: if isAndrew();
+    }
+
+    match /equityProfiles/{docId} {
+      allow read, write: if isFinanceAdmin();
     }
 
     match /{document=**} {

@@ -3,6 +3,7 @@ import AuthUserContext from './context';
 import { withFirebase } from '../Firebase';
 
 const ADMIN_EMAILS = ['andrew.theiss@gmail.com'];
+const FINANCE_ADMIN_EMAILS = ['andrew.theiss@gmail.com', 'cnufable7@gmail.com'];
 
 const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
@@ -12,6 +13,7 @@ const withAuthentication = Component => {
       this.state = {
         authUser: {
           admin: false,
+          financeAdmin: false,
           auth: false,
           user: null,
           loading: true,
@@ -24,6 +26,7 @@ const withAuthentication = Component => {
           this.setState({
             authUser: {
               admin: false,
+              financeAdmin: false,
               auth: false,
               user: null,
               loading: false,
@@ -33,9 +36,11 @@ const withAuthentication = Component => {
         }
 
         const isAdmin = ADMIN_EMAILS.includes(authUser.email);
+        const isFinanceAdmin = FINANCE_ADMIN_EMAILS.includes(authUser.email);
         this.setState({
           authUser: {
             admin: isAdmin,
+            financeAdmin: isFinanceAdmin,
             auth: true,
             user: authUser,
             loading: false,

@@ -77,7 +77,7 @@ const App = () => (
                     )}
                 />
                 <Route path={ROUTES.LIGHTCYCLE} element={<RequireAuth><LightCyclePage /></RequireAuth>} />
-                <Route path={ROUTES.EQUITY} element={<RequireAuth><EquityPage /></RequireAuth>} />
+                <Route path={ROUTES.EQUITY} element={<EquityPage />} />
                 <Route path="*" element={<Navigate to={ROUTES.LANDING} replace />} />
             </Route>
         </Routes>
