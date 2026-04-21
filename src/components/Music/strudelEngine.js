@@ -1,12 +1,31 @@
 import { initStrudel } from '@strudel/web';
+import { buildLocalSampleMap, revokeSampleUrls } from './dirtSamples';
 
 let initPromise = null;
 let isPlaying = false;
+let activeUrls = [];
+
+const registerFromCache = async () => {
+  // Revoke any blob URLs from a previous registration to avoid leaks.
+  if (activeUrls.length) {
+    revokeSampleUrls(activeUrls);
+    activeUrls = [];
+  }
+  const { map, urls } = await buildLocalSampleMap();
+  if (Object.keys(map).length === 0) return false;
+  activeUrls = urls;
+  if (typeof window.samples === 'function') {
+    await window.samples(map);
+  }
+  return true;
+};
 
 export function initOnce() {
   if (!initPromise) {
     initPromise = initStrudel({
-      prebake: () => window.samples('github:tidalcycles/dirt-samples'),
+      prebake: () => registerFromCache().catch((err) => {
+        console.warn('No cached samples yet:', err);
+      }),
     }).catch((err) => {
       initPromise = null;
       throw err;
@@ -15,9 +34,14 @@ export function initOnce() {
   return initPromise;
 }
 
+// Re-register samples after a fresh download so newly-cached packs become playable.
+export async function refreshSamples() {
+  await initOnce();
+  return registerFromCache();
+}
+
 export async function play(pattern) {
   await initOnce();
-  // initStrudel exposes evaluate/hush as globals on window
   await window.evaluate(pattern);
   isPlaying = true;
 }

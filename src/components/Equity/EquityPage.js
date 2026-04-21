@@ -31,6 +31,8 @@ const DEFAULT_SCENARIO = { mode: 'none', valueA: '', valueB: '' };
 const fmt = (n) =>
   Number(n).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
+const isRentItem = (label) => (label || '').trim().toLowerCase() === 'rent';
+
 function calcProperty(p) {
   const price = parseFloat(p.purchasePrice) || 0;
   if (price === 0) return null;
@@ -81,6 +83,7 @@ function calcProperty(p) {
     monthlyHoa,
     monthlyMaintenance,
     totalMonthlyCost,
+    firstMonthInterest,
     firstMonthPrincipal,
     monthlyAppreciation,
     monthlyEquityGain,
@@ -383,23 +386,36 @@ const ComparisonGrid = ({ rentalTotal, rentalItems, columns, properties, onUpdat
     (item) => item.label && parseFloat(item.amount) > 0,
   );
 
-  const Row = ({ label, rentalVal, renderCol, sub, bold, muted, rentalClass }) => (
-    <>
-      <div
-        className={`cg-cell cg-label${bold ? ' cg-bold' : ''}${sub ? ' cg-sub' : ''}${muted ? ' cg-muted' : ''}`}
-      >
-        {label}
-      </div>
-      <div className={`cg-cell cg-rental${sub ? ' cg-sub' : ''}${rentalClass ? ` ${rentalClass}` : ''}`}>
-        {rentalVal}
-      </div>
-      {columns.map((col, i) => (
-        <div key={i} className={`cg-cell cg-property${sub ? ' cg-sub' : ''}`}>
-          {renderCol(col, i)}
+  // Utilities (non-rent line items) carry over to the property side — water,
+  // electric, trash, internet etc. cost roughly the same whether you rent or own.
+  const utilitiesTotal = activeRentalItems
+    .filter((item) => !isRentItem(item.label))
+    .reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+
+  const propertyTotal = (calc) =>
+    calc ? calc.totalMonthlyCost + utilitiesTotal : null;
+
+  const Row = ({ label, rentalVal, renderCol, sub, sub2, bold, muted, rentalClass, title }) => {
+    const subClass = sub2 ? ' cg-sub cg-sub2' : sub ? ' cg-sub' : '';
+    return (
+      <>
+        <div
+          className={`cg-cell cg-label${bold ? ' cg-bold' : ''}${subClass}${muted ? ' cg-muted' : ''}`}
+          title={title}
+        >
+          {label}
         </div>
-      ))}
-    </>
-  );
+        <div className={`cg-cell cg-rental${subClass}${rentalClass ? ` ${rentalClass}` : ''}`}>
+          {rentalVal}
+        </div>
+        {columns.map((col, i) => (
+          <div key={i} className={`cg-cell cg-property${subClass}`}>
+            {renderCol(col, i)}
+          </div>
+        ))}
+      </>
+    );
+  };
 
   return (
     <div className="comparison-wrapper">
@@ -417,30 +433,49 @@ const ComparisonGrid = ({ rentalTotal, rentalItems, columns, properties, onUpdat
             </div>
           ))}
 
+          {/* Purchase info (one-time figures) */}
+          <Row
+            muted
+            label="Purchase Price"
+            rentalVal={DASH}
+            renderCol={(col) => (col.calc ? fmt(col.calc.price) : DASH)}
+          />
+          <Row
+            muted
+            label="Loan Amount (borrowed)"
+            rentalVal={DASH}
+            renderCol={(col) => (col.calc ? fmt(col.calc.loanAmount) : DASH)}
+          />
+
+          <div className="cg-cell cg-separator" style={{ gridColumn: '1 / -1' }} />
+
           {/* Monthly cost */}
           <Row
             bold
             label="Monthly Cost"
             rentalVal={fmt(rentalTotal)}
-            renderCol={(col) => (col.calc ? fmt(col.calc.totalMonthlyCost) : DASH)}
+            renderCol={(col) => (col.calc ? fmt(propertyTotal(col.calc)) : DASH)}
           />
 
-          {/* Rental line-item breakdown */}
-          {activeRentalItems.map((item, idx) => (
-            <Row
-              key={`r-${idx}`}
-              sub
-              label={item.label}
-              rentalVal={fmt(item.amount)}
-              renderCol={() => DASH}
-            />
-          ))}
+          {/* Rental line-item breakdown — utilities carry over to property side */}
+          {activeRentalItems.map((item, idx) => {
+            const carryover = !isRentItem(item.label);
+            return (
+              <Row
+                key={`r-${idx}`}
+                sub
+                label={item.label}
+                rentalVal={fmt(item.amount)}
+                renderCol={(col) => (carryover && col.calc ? fmt(item.amount) : DASH)}
+              />
+            );
+          })}
 
           {/* Property cost breakdown */}
           {hasData && (
             <>
               {/* Mortgage row with inline override input */}
-              <div className="cg-cell cg-label cg-sub">Mortgage (P&I)</div>
+              <div className="cg-cell cg-label cg-sub">Mortgage</div>
               <div className="cg-cell cg-rental cg-sub">{DASH}</div>
               {columns.map((col, i) => (
                 <div key={i} className="cg-cell cg-property cg-sub">
@@ -463,6 +498,10 @@ const ComparisonGrid = ({ rentalTotal, rentalItems, columns, properties, onUpdat
                   ) : DASH}
                 </div>
               ))}
+              <Row sub2 label="Principal" rentalVal={DASH}
+                renderCol={(col) => (col.calc ? fmt(col.calc.firstMonthPrincipal) : DASH)} />
+              <Row sub2 label="Interest" rentalVal={DASH}
+                renderCol={(col) => (col.calc ? fmt(col.calc.firstMonthInterest) : DASH)} />
               <Row sub label="Property Tax" rentalVal={DASH}
                 renderCol={(col) => (col.calc ? fmt(col.calc.monthlyTax) : DASH)} />
               <Row sub label="Insurance" rentalVal={DASH}
@@ -473,6 +512,17 @@ const ComparisonGrid = ({ rentalTotal, rentalItems, columns, properties, onUpdat
                 renderCol={(col) => (col.calc ? fmt(col.calc.monthlyMaintenance) : DASH)} />
             </>
           )}
+
+          {/* Subtotal: real out-of-pocket cost (excludes principal, which becomes equity) */}
+          <Row
+            bold
+            label="Cost excl. Principal"
+            title="Money out of pocket that does NOT come back as equity. For property: everything except the principal portion of the mortgage."
+            rentalVal={fmt(rentalTotal)}
+            renderCol={(col) =>
+              col.calc ? fmt(propertyTotal(col.calc) - col.calc.firstMonthPrincipal) : DASH
+            }
+          />
 
           <div className="cg-cell cg-separator" style={{ gridColumn: '1 / -1' }} />
 
@@ -490,21 +540,26 @@ const ComparisonGrid = ({ rentalTotal, rentalItems, columns, properties, onUpdat
 
           {hasData && (
             <>
-              <Row sub label="Principal Paydown" rentalVal={DASH}
+              <Row sub2 label="Principal Paydown" rentalVal={DASH}
                 renderCol={(col) => (col.calc ? fmt(col.calc.firstMonthPrincipal) : DASH)} />
-              <Row sub label="Appreciation" rentalVal={DASH}
+              <Row sub2 label="Appreciation" rentalVal={DASH}
                 renderCol={(col) => (col.calc ? fmt(col.calc.monthlyAppreciation) : DASH)} />
             </>
           )}
 
           <div className="cg-cell cg-separator" style={{ gridColumn: '1 / -1' }} />
 
-          {/* Net difference */}
-          <div className="cg-cell cg-label cg-bold">Equity vs Rental</div>
+          {/* Net worth change per month vs renting */}
+          <div
+            className="cg-cell cg-label cg-bold"
+            title="Monthly equity built (principal paid down + appreciation) minus the extra cash you'd pay versus rent. Treats appreciation as cash-equivalent; appreciation is unrealized until you sell."
+          >
+            Net Worth vs Rental
+          </div>
           <div className="cg-cell cg-rental">{DASH}</div>
           {columns.map((col, i) => {
             if (!col.calc) return <div key={i} className="cg-cell cg-property">{DASH}</div>;
-            const costDiff = col.calc.totalMonthlyCost - rentalTotal;
+            const costDiff = propertyTotal(col.calc) - rentalTotal;
             const netBenefit = col.calc.monthlyEquityGain - costDiff;
             return (
               <div
@@ -516,11 +571,29 @@ const ComparisonGrid = ({ rentalTotal, rentalItems, columns, properties, onUpdat
             );
           })}
 
-          <div className="cg-cell cg-label cg-sub cg-muted">Extra cost over rent</div>
+          <div
+            className="cg-cell cg-label cg-sub cg-muted"
+            title="Equity built each month (principal + appreciation)"
+          >
+            Equity built
+          </div>
+          <div className="cg-cell cg-rental cg-sub">{fmt(0)}</div>
+          {columns.map((col, i) => (
+            <div key={i} className="cg-cell cg-property cg-sub">
+              {col.calc ? fmt(col.calc.monthlyEquityGain) : DASH}
+            </div>
+          ))}
+
+          <div
+            className="cg-cell cg-label cg-sub cg-muted"
+            title="How much more (or less) you'd pay each month to own vs. rent — both sides include utilities"
+          >
+            − Extra cost vs rent
+          </div>
           <div className="cg-cell cg-rental cg-sub">{DASH}</div>
           {columns.map((col, i) => {
             if (!col.calc) return <div key={i} className="cg-cell cg-property cg-sub">{DASH}</div>;
-            const costDiff = col.calc.totalMonthlyCost - rentalTotal;
+            const costDiff = propertyTotal(col.calc) - rentalTotal;
             return (
               <div
                 key={i}
@@ -688,6 +761,18 @@ const EquityPage = () => {
           {/* ---- Comparison ---- */}
           <div className="equity-section">
             <h3>Side-by-Side Comparison</h3>
+            <p className="equity-section-note">
+              Utilities (anything other than &ldquo;Rent&rdquo;) are copied to the property
+              side since they cost roughly the same either way.
+              <br />
+              <strong>Cost excl. Principal</strong> is your real out-of-pocket spend — the
+              principal portion of the mortgage is excluded because it comes back to you as
+              equity.
+              <br />
+              <strong>Net Worth vs Rental</strong> = monthly equity built (principal +
+              appreciation) &minus; extra monthly cash vs rent. Appreciation is counted at
+              face value even though it&rsquo;s unrealized until you sell.
+            </p>
             <ComparisonGrid
               rentalTotal={rentalTotal}
               rentalItems={lineItems}
