@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './MusicPage.css';
-import GameCanvas from './GameCanvas';
+import ShooterGame from './ShooterGame';
+import SoundDevPanel from './SoundDevPanel';
 import {
   COMMON_PACKS,
   clearSamples,
@@ -8,7 +9,16 @@ import {
   downloadPacks,
   listDownloadedPacks,
 } from './dirtSamples';
-import { refreshSamples } from './strudelEngine';
+import {
+  clearBgMusic,
+  initOnce,
+  refreshSamples,
+  setBgMusic,
+} from './strudelEngine';
+import { fireSound } from './soundPlayer';
+import transport from './transport';
+import AudioLog from './AudioLog';
+import { KIND, logAudio } from './audioLogStore';
 
 const MusicPage = () => {
   const [downloading, setDownloading] = useState(false);
@@ -17,6 +27,14 @@ const MusicPage = () => {
   const [cachedCount, setCachedCount] = useState(0);
   const [error, setError] = useState(null);
   const [lastResult, setLastResult] = useState(null);
+  const [samplesOpen, setSamplesOpen] = useState(false);
+
+  // Bindings cache pushed up from the dev panel; the game's onTrigger reads
+  // these to fire the right sound for each engine slot.
+  const bindingsRef = useRef({ sounds: [], gameObjects: [], slots: {} });
+  const handleBindingsChange = useCallback((b) => {
+    bindingsRef.current = b;
+  }, []);
 
   const refreshCacheState = useCallback(async () => {
     try {
@@ -27,7 +45,6 @@ const MusicPage = () => {
       setCachedPacks(packs);
       setCachedCount(count);
     } catch (err) {
-      // IDB might be unavailable (private mode, etc.)
       setError(err.message || 'Could not read local cache');
     }
   }, []);
@@ -42,9 +59,7 @@ const MusicPage = () => {
     setLastResult(null);
     setProgress({ done: 0, total: 0 });
     try {
-      const result = await downloadPacks(COMMON_PACKS, (p) => {
-        setProgress(p);
-      });
+      const result = await downloadPacks(COMMON_PACKS, (p) => setProgress(p));
       setLastResult(result);
       await refreshSamples();
       await refreshCacheState();
@@ -74,88 +89,160 @@ const MusicPage = () => {
     ? Math.round((progress.done / progress.total) * 100)
     : 0;
 
+  // Resolve a slot binding to its sound object.
+  const resolveSlot = useCallback((slot) => {
+    const { sounds, slots } = bindingsRef.current;
+    const soundId = slots?.[slot];
+    if (!soundId) return null;
+    return (sounds || []).find((s) => s.id === soundId) || null;
+  }, []);
+
+  // Game emits in-game events. Checkpoint 1: SFX fire IMMEDIATELY (no
+  // quantization yet); the bg music slot is owned by the Start handler.
+  const handleGameTrigger = useCallback(async (slot) => {
+    const sound = resolveSlot(slot);
+    if (!sound || !sound.code) {
+      logAudio(KIND.trigger, `game→${slot}`, sound ? 'sound has no code' : 'no sound bound');
+      return;
+    }
+    // Sustained slots (bg music etc.) are owned by transport start/stop, not
+    // per-event triggers. Anything else is a fire-and-forget one-shot.
+    if (slot === 'bgLoop' || sound.mode === 'loop') {
+      logAudio(KIND.info, `game→${slot} skipped`,
+        'loop slots are managed by Start/Stop, not per-event');
+      return;
+    }
+    logAudio(KIND.trigger, `game→${slot}`,
+      `${sound.name} cycle=${transport.currentCycle().toFixed(3)}`);
+    await fireSound(sound, { label: `game:${slot}` });
+  }, [resolveSlot]);
+
+  // Big Start button → start transport + kick off bg music. The game already
+  // flipped its phase to 'playing' before calling us, so this all runs in
+  // the background and the click feels instant.
+  const handleStart = useCallback(async () => {
+    try {
+      await initOnce();              // ensure Strudel/superdough are wired
+      await transport.start();       // resume AC, anchor cycle 0 to NOW
+      const bg = resolveSlot('bgLoop');
+      if (bg && bg.code) {
+        logAudio(KIND.trigger, 'start→bgLoop', bg.name);
+        await setBgMusic(bg.code);
+      } else {
+        logAudio(KIND.info, 'start: no bg loop bound', 'silence ok');
+      }
+      // Optional one-shot Play stinger
+      const stinger = resolveSlot('playStart');
+      if (stinger && stinger.code && stinger.mode === 'oneShot') {
+        await fireSound(stinger, { label: 'playStart' });
+      }
+    } catch (err) {
+      logAudio(KIND.error, 'start failed', err.message || String(err));
+    }
+  }, [resolveSlot]);
+
+  const handleStop = useCallback(async () => {
+    try {
+      await clearBgMusic();
+      await transport.stop();
+    } catch (err) {
+      logAudio(KIND.error, 'stop failed', err.message || String(err));
+    }
+  }, []);
+
+  const cacheSummary = useMemo(() => {
+    if (cachedCount === 0) return 'No samples cached.';
+    return `${cachedCount} file${cachedCount === 1 ? '' : 's'} across ${cachedPacks.length} pack${cachedPacks.length === 1 ? '' : 's'}.`;
+  }, [cachedCount, cachedPacks.length]);
+
   return (
     <div className="music-page">
       <section className="music-hero">
         <p className="music-eyebrow">Music</p>
-        <h1>Live-code music in Strudel</h1>
+        <h1>Game + sound playground</h1>
         <p className="music-copy">
-          Strudel runs entirely in-browser here via <code>@strudel/web</code> — no iframe,
-          no external studio. Samples from the Tidal <code>dirt-samples</code> pack are fetched
-          on demand and cached locally in IndexedDB, so subsequent visits play offline.
+          Live-coded sounds via <code>@strudel/web</code> wired into a tiny shooter.
+          Use the right pane to author and bind sounds to engine slots; the left pane is the game.
         </p>
       </section>
 
       <section className="music-sample-shell">
-        <h2>Sample library</h2>
-        <p className="music-copy">
-          Click <strong>Download common samples</strong> to fetch a curated set of drum and
-          synth packs (bd, sd, hh, cp, bass, piano, and more) straight from
-          <code> tidalcycles/dirt-samples</code>. Files are stored in your browser only.
-        </p>
-
-        <div className="music-sample-actions">
-          <button
-            type="button"
-            className="music-btn primary"
-            onClick={handleDownload}
-            disabled={downloading}
-          >
-            {downloading ? 'Downloading…' : 'Download common samples'}
-          </button>
-          <button
-            type="button"
-            className="music-btn secondary"
-            onClick={handleClear}
-            disabled={downloading || cachedCount === 0}
-          >
-            Clear cache
-          </button>
-        </div>
-
-        {progress && progress.total > 0 && (
-          <div className="music-progress" aria-live="polite">
-            <div className="music-progress-bar" style={{ width: `${pct}%` }} />
-            <span className="music-progress-label">
-              {progress.done} / {progress.total} files • {pct}%
-              {progress.failed ? ` • ${progress.failed} failed` : ''}
-            </span>
+        <button
+          type="button"
+          className="music-accordion-head"
+          onClick={() => setSamplesOpen((v) => !v)}
+          aria-expanded={samplesOpen}
+        >
+          <span>Sample library</span>
+          <span className="music-accordion-meta">
+            {cacheSummary} <span className="music-accordion-caret">{samplesOpen ? '▾' : '▸'}</span>
+          </span>
+        </button>
+        {samplesOpen && (
+          <div className="music-accordion-body">
+            <p className="music-copy">
+              Drum/synth packs from <code>tidalcycles/dirt-samples</code>, cached in IndexedDB.
+            </p>
+            <div className="music-sample-actions">
+              <button
+                type="button"
+                className="music-btn primary"
+                onClick={handleDownload}
+                disabled={downloading}
+              >
+                {downloading ? 'Downloading…' : 'Download common samples'}
+              </button>
+              <button
+                type="button"
+                className="music-btn secondary"
+                onClick={handleClear}
+                disabled={downloading || cachedCount === 0}
+              >
+                Clear cache
+              </button>
+            </div>
+            {progress && progress.total > 0 && (
+              <div className="music-progress" aria-live="polite">
+                <div className="music-progress-bar" style={{ width: `${pct}%` }} />
+                <span className="music-progress-label">
+                  {progress.done} / {progress.total} files • {pct}%
+                  {progress.failed ? ` • ${progress.failed} failed` : ''}
+                </span>
+              </div>
+            )}
+            {cachedPacks.length > 0 && (
+              <p className="music-sample-packs">
+                <span className="music-eyebrow small">Cached packs</span>
+                <span className="music-pack-list">
+                  {cachedPacks.map((p) => <code key={p}>{p}</code>)}
+                </span>
+              </p>
+            )}
+            {lastResult && (
+              <p className="music-sample-status">
+                Downloaded {lastResult.downloaded}, skipped {lastResult.skipped}
+                {lastResult.failed ? `, ${lastResult.failed} failed` : ''}.
+              </p>
+            )}
+            {error && <p className="music-game-error">{error}</p>}
           </div>
         )}
-
-        <p className="music-sample-status">
-          {cachedCount === 0
-            ? 'No samples cached yet.'
-            : `${cachedCount} file${cachedCount === 1 ? '' : 's'} cached across ${cachedPacks.length} pack${cachedPacks.length === 1 ? '' : 's'}.`}
-        </p>
-
-        {cachedPacks.length > 0 && (
-          <p className="music-sample-packs">
-            <span className="music-eyebrow small">Cached packs</span>
-            <span className="music-pack-list">
-              {cachedPacks.map((p) => <code key={p}>{p}</code>)}
-            </span>
-          </p>
-        )}
-
-        {lastResult && (
-          <p className="music-sample-status">
-            Downloaded {lastResult.downloaded}, skipped {lastResult.skipped} (already cached)
-            {lastResult.failed ? `, ${lastResult.failed} failed` : ''}.
-          </p>
-        )}
-
-        {error && <p className="music-game-error">{error}</p>}
       </section>
 
-      <section className="music-game-shell">
-        <h2>Play</h2>
-        <p className="music-copy">
-          Click the canvas to start or stop. The default pattern uses the <code>bd</code>,
-          <code> cp</code>, and <code>hh</code> packs — download samples first to hear the
-          full mix.
-        </p>
-        <GameCanvas />
+      <section className="music-split">
+        <div className="music-split-game">
+          <div className="music-game-area">
+            <ShooterGame
+              onTrigger={handleGameTrigger}
+              onStart={handleStart}
+              onStop={handleStop}
+            />
+          </div>
+          <AudioLog />
+        </div>
+        <div className="music-split-panel">
+          <SoundDevPanel onBindingsChange={handleBindingsChange} />
+        </div>
       </section>
     </div>
   );

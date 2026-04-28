@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getFirestore, enableMultiTabIndexedDbPersistence } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const requiredKeys = [
@@ -45,8 +45,8 @@ const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
 
-enableIndexedDbPersistence(firestore).catch(() => {
-  // ignore persistence errors (unsupported or multiple tabs)
+enableMultiTabIndexedDbPersistence(firestore).catch(() => {
+  // ignore persistence errors (unsupported browser, etc.)
 });
 
 const secondaryConfig = readConfig('REACT_APP_SECONDARY_FIREBASE_');
