@@ -13,3 +13,4 @@ export const MUSIC = '/music';
 export const LIGHTCYCLE = '/light-cycle';
 export const EQUITY = '/equity';
 export const DESKTOP_AUTH = '/desktop-auth';
+export const WEDDING = '/wedding';

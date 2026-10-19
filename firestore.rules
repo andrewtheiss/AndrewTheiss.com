@@ -32,6 +32,19 @@ service cloud.firestore {
       allow read, write: if isFinanceAdmin();
     }
 
+    // Shared wedding to-do list. TODO: replace the placeholder with Mom's email
+    // (keep in sync with src/constants/wedding.js).
+    function isWeddingTodoEditor() {
+      return request.auth != null && (
+        request.auth.token.email == 'andrew.theiss@gmail.com' ||
+        request.auth.token.email == 'MOM_EMAIL@example.com'
+      );
+    }
+
+    match /weddingTodos/{docId} {
+      allow read, write: if isWeddingTodoEditor();
+    }
+
     match /{document=**} {
       allow read: if true;
       allow write: if false;
