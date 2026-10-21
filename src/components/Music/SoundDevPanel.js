@@ -34,11 +34,15 @@ const DEFAULT_SOUNDS = [
     tags: ['ambient', 'preStart'],
   },
   {
-    name: 'Shoot tick (default)',
-    code: '$: s("hh*1").gain(0.6).speed(1.4)',
+    name: 'Laser (default)',
+    code: `$: note("c5").sound("sawtooth")
+  .attack(0.001).decay(0.18).sustain(0).release(0.04)
+  .lpf(180).lpenv(8).lpattack(0.001).lpdecay(0.15).lpsustain(0)
+  .lpq(14)
+  .gain(0.5)`,
     mode: 'oneShot',
-    oneShotMs: 250,
-    tags: ['shoot'],
+    oneShotMs: 240,
+    tags: ['laser', 'shoot'],
   },
   {
     name: 'Bullet expire (default)',
@@ -99,24 +103,35 @@ const SoundDevPanel = ({ onBindingsChange }) => {
     }
   }, [uid, onBindingsChange]);
 
-  // Seed defaults once per user.
+  // Seed defaults. Idempotent by name so existing users pick up newly-added
+  // defaults (e.g. the laser shoot sound) without losing their own work.
   useEffect(() => {
     if (!uid) return;
     let cancelled = false;
     (async () => {
       try {
-        const [existingSounds, existingObjects] = await Promise.all([
-          listSounds(uid), listGameObjects(uid),
+        const [existingSounds, existingObjects, existingBindings] = await Promise.all([
+          listSounds(uid), listGameObjects(uid), getBindings(uid),
         ]);
         if (cancelled) return;
-        if (existingSounds.length === 0) {
-          for (const s of DEFAULT_SOUNDS) {
-            await saveSound(uid, s);
-          }
+        const existingSoundNames = new Set(existingSounds.map((s) => s.name));
+        for (const s of DEFAULT_SOUNDS) {
+          if (!existingSoundNames.has(s.name)) await saveSound(uid, s);
         }
-        if (existingObjects.length === 0) {
-          for (const o of DEFAULT_GAME_OBJECTS) {
-            await saveGameObject(uid, o);
+        const existingObjectNames = new Set(existingObjects.map((o) => o.name));
+        for (const o of DEFAULT_GAME_OBJECTS) {
+          if (!existingObjectNames.has(o.name)) await saveGameObject(uid, o);
+        }
+        // Auto-bind the laser to playerShoot when the slot is empty so the
+        // default click sound just works without manual setup.
+        const slots = { ...(existingBindings?.slots || {}) };
+        if (!slots.playerShoot) {
+          const allSounds = await listSounds(uid);
+          const laser = allSounds.find((s) => (s.tags || []).includes('laser'))
+            || allSounds.find((s) => (s.tags || []).includes('shoot'));
+          if (laser) {
+            slots.playerShoot = laser.id;
+            await saveBindings(uid, slots);
           }
         }
         await refresh();

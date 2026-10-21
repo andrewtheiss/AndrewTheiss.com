@@ -108,11 +108,22 @@ test('flights are tagged by traveler: us, mom with us, mom only', () => {
   expect(screen.getByText('Mom is on this flight with us')).toBeInTheDocument();
   fireEvent.keyDown(window, { key: 'Escape' });
 
-  // Nov 24: mom's morning flight and our evening flight, both to El Nido
+  // Nov 24: everyone is on the same evening flight to El Nido
   fireEvent.click(screen.getByRole('button', { name: 'Open Tuesday, Nov 24' }));
-  expect(screen.getByText('T6 5337')).toBeInTheDocument();
-  expect(screen.getByText('DG 6254')).toBeInTheDocument();
+  expect(screen.getByText('DG 6250')).toBeInTheDocument();
+  expect(screen.getByText('Mom is on this flight with us')).toBeInTheDocument();
+  fireEvent.keyDown(window, { key: 'Escape' });
+
+  // Nov 28: mom flies back to Cebu alone; we stay another night
+  fireEvent.click(screen.getByRole('button', { name: 'Open Saturday, Nov 28' }));
+  expect(screen.getByText('DG 6255')).toBeInTheDocument();
   expect(screen.getAllByText('Mom only').length).toBeGreaterThan(1); // legend + flight badge
+  expect(screen.getAllByText('Extra night in El Nido (Cassie & Andrew)').length).toBeGreaterThan(0); // overview card + detail
+  fireEvent.keyDown(window, { key: 'Escape' });
+
+  // Nov 29: our flight to Bohol
+  fireEvent.click(screen.getByRole('button', { name: 'Open Sunday, Nov 29' }));
+  expect(screen.getByText('DG 6887')).toBeInTheDocument();
   expect(screen.getByText('Andrew & Cassie')).toBeInTheDocument();
   fireEvent.keyDown(window, { key: 'Escape' });
 
