@@ -509,28 +509,30 @@ const WeddingPage = () => {
         {bookings.map((b) => (
           <a
             key={b.id}
-            className={`wd-booking who-${b.who} ${b.changed ? 'changed' : ''}`}
+            className={`wd-booking who-${b.who} ${b.kind || 'flight'} ${b.changed ? 'changed' : ''}`}
             href={b.url}
             target="_blank"
             rel="noreferrer"
           >
             <div className="wd-booking-airline">
-              {b.airline}
+              {b.name || b.airline}
               <WhoBadge who={b.who} compact />
             </div>
             <div className="wd-booking-legs">{b.legs}</div>
             <div className="wd-booking-ref">
               {b.pnr ? (
                 <>
-                  PNR <strong>{b.pnr}</strong>
+                  {b.refLabel || 'PNR'} <strong>{b.pnr}</strong>
                 </>
               ) : (
-                <span className="muted">PNR unknown</span>
+                <span className="muted">{b.refLabel || 'PNR'} unknown</span>
               )}
               {b.ticket && <span> · Ticket {b.ticket}</span>}
             </div>
             <div className="wd-booking-status">{b.status}</div>
-            <div className="wd-booking-link">Manage booking ↗</div>
+            <div className="wd-booking-link">
+              {b.kind === 'hotel' ? 'View itinerary ↗' : 'Manage booking ↗'}
+            </div>
           </a>
         ))}
       </section>

@@ -6,6 +6,10 @@
 //
 // To add something: push an entry onto `extras` with a `day` (YYYY-MM-DD),
 // an optional `time` (HH:mm, 24h), a `type`, a `title` and optional `detail`.
+//
+// Bookings are flights by default. A hotel is `kind: 'hotel'` with a `name`
+// instead of `airline`, and `refLabel` names what `pnr` holds (e.g. an Expedia
+// itinerary number).
 
 export const TZ = {
   LA: { id: 'America/Los_Angeles', label: 'Los Angeles', short: 'LA' },
@@ -81,6 +85,19 @@ export const bookings = [
     ticket: null,
     url: 'https://www.cebupacificair.com/',
     status: 'Confirmed Oct 21. El Nido → Bohol (Panglao), 1:35 PM – 3:20 PM.',
+  },
+  {
+    id: 'lime-bohol',
+    who: 'us',
+    kind: 'hotel',
+    name: 'LIME Resort Bohol',
+    legs: 'Barrio of Tangnan, Panglao · Nov 29 – Dec 3 · 4 nights',
+    pnr: '73572374870256',
+    refLabel: 'Expedia itinerary',
+    ticket: null,
+    url: 'https://www.expedia.com/trips/73572374870256',
+    status:
+      'Confirmed Oct 26. Villa, 1 Bedroom, Beachfront (Duplex), 2 adults. Full breakfast and Wi-Fi included. Check-in from 3:00 PM, check-out by 12:00 PM. $851.37 total ($194.75 × 4 nights + $93.48 tax, minus $21.11 OneKeyCash). Radisson Individuals Premier.',
   },
   {
     id: 'pr-mom',
@@ -236,7 +253,8 @@ export const whereabouts = [
   { from: '2026-11-24', place: 'Cebu → El Nido', tz: TZ.PH },
   { from: '2026-11-25', place: 'El Nido, Palawan', tz: TZ.PH },
   { from: '2026-11-29', place: 'El Nido → Bohol', tz: TZ.PH },
-  { from: '2026-11-30', place: 'Bohol, Panglao (onward plans TBD)', tz: TZ.PH },
+  { from: '2026-11-30', place: 'Panglao, Bohol (LIME Resort)', tz: TZ.PH },
+  { from: '2026-12-03', place: 'Leaving Bohol (Dec 3 – 5 plans TBD)', tz: TZ.PH },
   { from: '2026-12-05', place: 'Cebu → Taipei → Los Angeles', tz: TZ.PH },
 ];
 
@@ -246,7 +264,7 @@ export const extras = [
     day: '2026-11-20',
     type: 'note',
     title: 'Pack & prep day',
-    detail: 'Flight is tomorrow night. Confirm passports, PNRs, and the El Nido hotel. Mom flies out with us.',
+    detail: 'Flight is tomorrow night. Confirm passports, PNRs, the El Nido hotel, and the Bohol villa (Expedia 73572374870256). Mom flies out with us.',
   },
   {
     day: '2026-11-22',
@@ -299,10 +317,11 @@ export const extras = [
   },
   {
     day: '2026-11-29',
-    type: 'todo',
-    title: 'Lodging in Bohol & the way back to Cebu (Nov 29 – Dec 5)',
-    detail: 'Nothing booked after we land in Bohol at 3:20 PM. Need lodging there and a flight or fast ferry back to Cebu before our Dec 5, 12:10 PM departure from Cebu Terminal 2.',
-    urgent: true,
+    time: '15:00',
+    type: 'stay',
+    title: 'Check in: LIME Resort Bohol',
+    detail:
+      'Villa, 1 Bedroom, Beachfront (Duplex), 2 adults, four nights through Dec 3. Check-in opens 3:00 PM; we land at TAG at 3:20 PM. Barrio of Tangnan, Panglao. Full breakfast and Wi-Fi included. Expedia itinerary 73572374870256. A member of Radisson Individuals Premier.',
   },
   {
     day: '2026-11-29',
@@ -315,6 +334,20 @@ export const extras = [
     type: 'note',
     title: 'Mom flies home',
     detail: 'Cebu Terminal 1 at 11:15 AM via Manila. She lands at LAX the same afternoon, local time.',
+  },
+  {
+    day: '2026-12-03',
+    time: '12:00',
+    type: 'stay',
+    title: 'Check out: LIME Resort Bohol',
+    detail: 'Check-out by 12:00 PM. Four nights, Nov 29 – Dec 3. Nothing is booked after this.',
+  },
+  {
+    day: '2026-12-03',
+    type: 'todo',
+    title: 'Lodging Dec 3 – 5 & the way back to Cebu',
+    detail: 'Bohol is covered through check-out on Dec 3. Still need two nights somewhere (Dec 3 – 5) and a flight or fast ferry back to Cebu in time for our Dec 5, 12:10 PM departure from Cebu Terminal 2.',
+    urgent: true,
   },
 ];
 

@@ -135,6 +135,30 @@ test('flights are tagged by traveler: us, mom with us, mom only', () => {
   expect(screen.getAllByText('same day').length).toBe(2);
 });
 
+test('Bohol villa shows as a booking card and on its check-in and check-out days', () => {
+  render(<WeddingPage />);
+  // bookings strip
+  expect(screen.getByText('LIME Resort Bohol')).toBeInTheDocument();
+  expect(screen.getByText('73572374870256')).toBeInTheDocument();
+  expect(screen.getByText(/Expedia itinerary/)).toBeInTheDocument();
+  expect(screen.getByText('View itinerary ↗')).toBeInTheDocument();
+
+  // Nov 29: land in Bohol, then check in
+  fireEvent.click(screen.getByRole('button', { name: 'Open Sunday, Nov 29' }));
+  expect(screen.getByText('DG 6887')).toBeInTheDocument();
+  expect(screen.getAllByText('Check in: LIME Resort Bohol').length).toBeGreaterThan(0); // overview card + detail
+  expect(screen.getByText(/Check-in opens 3:00 PM; we land at TAG at 3:20 PM/)).toBeInTheDocument();
+  expect(screen.queryByText(/Nothing booked after we land in Bohol/)).not.toBeInTheDocument();
+  fireEvent.keyDown(window, { key: 'Escape' });
+
+  // Dec 3: check out, and the only remaining gap is Dec 3 – 5
+  fireEvent.click(screen.getByRole('button', { name: 'Open Thursday, Dec 3' }));
+  expect(screen.getAllByText('Check out: LIME Resort Bohol').length).toBeGreaterThan(0);
+  expect(screen.getAllByText('Lodging Dec 3 – 5 & the way back to Cebu').length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/Leaving Bohol/).length).toBeGreaterThan(1); // Dec 3 + Dec 4 cards + dialog header
+  fireEvent.keyDown(window, { key: 'Escape' });
+});
+
 test('to-do panel is hidden for other signed-in users', () => {
   renderAs('someone.else@example.com');
   expect(screen.queryByRole('button', { name: /to-do list/i })).not.toBeInTheDocument();
