@@ -9,7 +9,10 @@
 //
 // Bookings are flights by default. A hotel is `kind: 'hotel'` with a `name`
 // instead of `airline`, and `refLabel` names what `pnr` holds (e.g. an Expedia
-// itinerary number).
+// itinerary number). `ticketLabel` does the same for `ticket`.
+//
+// A journey leg is a flight unless it has `mode: 'ferry'`; the page then shows
+// a boat, "on the water" and a class instead of a seat.
 
 export const TZ = {
   LA: { id: 'America/Los_Angeles', label: 'Los Angeles', short: 'LA' },
@@ -109,6 +112,33 @@ export const bookings = [
     url: 'https://www.philippineairlines.com/',
     status: 'Minor change: CEB departure 11:00 AM → 11:15 AM',
     changed: true,
+  },
+  {
+    id: 'oceanjet-us',
+    who: 'us',
+    kind: 'ferry',
+    name: 'Oceanjet fast ferry',
+    legs: 'Tagbilaran Port → Cebu City Port · Dec 3 · 1:00 PM – 3:00 PM',
+    pnr: 'B151223294',
+    refLabel: 'Ferryscanner booking',
+    ticket: 'BW6029305',
+    ticketLabel: 'Oceanjet code',
+    url: 'https://www.ferryscanner.com/',
+    status:
+      'Confirmed Oct 27. Business class, 2 adults, booked through Ferryscanner. Business class keeps the 20 kg free baggage allowance per passenger plus one hand-carried trolley bag up to 130 cm (L+W+H).',
+  },
+  {
+    id: 'nustar-cebu',
+    who: 'us',
+    kind: 'hotel',
+    name: 'NUSTAR Hotel Cebu',
+    legs: 'Cebu City · Dec 3 – Dec 5 · 2 nights',
+    pnr: '73574551404499',
+    refLabel: 'Expedia itinerary',
+    ticket: null,
+    url: 'https://www.expedia.com/trips/73574551404499',
+    status:
+      'Confirmed Oct 27. 2 adults, 1 room. Check-in from 3:00 PM, check-out by 12:00 PM. Our last two nights before the Dec 5 flight home.',
   },
 ];
 
@@ -219,6 +249,23 @@ export const journeys = [
     ],
   },
   {
+    id: 'tag-ceb-ferry',
+    name: 'Us: Bohol → Cebu by ferry',
+    bookingId: 'oceanjet-us',
+    who: 'us',
+    flights: [
+      {
+        id: 'oceanjet-dec3',
+        mode: 'ferry',
+        airline: 'Fast ferry via Ferryscanner',
+        number: 'Oceanjet',
+        seat: 'Business',
+        from: { code: 'TAGBIL', city: 'Tagbilaran Port, Bohol', terminal: null, tz: TZ.PH, date: '2026-12-03', time: '13:00' },
+        to: { code: 'CEB', city: 'Cebu City Port', terminal: null, tz: TZ.PH, date: '2026-12-03', time: '15:00' },
+      },
+    ],
+  },
+  {
     id: 'return-us',
     name: 'Us: Cebu → Taipei → Los Angeles',
     bookingId: 'ci-us',
@@ -254,7 +301,8 @@ export const whereabouts = [
   { from: '2026-11-25', place: 'El Nido, Palawan', tz: TZ.PH },
   { from: '2026-11-29', place: 'El Nido → Bohol', tz: TZ.PH },
   { from: '2026-11-30', place: 'Panglao, Bohol (LIME Resort)', tz: TZ.PH },
-  { from: '2026-12-03', place: 'Leaving Bohol (Dec 3 – 5 plans TBD)', tz: TZ.PH },
+  { from: '2026-12-03', place: 'Bohol → Cebu (Oceanjet ferry)', tz: TZ.PH },
+  { from: '2026-12-04', place: 'Cebu City (NUSTAR Hotel)', tz: TZ.PH },
   { from: '2026-12-05', place: 'Cebu → Taipei → Los Angeles', tz: TZ.PH },
 ];
 
@@ -264,7 +312,7 @@ export const extras = [
     day: '2026-11-20',
     type: 'note',
     title: 'Pack & prep day',
-    detail: 'Flight is tomorrow night. Confirm passports, PNRs, the El Nido hotel, and the Bohol villa (Expedia 73572374870256). Mom flies out with us.',
+    detail: 'Flight is tomorrow night. Confirm passports, PNRs, the El Nido hotel, the Bohol villa (Expedia 73572374870256), the Dec 3 ferry (Ferryscanner B151223294) and NUSTAR Cebu (Expedia 73574551404499). Mom flies out with us.',
   },
   {
     day: '2026-11-22',
@@ -340,14 +388,23 @@ export const extras = [
     time: '12:00',
     type: 'stay',
     title: 'Check out: LIME Resort Bohol',
-    detail: 'Check-out by 12:00 PM. Four nights, Nov 29 – Dec 3. Nothing is booked after this.',
+    detail:
+      'Check-out by 12:00 PM. Four nights, Nov 29 – Dec 3. The ferry leaves Tagbilaran Port at 1:00 PM and the pier is roughly 30 minutes from Panglao, so pack up early and aim to be out by 11:30 AM at the latest.',
   },
   {
     day: '2026-12-03',
-    type: 'todo',
-    title: 'Lodging Dec 3 – 5 & the way back to Cebu',
-    detail: 'Bohol is covered through check-out on Dec 3. Still need two nights somewhere (Dec 3 – 5) and a flight or fast ferry back to Cebu in time for our Dec 5, 12:10 PM departure from Cebu Terminal 2.',
-    urgent: true,
+    time: '15:00',
+    type: 'stay',
+    title: 'Check in: NUSTAR Hotel Cebu',
+    detail:
+      '2 adults, 1 room, two nights through Dec 5. Check-in opens 3:00 PM; the ferry docks at Cebu City Port at 3:00 PM. Expedia itinerary 73574551404499.',
+  },
+  {
+    day: '2026-12-05',
+    type: 'stay',
+    title: 'Check out: NUSTAR Hotel Cebu',
+    detail:
+      'Check-out deadline is 12:00 PM, but our flight leaves Mactan (Terminal 2) at 12:10 PM, so we will be out well before that. Budget an hour or more for the drive to the airport with traffic. Two nights, Dec 3 – 5.',
   },
 ];
 

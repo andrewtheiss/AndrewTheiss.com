@@ -32,6 +32,13 @@ import './Wedding.css';
 
 /* ---------- derived data ---------- */
 
+// A journey leg is a flight unless it says `mode: 'ferry'`.
+const MODES = {
+  flight: { icon: '✈', travel: 'in the air', departed: 'Took off', seatLabel: 'Seat' },
+  ferry: { icon: '⛴', travel: 'on the water', departed: 'Sailed', seatLabel: 'Class' },
+};
+const modeOf = (leg) => MODES[leg.mode] || MODES.flight;
+
 function flightInstants(f) {
   const dep = zonedToUtc(f.from.date, f.from.time, f.from.tz.id);
   const arr = zonedToUtc(f.to.date, f.to.time, f.to.tz.id);
@@ -116,7 +123,7 @@ function summarize(day, items) {
   items.forEach((it) => {
     if (it.kind === 'flight') {
       lines.push({
-        icon: '✈',
+        icon: modeOf(it.flight).icon,
         who: it.who,
         text: `${it.flight.from.code} → ${it.flight.to.code} · ${fmtClock(it.flight.from.time)}`,
         tag: it.inst.dayShift > 0 ? `+${it.inst.dayShift}d` : null,
@@ -189,14 +196,15 @@ const WhoBadge = ({ who, compact }) => (
 
 const FlightCard = ({ flight, inst, journey, who = 'us' }) => {
   const booking = bookings.find((b) => b.id === journey.bookingId);
+  const mode = modeOf(flight);
   return (
     <div className={`wd-item wd-flight who-${who}`}>
       <div className="wd-flight-head">
-        <span className="wd-icon" aria-hidden>✈</span>
+        <span className="wd-icon" aria-hidden>{mode.icon}</span>
         <span className="wd-flight-number">{flight.number}</span>
         <span className="wd-flight-airline">{flight.airline}</span>
         <WhoBadge who={who} />
-        <span className="wd-duration">{fmtDuration(inst.durationMs)} in the air</span>
+        <span className="wd-duration">{fmtDuration(inst.durationMs)} {mode.travel}</span>
       </div>
       <div className="wd-flight-body">
         <Endpoint side="from" ep={flight.from} inst={inst} dayShift={inst.dayShift} />
@@ -204,9 +212,9 @@ const FlightCard = ({ flight, inst, journey, who = 'us' }) => {
         <Endpoint side="to" ep={flight.to} inst={inst} dayShift={inst.dayShift} />
       </div>
       <div className="wd-flight-meta">
-        <span>Seat {flight.seat}</span>
-        {booking && <span>PNR {booking.pnr}</span>}
-        {booking?.ticket && <span>Ticket {booking.ticket}</span>}
+        <span>{mode.seatLabel} {flight.seat}</span>
+        {booking && <span>{booking.refLabel || 'PNR'} {booking.pnr}</span>}
+        {booking?.ticket && <span>{booking.ticketLabel || 'Ticket'} {booking.ticket}</span>}
       </div>
       {flight.change && (
         <div className="wd-change">
@@ -227,9 +235,9 @@ const ArrivalCard = ({ flight, inst, who = 'us' }) => (
         {who !== 'us' && <WhoBadge who={who} compact />}
       </div>
       <div className="wd-item-detail">
-        {flight.number} from {flight.from.code}. Took off {weekdayOf(flight.from.date)}{' '}
-        {fmtClock(flight.from.time)} {flight.from.tz.short} time; {fmtDuration(inst.durationMs)} in
-        the air.
+        {flight.number} from {flight.from.code}. {modeOf(flight).departed}{' '}
+        {weekdayOf(flight.from.date)} {fmtClock(flight.from.time)} {flight.from.tz.short} time;{' '}
+        {fmtDuration(inst.durationMs)} {modeOf(flight).travel}.
       </div>
     </div>
   </div>
@@ -527,7 +535,7 @@ const WeddingPage = () => {
               ) : (
                 <span className="muted">{b.refLabel || 'PNR'} unknown</span>
               )}
-              {b.ticket && <span> · Ticket {b.ticket}</span>}
+              {b.ticket && <span> · {b.ticketLabel || 'Ticket'} {b.ticket}</span>}
             </div>
             <div className="wd-booking-status">{b.status}</div>
             <div className="wd-booking-link">

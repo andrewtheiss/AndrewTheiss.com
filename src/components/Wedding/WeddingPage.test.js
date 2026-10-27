@@ -140,8 +140,8 @@ test('Bohol villa shows as a booking card and on its check-in and check-out days
   // bookings strip
   expect(screen.getByText('LIME Resort Bohol')).toBeInTheDocument();
   expect(screen.getByText('73572374870256')).toBeInTheDocument();
-  expect(screen.getByText(/Expedia itinerary/)).toBeInTheDocument();
-  expect(screen.getByText('View itinerary ↗')).toBeInTheDocument();
+  expect(screen.getAllByText(/Expedia itinerary/)).toHaveLength(2); // LIME + NUSTAR
+  expect(screen.getAllByText('View itinerary ↗')).toHaveLength(2);
 
   // Nov 29: land in Bohol, then check in
   fireEvent.click(screen.getByRole('button', { name: 'Open Sunday, Nov 29' }));
@@ -151,11 +151,49 @@ test('Bohol villa shows as a booking card and on its check-in and check-out days
   expect(screen.queryByText(/Nothing booked after we land in Bohol/)).not.toBeInTheDocument();
   fireEvent.keyDown(window, { key: 'Escape' });
 
-  // Dec 3: check out, and the only remaining gap is Dec 3 – 5
+  // Dec 3: check out, then the ferry to Cebu; nothing is left to book
   fireEvent.click(screen.getByRole('button', { name: 'Open Thursday, Dec 3' }));
   expect(screen.getAllByText('Check out: LIME Resort Bohol').length).toBeGreaterThan(0);
-  expect(screen.getAllByText('Lodging Dec 3 – 5 & the way back to Cebu').length).toBeGreaterThan(0);
-  expect(screen.getAllByText(/Leaving Bohol/).length).toBeGreaterThan(1); // Dec 3 + Dec 4 cards + dialog header
+  expect(screen.queryByText('Lodging Dec 3 – 5 & the way back to Cebu')).not.toBeInTheDocument();
+  expect(screen.getAllByText(/Bohol → Cebu \(Oceanjet ferry\)/).length).toBeGreaterThan(1); // Dec 3 card + dialog header
+  fireEvent.keyDown(window, { key: 'Escape' });
+});
+
+test('Oceanjet ferry and NUSTAR Cebu show as bookings and on Dec 3 and Dec 5', () => {
+  render(<WeddingPage />);
+  // bookings strip
+  expect(screen.getByText('Oceanjet fast ferry')).toBeInTheDocument();
+  expect(screen.getByText('B151223294')).toBeInTheDocument();
+  expect(screen.getByText(/Ferryscanner booking/)).toBeInTheDocument();
+  expect(screen.getByText(/Oceanjet code BW6029305/)).toBeInTheDocument();
+  expect(screen.getByText('NUSTAR Hotel Cebu')).toBeInTheDocument();
+  expect(screen.getByText('73574551404499')).toBeInTheDocument();
+  expect(screen.getAllByText('View itinerary ↗')).toHaveLength(2); // LIME + NUSTAR
+
+  // overview card: ferry line uses the boat icon and local time
+  expect(screen.getByText('TAGBIL → CEB · 1:00 PM')).toBeInTheDocument();
+  expect(screen.getByText('⛴')).toBeInTheDocument();
+
+  // Dec 3: LIME check-out, ferry, NUSTAR check-in, in that order
+  fireEvent.click(screen.getByRole('button', { name: 'Open Thursday, Dec 3' }));
+  const dialog = screen.getByRole('dialog');
+  expect(dialog).toHaveTextContent(/Check out: LIME Resort Bohol.*Oceanjet.*Check in: NUSTAR Hotel Cebu/);
+  expect(screen.getByText('2h on the water')).toBeInTheDocument();
+  expect(screen.getByText('Class Business')).toBeInTheDocument();
+  expect(screen.getByText('Ferryscanner booking B151223294')).toBeInTheDocument();
+  expect(screen.getByText('Tagbilaran Port, Bohol')).toBeInTheDocument();
+  expect(screen.getByText('Cebu City Port')).toBeInTheDocument();
+  expect(screen.getByText('Andrew & Cassie')).toBeInTheDocument();
+  expect(screen.queryByText(/in the air/)).not.toBeInTheDocument();
+  fireEvent.keyDown(window, { key: 'Escape' });
+
+  // Dec 4: a full day in Cebu
+  expect(screen.getAllByText('Cebu City (NUSTAR Hotel)').length).toBeGreaterThan(0);
+
+  // Dec 5: check out of NUSTAR before the flight home
+  fireEvent.click(screen.getByRole('button', { name: 'Open Saturday, Dec 5' }));
+  expect(screen.getAllByText('Check out: NUSTAR Hotel Cebu').length).toBeGreaterThan(0);
+  expect(screen.getByText('CI 706')).toBeInTheDocument();
   fireEvent.keyDown(window, { key: 'Escape' });
 });
 
