@@ -640,6 +640,18 @@
   font-weight: 500;
 }
 
+.wd-item-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: rgba(120, 190, 255, 0.9);
+  text-decoration: none;
+}
+
+.wd-item-link:hover {
+  text-decoration: underline;
+}
+
 /* flights */
 .wd-flight {
   flex-direction: column;

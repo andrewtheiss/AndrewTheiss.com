@@ -6,6 +6,7 @@
 //
 // To add something: push an entry onto `extras` with a `day` (YYYY-MM-DD),
 // an optional `time` (HH:mm, 24h), a `type`, a `title` and optional `detail`.
+// An optional `link: { url, label }` renders as an outbound link on the card.
 //
 // Bookings are flights by default. A hotel is `kind: 'hotel'` with a `name`
 // instead of `airline`, and `refLabel` names what `pnr` holds (e.g. an Expedia
@@ -18,6 +19,13 @@ export const TZ = {
   LA: { id: 'America/Los_Angeles', label: 'Los Angeles', short: 'LA' },
   TPE: { id: 'Asia/Taipei', label: 'Taipei', short: 'Taipei' },
   PH: { id: 'Asia/Manila', label: 'Philippines', short: 'PH' },
+};
+
+// Philippine Coast Guard, El Nido station. Posts the daily weather advisory
+// and go / no-go for boat trips.
+export const COAST_GUARD_EL_NIDO = {
+  url: 'https://www.facebook.com/cgs.elnido/',
+  label: 'Coast Guard El Nido weather advisory (Facebook)',
 };
 
 export const TRIP_START = '2026-11-20';
@@ -333,10 +341,21 @@ export const extras = [
     detail: 'Not booked yet. Everyone lands 10:25 AM on DG 6250. Seda Lio stay starts Nov 26.',
   },
   {
+    day: '2026-11-24',
+    type: 'todo',
+    title: "Check the weather forecast for tomorrow's boat tour",
+    detail:
+      'The Coast Guard posts the El Nido weather advisory on Facebook. Check it the evening before; the official go / no-go comes between 6:00 and 7:00 AM on the 25th.',
+    link: COAST_GUARD_EL_NIDO,
+  },
+  {
     day: '2026-11-25',
-    type: 'note',
-    title: 'Free until the Welcome Dinner',
-    detail: 'First full day in Palawan. Welcome Dinner at Molave, 6:00 PM.',
+    time: '09:00',
+    type: 'event',
+    title: 'Boat tour',
+    detail:
+      'Loading at 9:00 AM. The Coast Guard gives the go / no-go between 6:00 and 7:00 AM, so check for the call first thing. If it is a no-go the morning is free. Welcome Dinner at Molave, 6:00 PM either way.',
+    link: COAST_GUARD_EL_NIDO,
   },
   {
     day: '2026-11-26',
@@ -410,7 +429,7 @@ export const extras = [
 
 // One-line summary shown on the overview card for a day (optional).
 export const dayHeadlines = {
-  '2026-11-25': 'Welcome Dinner at Molave, 6:00 PM',
+  '2026-11-25': 'Boat tour 9:00 AM, Welcome Dinner at Molave 6:00 PM',
   '2026-11-26': 'Island hopping, then rehearsal 4:30 PM',
   '2026-11-27': 'Ceremony 4:30 PM, reception 6:30 PM',
 };
@@ -418,7 +437,9 @@ export const dayHeadlines = {
 // Minute-by-minute run-of-show. Times are local (Philippines).
 // Each entry is one time slot; `section` starts a new labelled section.
 export const schedule = [
-  // ---- Wed Nov 25: Welcome Dinner ----
+  // ---- Wed Nov 25: Boat Tour & Welcome Dinner ----
+  { day: '2026-11-25', section: 'Boat Tour', time: '06:00', items: [{ tag: 'GO / NO GO', text: 'Coast Guard weather call, 6:00 – 7:00 AM' }] },
+  { day: '2026-11-25', time: '09:00', items: [{ tag: 'LOAD', text: 'Boat tour loading' }] },
   { day: '2026-11-25', section: 'Welcome Dinner', time: '18:00', items: [{ tag: 'START', text: 'Welcome Dinner', place: 'Molave' }] },
   { day: '2026-11-25', time: '22:00', items: [{ text: 'End of Dinner' }] },
 

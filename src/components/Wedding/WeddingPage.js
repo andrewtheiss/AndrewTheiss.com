@@ -276,6 +276,11 @@ const ExtraCard = ({ extra }) => (
         {extra.title}
       </div>
       {extra.detail && <div className="wd-item-detail">{extra.detail}</div>}
+      {extra.link && (
+        <a className="wd-item-link" href={extra.link.url} target="_blank" rel="noreferrer">
+          {extra.link.label || extra.link.url} ↗
+        </a>
+      )}
     </div>
   </div>
 );

@@ -62,6 +62,7 @@ test('overview shows 16 compact day cards with local-time summaries', () => {
   expect(screen.getByText('LAX → TPE · 10:40 PM')).toBeInTheDocument();
   expect(screen.getByText('+2d')).toBeInTheDocument();
   expect(screen.getByText('Ceremony 4:30 PM, reception 6:30 PM')).toBeInTheDocument();
+  expect(screen.getByText('Boat tour 9:00 AM, Welcome Dinner at Molave 6:00 PM')).toBeInTheDocument();
   // detail content is not rendered until a day is opened
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 });
@@ -83,9 +84,28 @@ test('clicking a day opens the detailed view, arrows move between days', () => {
   fireEvent.keyDown(window, { key: 'ArrowLeft' });
   expect(screen.getAllByText('Welcome Dinner').length).toBeGreaterThan(0);
   expect(screen.getByText('Molave')).toBeInTheDocument();
+  expect(screen.getByText('GO / NO GO')).toBeInTheDocument();
+  expect(screen.getByText('Coast Guard weather call, 6:00 – 7:00 AM')).toBeInTheDocument();
+  expect(screen.getByText('Boat tour loading')).toBeInTheDocument();
 
   fireEvent.keyDown(window, { key: 'Escape' });
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+});
+
+test('Coast Guard weather link shows the day before the boat tour and on the tour itself', () => {
+  render(<WeddingPage />);
+  expect(screen.getByText("Check the weather forecast for tomorrow's boat tour")).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Open Tuesday, Nov 24' }));
+  const link = screen.getByRole('link', { name: /Coast Guard El Nido weather advisory/ });
+  expect(link).toHaveAttribute('href', 'https://www.facebook.com/cgs.elnido/');
+  expect(link).toHaveAttribute('target', '_blank');
+
+  fireEvent.click(screen.getByRole('button', { name: 'Next day' }));
+  expect(screen.getByRole('link', { name: /Coast Guard El Nido weather advisory/ })).toHaveAttribute(
+    'href',
+    'https://www.facebook.com/cgs.elnido/',
+  );
 });
 
 test('flight day details show the flight card, then arrival and layover on landing day', () => {
